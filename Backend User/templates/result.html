@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Search Results - Eco Loop</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <nav>
+        <h2 class="logo">EcoLoop Results</h2>
+        <a href="/">Back to Home</a>
+    </nav>
+
+    <section class="results-container">
+        <h1>Items found for your search:</h1>
+        <ul>
+            {% for item in items %}
+                <li>
+                    <strong>{{ item.name }}</strong> - {{ item.description }} 
+                    <em>({{ item.fci }})</em>
+                </li>
+            {% endfor %}
+        </ul>
+    </section>
+</body>
+</html>

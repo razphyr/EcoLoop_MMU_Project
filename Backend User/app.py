@@ -1,9 +1,13 @@
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, render_template 
+from flask_cors import CORS
 from werkzeug.security import generate_password_hash, check_password_hash
 from models import db, Item, User
 
-app = Flask(__name__)
 
+app = Flask(__name__, static_folder='static')
+CORS(app)  
+
+app.config['TEMPLATES_FOLDER'] = 'templates'
 # 1. Database Configuration
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///ecoloop.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
@@ -17,7 +21,16 @@ with app.app_context():
 
 @app.route('/')
 def home():
-    return "EcoLoop MMU: FCI Marketplace is Online!"
+    return render_template('index.html')
+
+# Search Route 
+@app.route('/search')
+def search():
+    query = request.args.get('query')
+    # Maathesh will later update this to pull from the database
+    return render_template('result.html', items=[])
+
+
 
 # 4. Marketplace: View All Items (GET)
 # Features: FCI Filtering & Department Categorization
