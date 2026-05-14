@@ -1,16 +1,23 @@
 <!DOCTYPE html>
 <html>
-<head><title>EcoLoop MMU</title><link rel="stylesheet" href="{{url_for('static',filename='style.css')}}"></head>
+<head>
+    <title>EcoLoop MMU Portal</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
 <body>
     <nav>
-        <div class="logo" onclick="location.href='/'">Eco<span>Loop</span></div>
-        <button class="primary" onclick="location.href='/login'">Login</button>
+        <div class="logo" onclick="window.location.href='/main'">Eco<span>Loop</span></div>
+        <div style="display: flex; align-items: center; gap: 20px;">
+            <span id="welcomeText" style="font-weight: 600;">Welcome, Student</span>
+            <button class="primary" onclick="logout()" style="background: #555; padding: 8px 15px;">Logout</button>
+        </div>
     </nav>
+    
     <section class="hero">
         <h1 style="color: var(--mmu-blue);">FCI Resource Exchange</h1>
         <div style="max-width: 500px; margin: 20px auto; display: flex; border: 2px solid var(--mmu-blue); border-radius: 5px; overflow: hidden;">
             <form action="/search" method="get" style="display: flex; width: 100%;">
-                <input type="text" name="query" placeholder="Search textbooks, kits..." style="border:none;">
+                <input type="text" name="query" placeholder="Search textbooks, kits..." style="border:none; padding:12px; flex:1;">
                 <button type="submit" class="primary" style="border-radius:0;">Search</button>
             </form>
         </div>
@@ -19,5 +26,18 @@
             <div><h2 style="color:var(--mmu-blue); font-size: 40px; margin:0;">{{ impact.co2_offset_kg }}kg</h2><p>CO2 Saved</p></div>
         </div>
     </section>
+
+    <script>
+        // Personalize dashboard greeting dynamically
+        const name = localStorage.getItem('username');
+        if (name) {
+            document.getElementById('welcomeText').innerText = `Welcome, ${name}`;
+        }
+
+        function logout() {
+            localStorage.clear();
+            window.location.href = '/';
+        }
+    </script>
 </body>
 </html>

@@ -1,31 +1,54 @@
 <!DOCTYPE html>
 <html>
-<head><title>Sign Up | EcoLoop</title><link rel="stylesheet" href="{{url_for('static',filename='style.css')}}"></head>
-<body>
-    <nav><div class="logo" onclick="location.href='/'">Eco<span>Loop</span></div></nav>
-    <div style="display:flex; justify-content:center; margin-top:50px;">
-        <div class="card" style="width:350px; text-align:center;">
-            <h2 style="color:var(--mmu-blue);">Join EcoLoop</h2>
-            <form id="rForm" style="display:flex; flex-direction:column; gap:15px; margin-bottom: 20px;">
-                <input type="text" id="n" placeholder="Full Name" required>
-                <input type="email" id="e" placeholder="MMU Student Email" required>
-                <input type="password" id="p" placeholder="Password" required>
-                <button type="submit" class="btn-mmu">Send 2FA Code</button>
+<head>
+    <title>Create Account | EcoLoop MMU</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body style="background-color: #f4f4f9;">
+
+    <nav style="background: #004892; padding: 15px 5%; color: white; display: flex; justify-content: space-between; align-items: center;">
+        <div class="logo" style="font-size: 24px; font-weight: 800; cursor: pointer;" onclick="window.location.href='/'">Eco<span style="color: #e11b22;">Loop</span></div>
+        <div style="font-size: 14px; font-weight: 600;">MULTIMEDIA UNIVERSITY</div>
+    </nav>
+
+    <div style="display: flex; justify-content: center; padding: 60px 20px;">
+        <div class="card" style="width: 350px; background: white; padding: 35px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border-top: 5px solid #e11b22; text-align: center;">
+            <h2 style="color: #e11b22; margin-top: 0; font-size: 28px;">Create Account</h2>
+            <p style="color: #666; font-size: 14px; margin-bottom: 25px;">New here? Register with your MMU email.</p>
+            
+            <form id="signUpForm" style="display: flex; flex-direction: column; gap: 18px;">
+                <input type="text" id="regName" placeholder="Full Name" required style="padding: 12px; border: 1px solid #ddd; border-radius: 4px; width: 100%; box-sizing: border-box;">
+                <input type="email" id="regEmail" placeholder="student_id@student.mmu.edu.my" required style="padding: 12px; border: 1px solid #ddd; border-radius: 4px; width: 100%; box-sizing: border-box;">
+                <input type="password" id="regPassword" placeholder="Create Password" required style="padding: 12px; border: 1px solid #ddd; border-radius: 4px; width: 100%; box-sizing: border-box;">
+                <button type="submit" style="background: #004892; color: white; padding: 14px; border: none; border-radius: 4px; font-weight: bold; cursor: pointer; text-transform: uppercase; width: 100%;">Send 2FA Code</button>
             </form>
-            <p>Already have an account? <a href="/login" style="color:var(--mmu-blue); font-weight:bold; text-decoration:none;">Sign In</a></p>
-            <p id="m" style="font-weight:bold; color:var(--mmu-red);"></p>
+            
+            <p style="margin-top: 25px; font-size: 14px; color: #666;">
+                Already have an account? <a href="/" style="color: #004892; font-weight: bold; text-decoration: none;">Sign In here</a>
+            </p>
+            
+            <p id="signUpMessage" style="font-weight: bold; margin-top: 15px; color: #e11b22;"></p>
         </div>
     </div>
+
     <script>
-        document.getElementById('rForm').onsubmit = async (e) => {
+        document.getElementById('signUpForm').onsubmit = async (e) => {
             e.preventDefault();
-            const email = document.getElementById('e').value;
+            const email = document.getElementById('regEmail').value;
             const res = await fetch('http://127.0.0.1:5000/api/register', {
-                method: 'POST', headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({name: document.getElementById('n').value, email: email, password: document.getElementById('p').value})
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    name: document.getElementById('regName').value,
+                    email: email,
+                    password: document.getElementById('regPassword').value
+                })
             });
-            if (res.ok) location.href = `/verify?email=${email}`;
-            else document.getElementById('m').innerText = (await res.json()).error;
+            if (res.ok) {
+                window.location.href = `/verify?email=${email}`;
+            } else {
+                document.getElementById('signUpMessage').innerText = (await res.json()).error;
+            }
         };
     </script>
 </body>
