@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head><title>Results | EcoLoop</title><link rel="stylesheet" href="{{url_for('static',filename='style.css')}}"></head>
+<body>
+    <nav><div class="logo" onclick="location.href='/'">Eco<span>Loop</span></div></nav>
+    <h1 style="text-align: center; margin-top: 40px;">Results for "{{ query }}"</h1>
+    <div style="display: flex; flex-wrap: wrap; gap: 20px; justify-content: center; padding: 40px;">
+        {% for item in items %}
+            <div class="card" style="width:280px;">
+                <h3 style="color: var(--mmu-blue);">{{ item.name }}</h3>
+                <p>{{ item.description }}</p>
+                <p><strong>RM {{ item.price }}</strong></p>
+                <button class="btn-mmu" style="font-size:12px;">Contact: {{ item.contact }}</button>
+            </div>
+        {% endfor %}
+    </div>
+</body>
+</html>

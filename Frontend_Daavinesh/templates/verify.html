@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head><title>Verify | EcoLoop</title><link rel="stylesheet" href="{{url_for('static',filename='style.css')}}"></head>
+<body>
+    <div style="display:flex; justify-content:center; margin-top:100px;">
+        <div class="card" style="width:300px; text-align:center;">
+            <h2 style="color:var(--mmu-blue);">2FA Verification</h2>
+            <p>Code sent to: {{email}}</p>
+            <form id="vForm" style="display:flex; flex-direction:column; gap:20px;">
+                <input type="text" id="c" maxlength="6" style="text-align:center; font-size:24px; letter-spacing:5px;" required>
+                <button type="submit" class="btn-mmu" style="background:var(--mmu-blue);">Verify Account</button>
+            </form>
+        </div>
+    </div>
+    <script>
+        document.getElementById('vForm').onsubmit = async (e) => {
+            e.preventDefault();
+            const res = await fetch('http://127.0.0.1:5000/api/verify', {
+                method: 'POST', headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({email: "{{email}}", code: document.getElementById('c').value})
+            });
+            if (res.ok) { alert("Verified!"); location.href = '/login'; }
+            else alert("Invalid Code");
+        };
+    </script>
+</body>
+</html>
