@@ -1,33 +1,223 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Create Account | EcoLoop MMU</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-</head>
-<body style="background-color: #f4f4f9;">
+    <style>
+        :root {
+            --mmu-blue: #004892;
+            --mmu-red: #e11b22;
+            --mmu-dark: #1e293b;
+            --mmu-bg: #f1f5f9;
+            --border-color: #cbd5e1;
+        }
 
-    <nav style="background: #004892; padding: 15px 5%; color: white; display: flex; justify-content: space-between; align-items: center;">
-        <div class="logo" style="font-size: 24px; font-weight: 800; cursor: pointer;" onclick="window.location.href='/'">Eco<span style="color: #e11b22;">Loop</span></div>
-        <div style="font-size: 14px; font-weight: 600;">MULTIMEDIA UNIVERSITY</div>
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background-color: var(--mmu-bg);
+            color: var(--mmu-dark);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* Official University Top Bar */
+        .mmu-navbar {
+            background-color: var(--mmu-blue);
+            padding: 18px 6%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .mmu-navbar .logo {
+            font-size: 26px;
+            font-weight: 800;
+            color: #ffffff;
+            letter-spacing: -0.5px;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .mmu-navbar .logo span {
+            color: var(--mmu-red);
+        }
+
+        .navbar-tagline {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 13px;
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        /* Portal Content Area */
+        .portal-container {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 40px 20px;
+        }
+
+        .portal-card {
+            background: #ffffff;
+            width: 100%;
+            max-width: 400px;
+            padding: 45px 40px;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+            border-top: 6px solid var(--mmu-red); /* Crimson red accent for registration */
+            box-sizing: border-box;
+        }
+
+        .portal-header {
+            text-align: center;
+            margin-bottom: 35px;
+        }
+
+        .portal-header h2 {
+            color: var(--mmu-red);
+            font-size: 28px;
+            font-weight: 700;
+            margin: 0 0 8px 0;
+        }
+
+        .portal-header p {
+            color: #64748b;
+            font-size: 14px;
+            margin: 0;
+        }
+
+        /* Professional Input Fields */
+        .form-group {
+            margin-bottom: 22px;
+            text-align: left;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--mmu-blue);
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1.5px solid var(--border-color);
+            border-radius: 6px;
+            font-size: 15px;
+            color: var(--mmu-dark);
+            background-color: #ffffff;
+            box-sizing: border-box;
+            transition: all 0.2s ease;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--mmu-red);
+            box-shadow: 0 0 0 4px rgba(225, 27, 34, 0.15);
+        }
+
+        /* Action Buttons */
+        .btn-mmu-secondary {
+            width: 100%;
+            background-color: var(--mmu-blue);
+            color: #ffffff;
+            padding: 14px;
+            border: none;
+            border-radius: 6px;
+            font-size: 15px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            cursor: pointer;
+            transition: background-color 0.2s ease, transform 0.1s ease;
+            margin-top: 10px;
+        }
+
+        .btn-mmu-secondary:hover {
+            background-color: #00366d;
+        }
+
+        .btn-mmu-secondary:active {
+            transform: scale(0.98);
+        }
+
+        /* Utility Routing Links */
+        .portal-footer-links {
+            margin-top: 30px;
+            text-align: center;
+            font-size: 14px;
+            color: #64748b;
+        }
+
+        .portal-footer-links a {
+            color: var(--mmu-blue);
+            font-weight: 700;
+            text-decoration: none;
+            margin-left: 4px;
+        }
+
+        .portal-footer-links a:hover {
+            text-decoration: underline;
+        }
+
+        #signUpMessage {
+            font-weight: 600;
+            font-size: 14px;
+            margin-top: 15px;
+            text-align: center;
+            color: var(--mmu-red);
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="mmu-navbar">
+        <div class="logo" onclick="window.location.href='/'">Eco<span>Loop</span></div>
+        <div class="navbar-tagline">Account Registration</div>
     </nav>
 
-    <div style="display: flex; justify-content: center; padding: 60px 20px;">
-        <div class="card" style="width: 350px; background: white; padding: 35px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border-top: 5px solid #e11b22; text-align: center;">
-            <h2 style="color: #e11b22; margin-top: 0; font-size: 28px;">Create Account</h2>
-            <p style="color: #666; font-size: 14px; margin-bottom: 25px;">New here? Register with your MMU email.</p>
+    <div class="portal-container">
+        <div class="portal-card">
+            <div class="portal-header">
+                <h2>Create Account</h2>
+                <p>Register using an authorized internal MMU account domain.</p>
+            </div>
             
-            <form id="signUpForm" style="display: flex; flex-direction: column; gap: 18px;">
-                <input type="text" id="regName" placeholder="Full Name" required style="padding: 12px; border: 1px solid #ddd; border-radius: 4px; width: 100%; box-sizing: border-box;">
-                <input type="email" id="regEmail" placeholder="student_id@student.mmu.edu.my" required style="padding: 12px; border: 1px solid #ddd; border-radius: 4px; width: 100%; box-sizing: border-box;">
-                <input type="password" id="regPassword" placeholder="Create Password" required style="padding: 12px; border: 1px solid #ddd; border-radius: 4px; width: 100%; box-sizing: border-box;">
-                <button type="submit" style="background: #004892; color: white; padding: 14px; border: none; border-radius: 4px; font-weight: bold; cursor: pointer; text-transform: uppercase; width: 100%;">Send 2FA Code</button>
+            <form id="signUpForm">
+                <div class="form-group">
+                    <label for="regName">Full Name</label>
+                    <input type="text" id="regName" placeholder="As per student ID card" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="regEmail">MMU Email Address</label>
+                    <input type="email" id="regEmail" placeholder="student_id@student.mmu.edu.my" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="regPassword">Password</label>
+                    <input type="password" id="regPassword" placeholder="Minimum 8 characters" required>
+                </div>
+                
+                <button type="submit" class="btn-mmu-secondary">Send 2FA Code</button>
             </form>
             
-            <p style="margin-top: 25px; font-size: 14px; color: #666;">
-                Already have an account? <a href="/" style="color: #004892; font-weight: bold; text-decoration: none;">Sign In here</a>
-            </p>
+            <div class="portal-footer-links">
+                Already registered? <a href="/">Sign In here</a>
+            </div>
             
-            <p id="signUpMessage" style="font-weight: bold; margin-top: 15px; color: #e11b22;"></p>
+            <p id="signUpMessage"></p>
         </div>
     </div>
 
