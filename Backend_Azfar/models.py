@@ -10,6 +10,7 @@ class User(db.Model):
     is_verified = db.Column(db.Boolean, default=False)
     verification_code = db.Column(db.String(6), nullable=True)
 
+# models.py - Add status and category
 class Item(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(100), nullable=False)
@@ -17,7 +18,9 @@ class Item(db.Model):
     originalprice = db.Column(db.Float, nullable=False)
     description = db.Column(db.Text)
     faculty = db.Column(db.String(10), default="FCI")
-    level = db.Column(db.String(20), default="Degree")  #(Degree or Diploma_Foundation)
+    level = db.Column(db.String(20), default="Degree")
+    category = db.Column(db.String(50), default="General") # e.g., 'Book', 'Electronics', 'Kit'
+    status = db.Column(db.String(20), default="Available") # 'Available' or 'Sold'
     contact_info = db.Column(db.String(100))
-    category = db.Column(db.String(50), default="General") #<--- HELPS WITH CO2 CALCULATION
-    
+    # Link item to a specific user
+    owner_email = db.Column(db.String(120), db.ForeignKey('user.email'))

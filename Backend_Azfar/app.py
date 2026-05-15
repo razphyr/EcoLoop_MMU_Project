@@ -48,16 +48,26 @@ def get_items():
 def add_item():
     data = request.get_json()
     
-    # In a real app, you'd check if the user is logged in here
+    # Basic validation
+    if not data.get('title') or not data.get('price'):
+        return jsonify({"error": "Title and Price are required"}), 400
+
     new_item = Item(
         title=data.get('title'),
-        price=data.get('price'),
-        originalprice=data.get('originalprice', 0),
+        price=float(data.get('price')),
+        originalprice=float(data.get('originalprice', 0)),
         description=data.get('description'),
         faculty='FCI',
         level=data.get('level', 'Degree'),
-        contact_info=data.get('contact')
+        category=data.get('category', 'General'),
+        contact_info=data.get('contact'),
+        owner_email=data.get('email'), # Track who listed it
+        status="Available"
     )
+    
+    db.session.add(new_item)
+    db.session.commit()
+    return jsonify({"message": "Item listed successfully on EcoLoop!"}), 201
     
     db.session.add(new_item)
     db.session.commit()
@@ -65,12 +75,21 @@ def add_item():
 
 @app.route('/api/impact', methods=['GET'])
 def get_impact():
-    fci_items = Item.query.filter_by(faculty='FCI').all()
-    count = len(fci_items)
+    all_items = Item.query.filter_by(faculty='FCI').all()
+    
+    total_co2 = 0
+    for item in all_items:
+        if item.category == 'Electronics' or 'Kit' in item.title:
+            total_co2 += 1.5
+        elif item.category == 'Book':
+            total_co2 += 0.3
+        else:
+            total_co2 += 0.5 # Default
+            
     return jsonify({
         "fci_community_impact": {
-            "total_items_reused": count,
-            "co2_offset_kg": count * 0.5 
+            "total_items_reused": len(all_items),
+            "co2_offset_kg": round(total_co2, 2)
         }
     })
 
@@ -119,6 +138,18 @@ def login():
             return jsonify({"error": "Account not verified."}), 401
         return jsonify({"message": "Success", "user": {"name": user.name}}), 200
     return jsonify({"error": "Invalid email or password"}), 401
+
+# app.py - Get items listed by a specific student
+@app.route('/api/my-items', methods=['GET'])
+def get_my_items():
+    email = request.args.get('email')
+    items = Item.query.filter_by(owner_email=email).all()
+    return jsonify([{
+        'id': i.id,
+        'title': i.title,
+        'status': i.status,
+        'price': i.price
+    } for i in items])
 
 if __name__ == '__main__':
     app.run(port=5000, debug=True)
