@@ -2,19 +2,15 @@ from app import app, db
 from models import Item, User
 from werkzeug.security import generate_password_hash
 
-# This block ensures the database operations have access to the app configuration
 with app.app_context():
     try:
         print("Connecting to database...")
-        # Deletes existing tables to ensure a clean start
         db.drop_all()
-        # Creates the tables based on your models.py
         db.create_all()
         
         print("Adding sample MMU data...")
         
         # 1. Add a Verified Student Account
-        # Using the correct MMU email domain as per project requirements
         test_user = User(
             name="Azfar Hakim", 
             email="azfar@student.mmu.edu.my", 
@@ -23,8 +19,7 @@ with app.app_context():
         )
         db.session.add(test_user)
         
-        # 2. Add Sample FCI Marketplace Items
-        # These will be used to calculate the CO2 offset on the homepage
+        # 2. Add Sample FCI Marketplace Items with Academic Levels
         items = [
             Item(
                 title="Digital Logic Design Kit", 
@@ -32,6 +27,7 @@ with app.app_context():
                 originalprice=90.0, 
                 description="Complete breadboard and components for FCI Year 1.",
                 faculty="FCI",
+                level="Diploma_Foundation", #Matches the filter button
                 contact_info="012-3456789"
             ),
             Item(
@@ -40,6 +36,7 @@ with app.app_context():
                 originalprice=65.0, 
                 description="Essential for CSP1114. Minimal highlights.",
                 faculty="FCI",
+                level="Diploma_Foundation", #Matches the filter button
                 contact_info="013-9876543"
             ),
             Item(
@@ -48,7 +45,17 @@ with app.app_context():
                 originalprice=75.0, 
                 description="Perfect for robotics projects. Includes USB cable.",
                 faculty="FCI",
+                level="Degree", #Matches the Degree filter
                 contact_info="017-1122334"
+            ),
+            Item(
+                title="Advanced Data Structures Guide", 
+                price=40.0, 
+                originalprice=110.0, 
+                description="Detailed notes for Year 2 Computer Science students.",
+                faculty="FCI",
+                level="Degree",
+                contact_info="019-5566778"
             )
         ]
         
@@ -56,7 +63,7 @@ with app.app_context():
             db.session.add(item)
             
         db.session.commit()
-        print("Database Successfully Initialized and Seeded!")
+        print("Database Successfully Initialized and Seeded with academic levels!")
         
     except Exception as e:
         print(f"An error occurred during seeding: {e}")

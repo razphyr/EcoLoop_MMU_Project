@@ -17,4 +17,7 @@ class Item(db.Model):
     originalprice = db.Column(db.Float, nullable=False)
     description = db.Column(db.Text)
     faculty = db.Column(db.String(10), default="FCI")
+    level = db.Column(db.String(20), default="Degree")  #(Degree or Diploma_Foundation)
     contact_info = db.Column(db.String(100))
+    category = db.Column(db.String(50), default="General") #<--- HELPS WITH CO2 CALCULATION
+    

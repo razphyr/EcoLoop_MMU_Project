@@ -16,14 +16,52 @@ with app.app_context():
 
 @app.route('/api/items', methods=['GET'])
 def get_items():
-    items = Item.query.filter_by(faculty='FCI').all()
-    return jsonify([{
-        'name': i.title, 
-        'description': i.description,
-        'faculty': i.faculty,
-        'price': i.price,
-        'contact': i.contact_info
-    } for i in items])
+    # Capture the query parameters from the URL
+    query = request.args.get('query', '').lower()
+    level = request.args.get('level', 'All')
+
+    # Start with a base query
+    base_query = Item.query.filter_by(faculty='FCI')
+
+    # Apply the academic level filter if it's not "All"
+    if level != 'All':
+        base_query = base_query.filter_by(level=level)
+
+    items = base_query.all()
+
+    # Simple keyword search logic
+    results = []
+    for i in items:
+        if query in i.title.lower() or query in i.description.lower():
+            results.append({
+                'name': i.title,
+                'description': i.description,
+                'faculty': i.faculty,
+                'level': i.level,
+                'price': i.price,
+                'contact': i.contact_info
+            })
+    
+    return jsonify(results)
+
+@app.route('/api/add-item', methods=['POST'])
+def add_item():
+    data = request.get_json()
+    
+    # In a real app, you'd check if the user is logged in here
+    new_item = Item(
+        title=data.get('title'),
+        price=data.get('price'),
+        originalprice=data.get('originalprice', 0),
+        description=data.get('description'),
+        faculty='FCI',
+        level=data.get('level', 'Degree'),
+        contact_info=data.get('contact')
+    )
+    
+    db.session.add(new_item)
+    db.session.commit()
+    return jsonify({"message": "Item listed successfully!"}), 201
 
 @app.route('/api/impact', methods=['GET'])
 def get_impact():
