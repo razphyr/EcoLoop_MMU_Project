@@ -68,10 +68,6 @@ def add_item():
     db.session.add(new_item)
     db.session.commit()
     return jsonify({"message": "Item listed successfully on EcoLoop!"}), 201
-    
-    db.session.add(new_item)
-    db.session.commit()
-    return jsonify({"message": "Item listed successfully!"}), 201
 
 @app.route('/api/impact', methods=['GET'])
 def get_impact():
@@ -139,7 +135,7 @@ def login():
         return jsonify({"message": "Success", "user": {"name": user.name}}), 200
     return jsonify({"error": "Invalid email or password"}), 401
 
-# app.py - Get items listed by a specific student
+# app.py Get items listed by a specific student
 @app.route('/api/my-items', methods=['GET'])
 def get_my_items():
     email = request.args.get('email')
