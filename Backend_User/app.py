@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, render_template
 from flask_cors import CORS
 from werkzeug.security import generate_password_hash, check_password_hash
 from models import db, Item, User
@@ -19,7 +19,7 @@ with app.app_context():
 
 @app.route('/')
 def home():
-    return "EcoLoop MMU: FCI Faculty Marketplace is Online!"
+    return render_template('index.html')
 
 # 4. Marketplace: View Items (GET) - Filters for FCI & 2 Academic Categories
 @app.route('/api/items', methods=['GET'])
