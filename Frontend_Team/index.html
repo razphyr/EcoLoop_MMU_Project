@@ -15,36 +15,33 @@
         </div>
         
         <ul>
-            <li>Home</li>
-            <li>Explore</li>
-            <li>Transactions</li>
-            <li>About us</li>
+            <li onclick="window.location.href='/'" style="cursor:pointer">Home</li>
+            <li onclick="window.location.href='/student'" style="cursor:pointer">Explore</li>
+            <li onclick="window.location.href='/dashboard'" style="cursor:pointer">Dashboard</li>
         </ul>
         <div class="nav-buttons"></div>
     </nav>
 
     <section class="hero">
         <h1 class="main-title">EcoLoop</h1>
-        
-        <h2 class="subtitle">THE FUTURE OF STUDENT MARKETPLACE STARTS HERE</h2>
+        <h2 class="subtitle">THE FUTURE OF CAMPUS MARKETPLACES</h2>
         
         <p class="description">
-            EcoLoop helps students to buy and sell their used items easily, save money, and <br>
-            reduce waste within our beloved campus communities.
+            EcoLoop helps MMU students and staff buy or sell secondhand goods easily, <br>
+            save money, and reduce waste within our campus community.
         </p>
 
         <div class="search-container">
             <form action="/search" method="get">
-                <input type="text" name="query" placeholder="Search for items...">
+                <input type="text" name="query" placeholder="Search textbooks, lab kits, electronics..." required>
                 <button type="submit">Search</button>
             </form>
         </div>
 
         <div class="action-container">
-            <button class="btn-start-now">Start Now</button>
+            <button class="btn-start-now" onclick="window.location.href='/student'">Start Now</button>
         </div>
     </section>
 
 </body>
 </html>
- 
