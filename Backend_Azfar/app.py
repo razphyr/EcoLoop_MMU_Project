@@ -1,36 +1,72 @@
-from flask import Flask, jsonify, request
+import os
+from flask import Flask, jsonify, request, send_from_directory
 from flask_cors import CORS
-from models import db, Item, User 
 
 app = Flask(__name__)
-CORS(app) # Allows the frontend to talk to this API
+CORS(app)
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///ecoloop.db'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-db.init_app(app)
+# Track path locations
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+FRONTEND_DIR = os.path.abspath(os.path.join(BASE_DIR, "..", "Frontend_Team"))
 
-@app.route('/api/items', methods=['GET'])
+# ==========================================
+# 🌐 WEB PAGE ROUTES (Serves your GUI panels)
+# ==========================================
+
+@app.route("/", methods=["GET"])
+def serve_student_panel():
+    return send_from_directory(FRONTEND_DIR, "student panel.html")
+
+@app.route("/admin", methods=["GET"])
+def serve_admin_panel():
+    return send_from_directory(FRONTEND_DIR, "admin panel.html")
+
+# ==========================================
+# 📊 DATA API ROUTES (Handles JSON communication)
+# ==========================================
+
+items = [
+    {"id": 1, "name": "Notebook", "price": 10, "student": "Ali", "faculty": "FCI", "sold": False},
+    {"id": 2, "name": "Calculator", "price": 50, "student": "Siti", "faculty": "FOAIE", "sold": True}
+]
+
+@app.route("/items", methods=["GET"])
 def get_items():
-    items = Item.query.filter_by(faculty='FCI').all()
-    # We map 'title' to 'name' to match your results.html exactly
-    return jsonify([{
-        'name': i.title, 
-        'description': i.description,
-        'faculty': i.faculty
-    } for i in items])
+    return jsonify(items)
 
-@app.route('/api/impact', methods=['GET'])
-def get_impact():
-    fci_items = Item.query.filter_by(faculty='FCI').all()
-    count = len(fci_items)
-    # Total CO2 offset calculation:
-    # $$Impact = Reused\_Items \times 0.5\text{kg}$$
-    return jsonify({
-        "fci_community_impact": {
-            "total_items_reused": count,
-            "co2_offset_kg": count * 0.5 
-        }
-    })
+@app.route("/items", methods=["POST"])
+def add_item():
+    data = request.json
+    new_item = {
+        "id": max([i["id"] for i in items]) + 1 if items else 1,
+        "name": data.get("name"),
+        "price": data.get("price"),
+        "student": data.get("student"),
+        "faculty": data.get("faculty"),
+        "sold": False
+    }
+    items.append(new_item)
+    return jsonify(new_item)
 
-if __name__ == '__main__':
+@app.route("/items/<int:item_id>", methods=["PUT"])
+def toggle_item(item_id):
+    for i in items:
+        if i["id"] == item_id:
+            i["sold"] = not i["sold"]
+            return jsonify(i)
+    return jsonify({"error": "Item not found"}), 404
+
+@app.route("/items/<int:item_id>", methods=["DELETE"])
+def delete_item(item_id):
+    global items
+    items = [i for i in items if i["id"] != item_id]
+    return jsonify({"message": "deleted"})
+
+if __name__ == "__main__":
+    # DIAGNOSTIC PATH PRINTS
+    print("\n" + "="*50)
+    print(f"LOOKING FOR FRONTEND AT: {FRONTEND_DIR}")
+    print(f"DOES THE FOLDER EXIST?:  {os.path.exists(FRONTEND_DIR)}")
+    print("="*50 + "\n")
+    
     app.run(port=5000, debug=True)
