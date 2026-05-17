@@ -14,12 +14,22 @@ FRONTEND_DIR = os.path.abspath(os.path.join(BASE_DIR, "..", "Frontend_Team"))
 # ==========================================
 
 @app.route("/", methods=["GET"])
+def serve_homepage():
+    return send_from_directory(FRONTEND_DIR, "index.html")
+
+@app.route("/student", methods=["GET"])
 def serve_student_panel():
     return send_from_directory(FRONTEND_DIR, "student panel.html")
 
 @app.route("/admin", methods=["GET"])
 def serve_admin_panel():
     return send_from_directory(FRONTEND_DIR, "admin panel.html")
+
+@app.route("/style.css", methods=["GET"])
+def serve_styles():
+    return send_from_directory(FRONTEND_DIR, "style.css")
+
+
 
 # ==========================================
 # 📊 DATA API ROUTES (Handles JSON communication)
