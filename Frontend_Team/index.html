@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Eco Loop // FCI Hub</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
 </head>
 <body>
 
@@ -14,7 +15,7 @@
             <span class="status-text">NODE // FCI_LIVE</span>
         </div>
         
-        <ul>
+        <ul id="navLinksList">
             <li onclick="window.location.href='/'" style="cursor:pointer">Home</li>
             <li onclick="window.location.href='/login'" style="cursor:pointer">Explore</li>
             <li onclick="window.location.href='/login'" style="cursor:pointer">Dashboard</li>
@@ -39,26 +40,61 @@
         </div>
 
         <div class="action-container">
-            <button class="btn-start-now" onclick="window.location.href='/login'">Start Now</button>
+            <button class="btn-start-now" id="heroActionButton" onclick="window.location.href='/login'">Start Now</button>
         </div>
     </section>
 
     <script>
     function handleSearch(event) {
-        // Inspects local storage vectors for an active authentication session status
         const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
-        
         if (!isLoggedIn) {
-            // Block the form from redirecting to /search
             event.preventDefault(); 
-            
             alert("Access Denied! You must be registered and logged in to search the FCI marketplace repository.");
-            // Route the unauthorized guest user directly into your login matrix layout
             window.location.href = '/login';
             return false;
         }
-        return true; // Let the form submit cleanly to /search if logged in
+        return true;
     }
+
+    function logout() {
+        if(confirm("Are you sure you want to log out of your session?")) {
+            localStorage.clear();
+            window.location.href = '/';
+        }
+    }
+
+    document.addEventListener("DOMContentLoaded", function() {
+        const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+        
+        if (isLoggedIn) {
+            const navList = document.getElementById('navLinksList');
+            const listItems = navList.querySelectorAll('li');
+            
+            // Upgrade guest links into active workspace paths
+            if (listItems.length >= 3) {
+                listItems[1].setAttribute('onclick', "window.location.href='/student'");
+                listItems[2].setAttribute('onclick', "window.location.href='/dashboard'");
+            }
+            
+            // Dynamically append a unified logout button to the nav line
+            const logoutLi = document.createElement('li');
+            logoutLi.innerHTML = '<i class="ti ti-logout"></i> Logout';
+            logoutLi.style.cursor = 'pointer';
+            logoutLi.style.color = '#dc2626';
+            logoutLi.style.fontWeight = '700';
+            logoutLi.setAttribute('onclick', 'logout()');
+            navList.appendChild(logoutLi);
+            
+            // Upgrade hero prompt path
+            const heroBtn = document.getElementById('heroActionButton');
+            if (heroBtn) {
+                heroBtn.textContent = "Enter Marketplace";
+                heroBtn.setAttribute('onclick', "window.location.href='/student'");
+                heroBtn.style.background = "#7ec139";
+                heroBtn.style.boxShadow = "0 4px 15px rgba(126, 193, 57, 0.3)";
+            }
+        }
+    });
     </script>
 
 </body>
