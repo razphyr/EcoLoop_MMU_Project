@@ -3,42 +3,30 @@ from flask_sqlalchemy import SQLAlchemy
 db = SQLAlchemy()
 
 class User(db.Model):
-    """The permanent database table blueprint for registered FCI accounts"""
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
     student_id = db.Column(db.String(50), unique=True, nullable=False)
-    level = db.Column(db.String(50), nullable=False) # 'Degree' or 'Diploma/Foundation'
+    level = db.Column(db.String(50), nullable=False) 
     email = db.Column(db.String(100), unique=True, nullable=False)
     password = db.Column(db.String(100), nullable=False)
+    role = db.Column(db.String(20), default='user') # 'user' or 'admin'
 
     def to_dict(self):
-        return {
-            "id": self.id,
-            "name": self.name,
-            "student_id": self.student_id,
-            "level": self.level,
-            "email": self.email
-        }
+        return {"id": self.id, "name": self.name, "student_id": self.student_id, "level": self.level, "email": self.email, "role": self.role}
 
 class Item(db.Model):
-    """The permanent database table blueprint for marketplace listings"""
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
     price = db.Column(db.Float, nullable=False)
-    student = db.Column(db.String(100), nullable=False)   # Seller Name
-    level = db.Column(db.String(50), nullable=False)       # Academic level tier focus
+    student = db.Column(db.String(100), nullable=False)   
+    level = db.Column(db.String(50), nullable=False)       
     sold = db.Column(db.Boolean, default=False, nullable=False)
-    description = db.Column(db.String(255), nullable=False, default="Pre-loved FCI course material.")
-    buyer = db.Column(db.String(100), nullable=True)       # Tracks purchase history
+    description = db.Column(db.String(255), nullable=False)
+    buyer = db.Column(db.String(100), nullable=True)       
 
-    def to_dict(self):
-        return {
-            "id": self.id,
-            "name": self.name,
-            "price": self.price,
-            "student": self.student,
-            "level": self.level,
-            "sold": self.sold,
-            "description": self.description,
-            "buyer": self.buyer
-        }
+class Report(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    type = db.Column(db.String(20), nullable=False)        # 'Report' or 'Feedback'
+    statement = db.Column(db.Text, nullable=False)         
+    image = db.Column(db.Text, nullable=True)              # Stores image as simple Base64 text string
+    user_name = db.Column(db.String(100), nullable=False)
