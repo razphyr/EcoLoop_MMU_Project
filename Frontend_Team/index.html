@@ -4,43 +4,49 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Eco Loop // FCI Hub</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="/style.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
 </head>
 <body>
 
-    <nav>
-        <div class="status-node">
-            <span class="status-dot"></span>
-            <span class="status-text">NODE // FCI_LIVE</span>
+    <div class="floating-bg">
+        <div class="floating-item"><i class="ti ti-book"></i></div>
+        <div class="floating-item"><i class="ti ti-calculator"></i></div>
+        <div class="floating-item"><i class="ti ti-pencil"></i></div>
+        <div class="floating-item"><i class="ti ti-book"></i></div>
+        <div class="floating-item"><i class="ti ti-calculator"></i></div>
+    </div>
+
+    <nav style="display: flex; justify-content: space-between; align-items: center; padding: 1.5rem 2.5rem; position: relative; z-index: 5;">
+        <div style="display: flex; align-items: center; gap: 8px;">
+            <span style="width: 8px; height: 8px; background: #4ade80; border-radius: 50%; box-shadow: 0 0 8px #4ade80;"></span>
+            <span style="font-size: 11px; font-weight: 700; color: #94a3b8; letter-spacing: 0.05em;">NODE // FCI_LIVE</span>
         </div>
         
-        <ul id="navLinksList">
-            <li onclick="window.location.href='/'" style="cursor:pointer">Home</li>
-            <li onclick="window.location.href='/login'" style="cursor:pointer">Explore</li>
-            <li onclick="window.location.href='/login'" style="cursor:pointer">Dashboard</li>
+        <ul id="navLinksList" style="display: flex; list-style: none; gap: 24px; font-size: 14px; font-weight: 500; color: #94a3b8;">
+            <li onclick="window.location.href='/'" style="cursor:pointer; color: #ffffff;">Home</li>
+            <li onclick="window.location.href='/login'" style="cursor:pointer;">Explore</li>
+            <li onclick="window.location.href='/login'" style="cursor:pointer;">Dashboard</li>
         </ul>
-        <div class="nav-buttons"></div>
     </nav>
 
-    <section class="hero">
-        <h1 class="main-title">EcoLoop</h1>
-        <h2 class="subtitle">THE FCI COMPUTING MARKETPLACE HUB</h2>
+    <section style="max-width: 800px; margin: 8% auto 0 auto; text-align: center; position: relative; z-index: 5; padding: 0 1.5rem;">
+        <h1 style="font-family: 'DM Serif Display', serif; font-size: 4.5rem; color: #4ade80; text-shadow: 0 0 20px rgba(74, 222, 128, 0.2); line-height: 1.1; margin-bottom: 0.5rem;">EcoLoop</h1>
+        <h2 style="font-size: 12px; font-weight: 700; color: #94a3b8; letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 2rem;">The FCI Computing Marketplace Hub</h2>
         
-        <p class="description">
-            EcoLoop helps FCI students and staff trade programming manuals, computing hardware, <br>
-            and course reference guides easily to reduce waste within our faculty community.
+        <p style="font-size: 16px; color: #94a3b8; line-height: 1.6; max-width: 600px; margin: 0 auto 2.5rem auto;">
+            EcoLoop helps FCI students and staff trade programming manuals, computing hardware, and course reference guides easily to reduce waste within our faculty community.
         </p>
 
-        <div class="search-container">
-            <form action="/search" method="get" onsubmit="return handleSearch(event)">
-                <input type="text" name="query" placeholder="Search textbooks, lab kits, electronics..." required>
-                <button type="submit">Search</button>
+        <div style="max-width: 550px; margin: 0 auto 2rem auto;">
+            <form action="/search" method="get" onsubmit="return handleSearch(event)" style="display: flex; gap: 8px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); padding: 6px; border-radius: 50px; backdrop-filter: blur(10px);">
+                <input type="text" name="query" placeholder="Search textbooks, lab kits, electronics..." required style="flex: 1; background: transparent; border: none; outline: none; padding: 10px 16px; color: #ffffff; font-family: 'DM Sans', sans-serif; font-size: 14px;">
+                <button type="submit" style="background: #4ade80; border: none; padding: 10px 24px; border-radius: 50px; font-family: 'DM Sans', sans-serif; font-weight: 700; color: #0f172a; cursor: pointer; transition: transform 0.2s;">Search</button>
             </form>
         </div>
 
-        <div class="action-container">
-            <button class="btn-start-now" id="heroActionButton" onclick="window.location.href='/login'">Start Now</button>
+        <div>
+            <button id="heroActionButton" onclick="window.location.href='/login'" style="background: transparent; border: 1px solid rgba(255,255,255,0.15); color: #ffffff; padding: 12px 32px; border-radius: 50px; font-family: 'DM Sans', sans-serif; font-weight: 700; font-size: 14px; cursor: pointer; transition: all 0.2s;">Start Now</button>
         </div>
     </section>
 
@@ -70,28 +76,27 @@
             const navList = document.getElementById('navLinksList');
             const listItems = navList.querySelectorAll('li');
             
-            // Upgrade guest links into active workspace paths
             if (listItems.length >= 3) {
                 listItems[1].setAttribute('onclick', "window.location.href='/student'");
                 listItems[2].setAttribute('onclick', "window.location.href='/dashboard'");
             }
             
-            // Dynamically append a unified logout button to the nav line
             const logoutLi = document.createElement('li');
             logoutLi.innerHTML = '<i class="ti ti-logout"></i> Logout';
             logoutLi.style.cursor = 'pointer';
-            logoutLi.style.color = '#dc2626';
+            logoutLi.style.color = '#ef4444';
             logoutLi.style.fontWeight = '700';
             logoutLi.setAttribute('onclick', 'logout()');
             navList.appendChild(logoutLi);
             
-            // Upgrade hero prompt path
             const heroBtn = document.getElementById('heroActionButton');
             if (heroBtn) {
                 heroBtn.textContent = "Enter Marketplace";
                 heroBtn.setAttribute('onclick', "window.location.href='/student'");
-                heroBtn.style.background = "#7ec139";
-                heroBtn.style.boxShadow = "0 4px 15px rgba(126, 193, 57, 0.3)";
+                heroBtn.style.background = "#4ade80";
+                heroBtn.style.color = "#0f172a";
+                heroBtn.style.border = "none";
+                heroBtn.style.boxShadow = "0 4px 15px rgba(74, 222, 128, 0.25)";
             }
         }
     });

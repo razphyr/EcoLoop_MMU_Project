@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>EcoLoop MMU — Admin Panel</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+<link rel="stylesheet" href="/admin_style.css">
+</head>
+<body>
+
+<div class="floating-bg">
+  <i class="ti ti-calculator floating-item"></i>
+  <i class="ti ti-book floating-item"></i>
+  <i class="ti ti-school floating-item"></i>
+  <i class="ti ti-device-laptop floating-item"></i>
+  <i class="ti ti-math-symbols floating-item"></i>
+</div>
+
+<div class="sidebar">
+  <div class="logo">EcoLoop</div>
+  <div class="logo-sub">MMU Admin Panel</div>
+  <div class="nav-item active"><i class="ti ti-layout-dashboard"></i> Dashboard</div>
+  
+  <div class="nav-item" onclick="window.location.href='/'"><i class="ti ti-building-store"></i> Student Panel</div>
+
+  <div class="nav-item"><i class="ti ti-users"></i> Students</div>
+  <div class="nav-item"><i class="ti ti-chart-bar"></i> Reports</div>
+  <div class="sidebar-footer">EcoLoop MMU v1.0</div>
+</div>
+
+<div class="main">
+  <div class="topbar">
+    <div>
+      <div class="page-title" id="buzzerTitle">Marketplace Overview</div>
+      <div class="page-sub">Manage all student listings across faculties</div>
+    </div>
+    <div>
+      <span class="admin-badge"><i class="ti ti-shield-check"></i> System Administrator</span>
+    </div>
+  </div>
+
+  <div class="stats">
+    <div class="stat-card accent">
+      <div class="stat-val" id="s-total">0</div>
+      <div class="stat-lbl">Total listings</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-val" id="s-avail" style="color: #4ade80">0</div>
+      <div class="stat-lbl">Available</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-val" id="s-sold" style="color: #ef4444">0</div>
+      <div class="stat-lbl">Sold</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-val" id="s-avail-val" style="color: #4ade80">RM 0</div>
+      <div class="stat-lbl">Available value</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-val" id="s-revenue" style="color: #f59e0b">RM 0</div>
+      <div class="stat-lbl">Revenue earned</div>
+    </div>
+  </div>
+
+  <div class="filters-bar">
+    <input type="text" id="searchInput" placeholder="Search item or student..." oninput="applyFilters()">
+    <input type="number" id="minPrice" placeholder="Min RM" oninput="applyFilters()">
+    <input type="number" id="maxPrice" placeholder="Max RM" oninput="applyFilters()">
+    <select id="facultyFilter" onchange="applyFilters()">
+      <option value="">All Faculties</option>
+      <option value="FCI">FCI</option>
+      <option value="FOAIE">FOAIE</option>
+      <option value="FCM">FCM</option>
+    </select>
+    <button class="btn-ghost" onclick="showAll()"><i class="ti ti-eye"></i> Show All</button>
+    <button class="btn-danger-ghost" onclick="clearFilters()"><i class="ti ti-x"></i> Clear</button>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Item</th>
+          <th>Price</th>
+          <th>Student</th>
+          <th>Faculty</th>
+          <th>Status</th>
+          <th style="text-align:center">Actions</th>
+        </tr>
+      </thead>
+      <tbody id="itemTable"></tbody>
+    </table>
+  </div>
+</div>
+
+<script>
+let items = [];
+let activeFilter = { search: '', min: '', max: '', faculty: '' };
+
+// Script handling for user click buzzer interaction trigger
+const titleEl = document.getElementById('buzzerTitle');
+titleEl.addEventListener('click', () => {
+    titleEl.classList.add('clicked-buzz');
+    setTimeout(() => {
+        titleEl.classList.remove('clicked-buzz');
+    }, 600);
+});
+
+function render() {
+  const tbody = document.getElementById('itemTable');
+  const f = activeFilter;
+
+  const filtered = items.filter(it => {
+    const okSearch = !f.search || it.name.toLowerCase().includes(f.search) || it.student.toLowerCase().includes(f.search);
+    const okMin = !f.min || it.price >= parseFloat(f.min);
+    const okMax = !f.max || it.price <= parseFloat(f.max);
+    const okFaculty = !f.faculty || it.faculty === f.faculty;
+    return okSearch && okMin && okMax && okFaculty;
+  });
+
+  if (!filtered.length) {
+    tbody.innerHTML = '<tr class="empty-row"><td colspan="6">No listings found</td></tr>';
+    updateStats();
+    return;
+  }
+
+  tbody.innerHTML = filtered.map(it => `
+    <tr data-id="${it.id}">
+      <td class="item-name">${it.name}</td>
+      <td class="price-cell">RM ${parseFloat(it.price).toFixed(2)}</td>
+      <td><span class="student-link" onclick="filterByStudent('${it.student}')">${it.student}</span></td>
+      <td><span class="faculty-badge">${it.faculty}</span></td>
+      <td><span class="badge-${it.sold ? 'sold' : 'avail'}">${it.sold ? 'Sold' : 'Available'}</span></td>
+      <td>
+        <div class="action-cell">
+          <button class="btn-toggle" onclick="toggleStatus(${it.id})">Toggle</button>
+          <button class="btn-del" onclick="deleteItem(${it.id})">Delete</button>
+        </div>
+      </td>
+    </tr>
+  `).join('');
+  updateStats();
+}
+
+function updateStats() {
+  document.getElementById('s-total').textContent = items.length;
+  document.getElementById('s-avail').textContent = items.filter(i=>!i.sold).length;
+  document.getElementById('s-sold').textContent = items.filter(i=>i.sold).length;
+  const availVal = items.filter(i=>!i.sold).reduce((s,i)=>s+i.price,0);
+  const revenue = items.filter(i=>i.sold).reduce((s,i)=>s+i.price,0);
+  document.getElementById('s-avail-val').textContent = 'RM '+availVal.toLocaleString();
+  document.getElementById('s-revenue').textContent = 'RM '+revenue.toLocaleString();
+}
+
+function toggleStatus(id){
+  fetch(`http://127.0.0.1:5000/items/${id}`, { method: "PUT" })
+  .then(res => res.json())
+  .then(updated => {
+    const index = items.findIndex(i => i.id === id);
+    if(index !== -1){
+      items[index] = updated;
+      render();
+    }
+  });
+}
+
+function deleteItem(id){
+  fetch(`http://127.0.0.1:5000/items/${id}`, { method: "DELETE" })
+  .then(res => res.json())
+  .then(() => {
+    items = items.filter(i => i.id !== id);
+    render();
+  });
+}
+
+function filterByStudent(name) {
+  document.getElementById('searchInput').value = name;
+  activeFilter.search = name.toLowerCase();
+  render();
+}
+
+function applyFilters() {
+  activeFilter.search = document.getElementById('searchInput').value.toLowerCase();
+  activeFilter.min = document.getElementById('minPrice').value;
+  activeFilter.max = document.getElementById('maxPrice').value;
+  activeFilter.faculty = document.getElementById('facultyFilter').value;
+  render();
+}
+
+function clearFilters() {
+  document.getElementById('searchInput').value = '';
+  document.getElementById('minPrice').value = '';
+  document.getElementById('maxPrice').value = '';
+  document.getElementById('facultyFilter').value = '';
+  activeFilter = {search:'',min:'',max:'',faculty:''};
+  render();
+}
+
+function showAll() { clearFilters(); }
+
+function loadItems(){
+  fetch("http://127.0.0.1:5000/items")
+    .then(res => res.json())
+    .then(data => {
+      items = data;
+      render();
+    });
+}
+loadItems();
+</script>
+</body>
+</html>

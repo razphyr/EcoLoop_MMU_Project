@@ -33,7 +33,13 @@ def serve_student_panel(): return send_from_directory(FRONTEND_DIR, "student_pan
 def serve_student_dashboard(): return send_from_directory(FRONTEND_DIR, "student_dashboard.html")
 
 @app.route("/admin")
-def serve_admin_panel(): return send_from_directory(FRONTEND_DIR, "admin_panel.html")
+def serve_admin_panel(): return send_from_directory(FRONTEND_DIR, "admin panel.html")
+
+@app.route("/admin_style.css", methods=["GET"])
+def serve_admin_styles():
+    return send_from_directory(FRONTEND_DIR, "admin_style.css")
+
+
 
 
 # ==========================================
