@@ -10,6 +10,9 @@ class User(db.Model):
     email = db.Column(db.String(100), unique=True, nullable=False)
     password = db.Column(db.String(100), nullable=False)
     role = db.Column(db.String(20), default='user') # 'user' or 'admin'
+    id = db.Column(db.Integer, primary_key=True)
+    # ... your existing user fields (name, student_id, level, email, password, role) ...
+    otp_secret = db.Column(db.String(32), nullable=True) # Stores the unique 32-character 2FA secret key
 
     def to_dict(self):
         return {"id": self.id, "name": self.name, "student_id": self.student_id, "level": self.level, "email": self.email, "role": self.role}
