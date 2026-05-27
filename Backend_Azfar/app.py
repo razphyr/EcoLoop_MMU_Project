@@ -1,7 +1,8 @@
 import os
+import random
+import pyotp  # Handled for true mathematical TOTP app sync verification
 from flask import Flask, jsonify, request, send_from_directory, render_template
 from flask_cors import CORS
-# Imported Report model cleanly here
 from models import db, Item, User, Report 
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -26,6 +27,9 @@ def serve_login_page(): return send_from_directory(FRONTEND_DIR, "login.html")
 @app.route("/register")
 def serve_register_page(): return send_from_directory(FRONTEND_DIR, "register.html")
 
+@app.route("/forgot-password")
+def serve_forgot_password_page(): return send_from_directory(FRONTEND_DIR, "forgot_password.html")
+
 @app.route("/student")
 def serve_student_panel(): return send_from_directory(FRONTEND_DIR, "student_panel.html")
 
@@ -35,6 +39,11 @@ def serve_student_dashboard(): return send_from_directory(FRONTEND_DIR, "student
 @app.route("/admin")
 def serve_admin_panel(): return send_from_directory(FRONTEND_DIR, "admin_panel.html")
 
+@app.route("/product/<int:item_id>")
+def serve_product_detail_page(item_id):
+    # Renders the individual details card page layout cleanly
+    return send_from_directory(FRONTEND_DIR, "product_detail.html")
+
 
 # ==========================================
 # 🔐 ACCOUNT AUTHENTICATION API
@@ -42,9 +51,22 @@ def serve_admin_panel(): return send_from_directory(FRONTEND_DIR, "admin_panel.h
 @app.route("/api/register", methods=["POST"])
 def api_register():
     data = request.json
+    email = data.get("email", "").lower().strip() # Clean up the input string
+    
+    # 🔐 SECURITY RULE: Reject any email that doesn't end with an official MMU domain
+    if not (email.endswith("@student.mmu.edu.my") or email.endswith("@mmu.edu.my")):
+        return jsonify({"error": "Access Denied: Only official MMU email addresses are permitted to register."}), 403
+    
+    existing_user = User.query.filter((User.email == email) | (User.student_id == data.get("student_id"))).first()
+    if existing_user:
+        return jsonify({"error": "A profile node with this Email or Student ID already exists."}), 400
+
     new_user = User(
-        name=data.get("name"), student_id=data.get("student_id"),
-        level=data.get("level"), email=data.get("email"), password=data.get("password"),
+        name=data.get("name"), 
+        student_id=data.get("student_id"),
+        level=data.get("level"), 
+        email=email, 
+        password=data.get("password"),
         role="user"
     )
     db.session.add(new_user)
@@ -66,6 +88,55 @@ def api_login():
 
 
 # ==========================================
+# 🔑 AUTHENTICATOR APP 2FA ENGINE ENDPOINTS
+# ==========================================
+
+# STAGE 1: CONNECT TO WEBSITE ACCOUNT AND GENERATE TOTP APP SEED KEY
+@app.route("/api/send-otp", methods=["POST"])
+def send_otp():
+    email = request.json.get("email")
+    user = User.query.filter_by(email=email).first()
+    if not user: return jsonify({"error": "Account email node not found inside database records."}), 404
+    
+    # Generate a permanent 32-character base32 secret key string if they do not have one
+    if not user.otp_secret:
+        user.otp_secret = pyotp.random_base32()
+        db.session.commit()
+        
+    # Return the secret key directly upstream to map into the template presenter field box
+    return jsonify({"success": True, "secret": user.otp_secret})
+
+# STAGE 2: VALIDATE THE LIVE GENERATED 6-DIGIT CODE FROM THE APP
+@app.route("/api/verify-otp", methods=["POST"])
+def verify_otp():
+    data = request.json
+    email = data.get("email")
+    token_input = data.get("otp")  # Gathers input parameter code values sent from frontend form fields
+    
+    user = User.query.filter_by(email=email).first()
+    if not user or not user.otp_secret: return jsonify({"error": "2FA Authenticator node not configured."}), 400
+    
+    # MODIFIED: Added valid_window=2 to tolerate a 60-second time-drift leeway ahead or behind
+    totp = pyotp.TOTP(user.otp_secret)
+    if totp.verify(token_input, valid_window=2):
+        return jsonify({"success": True, "message": "2FA Clearance Confirmed"})
+    return jsonify({"error": "Invalid token pass. Please verify your mobile device clock sync configurations."}), 400
+
+@app.route("/api/reset-password", methods=["POST"])
+def reset_password():
+    data = request.json
+    email = data.get("email")
+    password = data.get("password")
+    
+    user = User.query.filter_by(email=email).first()
+    if user:
+        user.password = password
+        db.session.commit()
+        return jsonify({"success": True, "message": "Passcode overwritten successfully."}), 200
+    return jsonify({"error": "Failed to update profile parameter node."}), 404
+
+
+# ==========================================
 # 🛡️ NEW REPORT & FEEDBACK HANDLERS API
 # ==========================================
 @app.route("/api/reports", methods=["POST"])
@@ -74,7 +145,7 @@ def add_report():
     new_report = Report(
         type=data.get("type"),
         statement=data.get("statement"),
-        image=data.get("image"), # Receives simple base64 string image data payload
+        image=data.get("image"), 
         user_name=data.get("user_name")
     )
     db.session.add(new_report)
@@ -104,13 +175,32 @@ def get_items():
     all_items = Item.query.all()
     output = []
     for i in all_items:
-        output.append({"id": i.id, "name": i.name, "price": i.price, "student": i.student, "level": i.level, "sold": i.sold, "description": i.description, "buyer": i.buyer})
+        # FIXED: Mapped out the image attribute string payload so marketplace cards can download pictures
+        output.append({
+            "id": i.id, 
+            "name": i.name, 
+            "price": i.price, 
+            "student": i.student, 
+            "level": i.level, 
+            "sold": i.sold, 
+            "description": i.description, 
+            "buyer": i.buyer,
+            "image": getattr(i, "image", None)
+        })
     return jsonify(output)
 
 @app.route("/items", methods=["POST"])
 def add_item():
     data = request.json
-    new_item = Item(name=data.get("name"), price=float(data.get("price")), student=data.get("student"), level=data.get("level"), description=data.get("description"))
+    # FIXED: Added image data parser to accept Base64 values when creating product nodes
+    new_item = Item(
+        name=data.get("name"), 
+        price=float(data.get("price")), 
+        student=data.get("student"), 
+        level=data.get("level"), 
+        description=data.get("description"),
+        image=data.get("image")
+    )
     db.session.add(new_item)
     db.session.commit()
     return jsonify({"message": "Added"}), 201
