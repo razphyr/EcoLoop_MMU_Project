@@ -2,30 +2,166 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Search Results - Eco Loop</title>
-    <link rel="stylesheet" href="/style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Results // EcoLoop</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
     <style>
-        .results-container { max-width: 800px; margin: 60px auto; padding: 40px; background: rgba(20, 26, 17, 0.6); border: 1px solid rgba(255, 255, 255, 0.05); backdrop-filter: blur(16px); border-radius: 24px; box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
-        h1 { font-family: 'Segoe UI', sans-serif; font-size: 1.8rem; margin-bottom: 25px; border-bottom: 1px solid rgba(255, 255, 255, 0.1); padding-bottom: 15px; color: #ffffff; }
-        .query-highlight { color: #dc2626; }
-        ul { list-style: none; padding: 0; }
-        li { background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.04); padding: 18px 22px; border-radius: 14px; margin-bottom: 14px; font-size: 1.05rem; transition: all 0.2s ease; display: flex; justify-content: space-between; align-items: center; }
-        li:hover { background: rgba(6, 95, 70, 0.2); border-color: rgba(126, 193, 57, 0.3); transform: translateX(4px); }
-        .item-details { display: flex; flex-direction: column; gap: 4px; }
-        strong { color: #fff; font-size: 1.15rem; }
-        .item-desc { color: #878f82; font-size: 0.95rem; }
-        .level-badge { color: #7ec139; font-weight: 700; font-size: 0.85rem; background: rgba(126, 193, 57, 0.1); padding: 4px 12px; border-radius: 8px; border: 1px solid rgba(126, 193, 57, 0.2); }
-        .empty-state { text-align: center; color: #878f82; padding: 40px 0; font-size: 1.1rem; }
-        nav.results-nav { display: flex; justify-content: space-between; align-items: center; padding: 20px 8%; background: rgba(11, 14, 9, 0.8); border-bottom: 1px solid rgba(255, 255, 255, 0.05); }
-        nav.results-nav a { color: #ffffff; text-decoration: none; font-weight: 600; transition: color 0.2s; }
-        nav.results-nav a:hover { color: #dc2626; }
+        /* ==========================================================
+           🌌 PREMIUM FOREST MATRIX THEME - SEARCH RESULTS
+           🎨 Palette: Obsidian Jade | Emerald Glow | Muted Crimson
+           ========================================================== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            background-color: #081111 !important; /* Deep obsidian jade base */
+            color: #f4f6f2;
+            padding: 30px;
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            z-index: 1;
+            pointer-events: none;
+            background: radial-gradient(circle at 85% 50%, rgba(16, 185, 129, 0.45) 0%, transparent 55%),
+                        radial-gradient(circle at 15% 50%, rgba(31, 23, 38, 0.8) 0%, transparent 60%),
+                        radial-gradient(circle at 50% 20%, rgba(5, 150, 105, 0.25) 0%, transparent 50%);
+            background-size: 150% 150%;
+        }
+
+        nav.results-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 4%;
+            background: rgba(11, 24, 23, 0.85);
+            border: 1px solid rgba(16, 185, 129, 0.15);
+            border-radius: 16px;
+            backdrop-filter: blur(10px);
+            z-index: 10;
+            position: relative;
+            margin-bottom: 40px;
+        }
+
+        nav.results-nav h2 {
+            font-size: 1.3rem;
+            color: #ffffff;
+            font-weight: 700;
+        }
+
+        nav.results-nav a {
+            color: #ffffff;
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        nav.results-nav a:hover {
+            color: #10b981;
+        }
+
+        .results-container {
+            max-width: 850px;
+            margin: 0 auto;
+            padding: 40px;
+            background: rgba(11, 24, 23, 0.85) !important;
+            border: 1px solid rgba(16, 185, 129, 0.15);
+            backdrop-filter: blur(16px);
+            border-radius: 24px;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.65);
+            position: relative;
+            z-index: 5;
+            text-align: left;
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            margin-bottom: 25px;
+            border-bottom: 1px solid rgba(16, 185, 129, 0.15);
+            padding-bottom: 15px;
+            color: #ffffff;
+        }
+
+        .query-highlight {
+            color: #10b981;
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        li {
+            background: rgba(6, 13, 13, 0.4);
+            border: 1px solid rgba(16, 185, 129, 0.1);
+            padding: 20px 24px;
+            border-radius: 14px;
+            margin-bottom: 14px;
+            transition: all 0.2s ease;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        li:hover {
+            background: rgba(16, 185, 129, 0.08);
+            border-color: rgba(16, 185, 129, 0.4);
+            transform: translateX(4px);
+        }
+
+        .item-details {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        strong {
+            color: #fff;
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+
+        .item-desc {
+            color: #94a3b8;
+            font-size: 0.95rem;
+        }
+
+        .level-badge {
+            color: #10b981;
+            font-weight: 700;
+            font-size: 0.85rem;
+            background: rgba(16, 185, 129, 0.1);
+            padding: 6px 14px;
+            border-radius: 30px;
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .empty-state {
+            text-align: center;
+            color: #64748b;
+            padding: 40px 0;
+            font-size: 1.1rem;
+            font-weight: 500;
+        }
     </style>
 </head>
 <body>
 
     <nav class="results-nav">
-        <h2 style="font-family: 'Segoe UI', sans-serif; letter-spacing: 0.5px;">EcoLoop FCI Engine</h2>
-        <a href="/">Back to Home</a>
+        <h2>EcoLoop FCI Engine</h2>
+        <a href="/"><i class="ti ti-arrow-left"></i> Back to Home</a>
     </nav>
 
     <section class="results-container">
@@ -34,7 +170,7 @@
             {% for item in items %}
                 <li>
                     <div class="item-details">
-                        <strong>{{ item.name }} (RM {{ "%.2f"|format(item.price) }})</strong>
+                        <strong>{{ item.name }} — <span style="color: #ba7517;">RM {{ "%.2f"|format(item.price) }}</span></strong>
                         <span class="item-desc">{{ item.description }}</span>
                     </div>
                     <span class="level-badge">
@@ -46,7 +182,7 @@
                     </span>
                 </li>
             {% else %}
-                <div class="empty-state">No listings matched your FCI search criteria.</div>
+                <div class="empty-state">No listings matched your FCI search criteria inside the node.</div>
             {% endfor %}
         </ul>
     </section>
