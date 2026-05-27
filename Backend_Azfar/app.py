@@ -44,6 +44,11 @@ def serve_admin_styles():
     return send_from_directory(FRONTEND_DIR, "admin_style.css")
 
 
+@app.route("/login_style.css", methods=["GET"])
+def serve_login_styles():
+    return send_from_directory(FRONTEND_DIR, "login_style.css")
+
+
 
 @app.route("/product/<int:item_id>")
 def serve_product_detail_page(item_id):
