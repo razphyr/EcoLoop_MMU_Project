@@ -8,6 +8,7 @@ from models import db, Item, User, Report
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 FRONTEND_DIR = os.path.abspath(os.path.join(BASE_DIR, "..", "Frontend_Team"))
 
+# Explicitly set the template folder so render_template can find your HTML files
 app = Flask(__name__, template_folder=FRONTEND_DIR, static_folder=FRONTEND_DIR, static_url_path='')
 CORS(app)
 
@@ -16,55 +17,71 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db.init_app(app)
 
 # ==========================================
-# 🌐 BASIC HTML PAGE PAGES ROUTING
+# 🌐 HTML STATIC FILE PAGE ROUTERS
 # ==========================================
 @app.route("/")
-def serve_homepage(): return send_from_directory(FRONTEND_DIR, "index.html")
+def serve_homepage(): 
+    return send_from_directory(FRONTEND_DIR, "index.html")
 
 @app.route("/login")
-def serve_login_page(): return send_from_directory(FRONTEND_DIR, "login.html")
+def serve_login_page(): 
+    return send_from_directory(FRONTEND_DIR, "login.html")
 
 @app.route("/register")
-def serve_register_page(): return send_from_directory(FRONTEND_DIR, "register.html")
+def serve_register_page(): 
+    return send_from_directory(FRONTEND_DIR, "register.html")
 
 @app.route("/forgot-password")
-def serve_forgot_password_page(): return send_from_directory(FRONTEND_DIR, "forgot_password.html")
+def serve_forgot_password_page(): 
+    return send_from_directory(FRONTEND_DIR, "forgot_password.html")
 
 @app.route("/student")
-def serve_student_panel(): return send_from_directory(FRONTEND_DIR, "student_panel.html")
+def serve_student_panel(): 
+    return send_from_directory(FRONTEND_DIR, "student_panel.html")
 
 @app.route("/dashboard")
-def serve_student_dashboard(): return send_from_directory(FRONTEND_DIR, "student_dashboard.html")
+def serve_student_dashboard(): 
+    return send_from_directory(FRONTEND_DIR, "student_dashboard.html")
 
 @app.route("/admin")
-def serve_admin_panel(): return send_from_directory(FRONTEND_DIR, "admin panel.html")
+def serve_admin_panel(): 
+    return send_from_directory(FRONTEND_DIR, "admin_panel.html")
 
-@app.route("/admin_style.css", methods=["GET"])
-def serve_admin_styles():
-    return send_from_directory(FRONTEND_DIR, "admin_style.css")
-
-
-@app.route("/login_style.css", methods=["GET"])
-def serve_login_styles():
-    return send_from_directory(FRONTEND_DIR, "login_style.css")
-
-
+@app.route("/admin/items")
+def serve_admin_moderator_panel():
+    # Points to your brand new standalone file to avoid any student_panel redirects
+    return send_from_directory(FRONTEND_DIR, "admin_moderator.html")
 
 @app.route("/product/<int:item_id>")
 def serve_product_detail_page(item_id):
-    # Renders the individual details card page layout cleanly
     return send_from_directory(FRONTEND_DIR, "product_detail.html")
 
 
 # ==========================================
-# 🔐 ACCOUNT AUTHENTICATION API
+# 🔍 ECOLOOP DYNAMIC JINJA2 SEARCH ENGINE
+# ==========================================
+@app.route("/search", methods=["GET"])
+def search_marketplace_items():
+    query_param = request.args.get("query", "").strip()
+    
+    # Query database columns for text matches against name or description strings
+    matched_items = Item.query.filter(
+        (Item.name.like(f"%{query_param}%")) | 
+        (Item.description.like(f"%{query_param}%"))
+    ).all()
+    
+    # Render template server-side and inject parameters into result.html cleanly
+    return render_template("result.html", query=query_param, items=matched_items)
+
+
+# ==========================================
+# 🔐 ACCOUNT ACCESS & REGISTRATION GATEWAY API
 # ==========================================
 @app.route("/api/register", methods=["POST"])
 def api_register():
     data = request.json
-    email = data.get("email", "").lower().strip() # Clean up the input string
+    email = data.get("email", "").lower().strip()
     
-    # 🔐 SECURITY RULE: Reject any email that doesn't end with an official MMU domain
     if not (email.endswith("@student.mmu.edu.my") or email.endswith("@mmu.edu.my")):
         return jsonify({"error": "Access Denied: Only official MMU email addresses are permitted to register."}), 403
     
@@ -99,35 +116,29 @@ def api_login():
 
 
 # ==========================================
-# 🔑 AUTHENTICATOR APP 2FA ENGINE ENDPOINTS
+# 🔑 SECURITY SYSTEM 2FA AUTHENTICATOR API
 # ==========================================
-
-# STAGE 1: CONNECT TO WEBSITE ACCOUNT AND GENERATE TOTP APP SEED KEY
 @app.route("/api/send-otp", methods=["POST"])
 def send_otp():
     email = request.json.get("email")
     user = User.query.filter_by(email=email).first()
     if not user: return jsonify({"error": "Account email node not found inside database records."}), 404
     
-    # Generate a permanent 32-character base32 secret key string if they do not have one
     if not user.otp_secret:
         user.otp_secret = pyotp.random_base32()
         db.session.commit()
         
-    # Return the secret key directly upstream to map into the template presenter field box
     return jsonify({"success": True, "secret": user.otp_secret})
 
-# STAGE 2: VALIDATE THE LIVE GENERATED 6-DIGIT CODE FROM THE APP
 @app.route("/api/verify-otp", methods=["POST"])
 def verify_otp():
     data = request.json
     email = data.get("email")
-    token_input = data.get("otp")  # Gathers input parameter code values sent from frontend form fields
+    token_input = data.get("otp") 
     
     user = User.query.filter_by(email=email).first()
     if not user or not user.otp_secret: return jsonify({"error": "2FA Authenticator node not configured."}), 400
     
-    # MODIFIED: Added valid_window=2 to tolerate a 60-second time-drift leeway ahead or behind
     totp = pyotp.TOTP(user.otp_secret)
     if totp.verify(token_input, valid_window=2):
         return jsonify({"success": True, "message": "2FA Clearance Confirmed"})
@@ -148,7 +159,7 @@ def reset_password():
 
 
 # ==========================================
-# 🛡️ NEW REPORT & FEEDBACK HANDLERS API
+# 🛡️ SYSTEM FAULT REPORTING & FEEDBACK API
 # ==========================================
 @app.route("/api/reports", methods=["POST"])
 def add_report():
@@ -179,14 +190,13 @@ def get_reports():
 
 
 # ==========================================
-# 📊 MARKETPLACE DATA HANDLING API
+# 📊 CENTRAL ASSET TRADING MARKETPLACE API
 # ==========================================
 @app.route("/items", methods=["GET"])
 def get_items():
     all_items = Item.query.all()
     output = []
     for i in all_items:
-        # FIXED: Mapped out the image attribute string payload so marketplace cards can download pictures
         output.append({
             "id": i.id, 
             "name": i.name, 
@@ -203,7 +213,6 @@ def get_items():
 @app.route("/items", methods=["POST"])
 def add_item():
     data = request.json
-    # FIXED: Added image data parser to accept Base64 values when creating product nodes
     new_item = Item(
         name=data.get("name"), 
         price=float(data.get("price")), 

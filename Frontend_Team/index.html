@@ -24,9 +24,9 @@
         </div>
         
         <ul id="navLinksList">
-            <li onclick="window.location.href='/'" style="color: #ffffff;">Home</li>
-            <li onclick="window.location.href='/login'">Explore</li>
-            <li onclick="window.location.href='/login'">Dashboard</li>
+            <li onclick="window.location.href='/'" style="color: #ffffff; cursor: pointer;">Home</li>
+            <li onclick="window.location.href='/login'" style="cursor: pointer;">Explore</li>
+            <li onclick="window.location.href='/login'" style="cursor: pointer;">Dashboard</li>
         </ul>
     </nav>
 
@@ -41,7 +41,7 @@
 
         <div class="search-container">
             <form action="/search" method="get" onsubmit="return handleSearch(event)">
-                <input type="text" name="query" placeholder="Search textbooks, lab kits, electronics..." required>
+                <input type="text" name="query" placeholder="Search textbooks, lab kits, electronics..." required autocomplete="off">
                 <button type="submit">Search</button>
             </form>
         </div>
@@ -52,9 +52,12 @@
     </section>
 
     <script>
+    // FIXED: Unified search validation checking your active logged-in profile node parameters
     function handleSearch(event) {
-        const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
-        if (!isLoggedIn) {
+        const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+        const hasActiveSession = !!currentUser.name;
+
+        if (!hasActiveSession) {
             event.preventDefault(); 
             alert("Access Denied! You must be registered and logged in to search the FCI marketplace repository.");
             window.location.href = '/login';
@@ -63,25 +66,22 @@
         return true;
     }
 
-    function logout() {
-        if(confirm("Are you sure you want to log out of your session?")) {
-            localStorage.clear();
-            window.location.href = '/';
-        }
-    }
-
     document.addEventListener("DOMContentLoaded", function() {
-        const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+        // Checking for your actual active configuration session parameter mapping
+        const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+        const hasActiveSession = !!currentUser.name;
         
-        if (isLoggedIn) {
+        if (hasActiveSession) {
             const navList = document.getElementById('navLinksList');
             const listItems = navList.querySelectorAll('li');
             
+            // Dynamically point paths to clean backend routes rather than sending back to /login
             if (listItems.length >= 3) {
                 listItems[1].setAttribute('onclick', "window.location.href='/student'");
                 listItems[2].setAttribute('onclick', "window.location.href='/dashboard'");
             }
             
+            // Append a secure logout trigger node
             const logoutLi = document.createElement('li');
             logoutLi.innerHTML = '<i class="ti ti-logout"></i> Logout';
             logoutLi.style.cursor = 'pointer';
@@ -94,13 +94,21 @@
             if (heroBtn) {
                 heroBtn.textContent = "Enter Marketplace";
                 heroBtn.setAttribute('onclick', "window.location.href='/student'");
-                heroBtn.style.background = "#4ade80";
-                heroBtn.style.color = "#0f172a";
+                heroBtn.style.background = "#10b981"; // Dynamic Emerald Match
+                heroBtn.style.color = "#081111";
                 heroBtn.style.border = "none";
-                heroBtn.style.boxShadow = "0 4px 15px rgba(74, 222, 128, 0.25)";
+                heroBtn.style.boxShadow = "0 4px 15px rgba(16, 185, 129, 0.25)";
             }
         }
     });
+
+    // Clean session clear callback method
+    function logout() {
+        if (confirm("Are you sure you want to log out of your session?")) {
+            localStorage.clear();
+            window.location.href = '/';
+        }
+    }
     </script>
 
 </body>
