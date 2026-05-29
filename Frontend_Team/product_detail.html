@@ -83,13 +83,12 @@
         </div>
     </div>
 
-    <script>
+  <script>
         const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
         if (!currentUser.name) { window.location.href = '/login'; }
 
         function logout() { localStorage.clear(); window.location.href = '/'; }
 
-        // EXTRACT ID NODES FROM THE CURRENT URL PATHWAY
         const urlSegments = window.location.pathname.split('/');
         const itemId = urlSegments[urlSegments.length - 1];
 
@@ -111,25 +110,36 @@
         }
 
         function renderProductData() {
+            const basePrice = parseFloat(targetItem.price);
+            // DYNAMIC CALCULATION: 6% Platform Processing Fee
+            const serviceCharge = basePrice * 0.06;
+            const totalPrice = basePrice + serviceCharge;
+
             document.getElementById('prodTitle').textContent = targetItem.name;
             document.getElementById('sellerName').textContent = targetItem.student;
-            document.getElementById('prodDesc').textContent = targetItem.description || "No metadata description string accompanied this listing.";
-            document.getElementById('prodPrice').textContent = parseFloat(targetItem.price).toFixed(2);
+            
+            // Appending a breakdown directly into the description area
+            document.getElementById('prodDesc').innerHTML = `
+                ${targetItem.description || "No description provided."}
+                <br><br>
+                <div style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); padding: 15px; border-radius: 10px; font-size: 13px;">
+                    <span style="color: #878f82;">Base Asset Price:</span> RM ${basePrice.toFixed(2)}<br>
+                    <span style="color: #7ec139;">EcoLoop Service Charge (6%):</span> RM ${serviceCharge.toFixed(2)}
+                </div>
+            `;
+            
+            // Display Total Price inside the main price badge
+            document.getElementById('prodPrice').textContent = totalPrice.toFixed(2);
             
             const itemFaculty = targetItem.faculty || 'FCI';
             document.getElementById('facultyBadge').textContent = `${itemFaculty} Node`;
 
-            // DEPLOY MULTI-IMAGE EXTRACTOR PATTERN
             const mainPreview = document.getElementById('mainPreview');
             const thumbsContainer = document.getElementById('thumbnailsContainer');
-            
             const imagesList = targetItem.image ? targetItem.image.split('|||') : [];
 
             if (imagesList.length > 0) {
-                // Set default thumbnail frame view
                 mainPreview.innerHTML = `<img src="${imagesList[0]}" class="main-preview-img" id="activePreviewImg"/>`;
-                
-                // Build interactive thumb row
                 thumbsContainer.innerHTML = imagesList.map((imgSrc, index) => `
                     <div class="thumb-node ${index === 0 ? 'active' : ''}" onclick="swapPreviewFrame('${imgSrc}', this)">
                         <img src="${imgSrc}" />
@@ -140,7 +150,6 @@
                 thumbsContainer.innerHTML = '';
             }
 
-            // AUDIT ITEM FLAGS FOR SALE STATES
             const purchaseBtn = document.getElementById('purchaseBtn');
             if (targetItem.sold === 1 || targetItem.sold === true) {
                 purchaseBtn.textContent = "Sold Out / Deactivated";
@@ -155,7 +164,10 @@
         }
 
         function executeAcquisition() {
-            if (!confirm(`Confirm asset transfer routing for RM ${parseFloat(targetItem.price).toFixed(2)}?`)) return;
+            const basePrice = parseFloat(targetItem.price);
+            const totalPrice = basePrice * 1.06; // Total including the 6% fee
+
+            if (!confirm(`Confirm asset transfer routing for total of RM ${totalPrice.toFixed(2)} (includes 6% website service fee)?`)) return;
 
             fetch(`/items/${targetItem.id}`, {
                 method: 'PUT',

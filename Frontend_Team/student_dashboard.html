@@ -7,8 +7,8 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
     <style>
         /* ==========================================================
-           🌌 PREMIUM FOREST MATRIX THEME - LOGISTICS DASHBOARD
-           🎨 Palette: Obsidian Jade | Emerald Glow | Muted Crimson
+            🌌 PREMIUM FOREST MATRIX THEME - LOGISTICS DASHBOARD
+            🎨 Palette: Obsidian Jade | Emerald Glow | Muted Crimson
            ========================================================== */
 
         * {
@@ -134,6 +134,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            gap: 20px;
             backdrop-filter: blur(16px);
             transition: all 0.3s ease;
         }
@@ -158,6 +159,10 @@
 
         .metrics-block {
             text-align: right;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 8px;
         }
 
         .item-cost {
@@ -165,7 +170,6 @@
             font-weight: 700;
             color: #ba7517;
             display: block;
-            margin-bottom: 4px;
         }
 
         .role-badge {
@@ -175,10 +179,33 @@
             text-transform: uppercase;
             padding: 4px 10px;
             border-radius: 6px;
+            display: inline-block;
         }
 
         .role-badge.selling { background: rgba(16, 185, 129, 0.12); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.2); }
-        .role-badge.acquired { background: rgba(220, 38, 38, 0.12); color: #ef4444; border: 1px solid rgba(220, 38, 38, 0.2); }
+        .role-badge.acquired { background: rgba(186, 117, 23, 0.12); color: #ba7517; border: 1px solid rgba(186, 117, 23, 0.2); }
+
+        /* ✨ INTERACTIVE ACTION TOGGLES */
+        .btn-status-toggle {
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid #10b981;
+            color: #10b981;
+            padding: 6px 14px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            transition: all 0.2s ease;
+            margin-top: 4px;
+        }
+
+        .btn-status-toggle:hover {
+            background: #10b981;
+            color: #081111;
+            box-shadow: 0 0 12px rgba(16, 185, 129, 0.4);
+        }
 
         .empty-state {
             text-align: center;
@@ -233,21 +260,41 @@
 
                 container.innerHTML = myTransactions.map(i => {
                     const isOwner = i.student === user.name;
+                    const isSold = (i.sold === 1 || i.sold === true);
+                    
                     return `
-                    <div class="ledger-card">
+                    <div class="ledger-card" style="${isSold ? 'opacity: 0.75;' : ''}">
                         <div class="item-details">
-                            <h4>${i.name}</h4>
-                            <p>${i.description}</p>
+                            <h4 style="${isSold ? 'text-decoration: line-through; color: #64748b;' : ''}">${i.name}</h4>
+                            <p>${i.description || 'No description provided.'}</p>
+                            <div style="margin-top: 10px; font-size: 12px; color: #64748b;">
+                                ${isOwner ? `<span>Listing Node Presence // <b style="color: ${isSold ? '#ef4444' : '#10b981'};">${isSold ? 'SOLD' : 'AVAILABLE'}</b></span>` : `<span>Acquired from: <b style="color: #10b981;">${i.student}</b></span>`}
+                            </div>
                         </div>
                         <div class="metrics-block">
                             <span class="item-cost">RM ${parseFloat(i.price).toFixed(2)}</span>
                             <span class="role-badge ${isOwner ? 'selling' : 'acquired'}">
                                 ${isOwner ? 'Selling Asset' : 'Acquired Asset'}
                             </span>
+                            ${isOwner ? `<button class="btn-status-toggle" onclick="toggleListingState(${i.id})">Toggle Status</button>` : ''}
                         </div>
                     </div>`;
                 }).join('');
-            });
+            }).catch(err => console.error("Database connection failure:", err));
+        }
+
+        // COMPATIBILITY ACTION: Integrates backend parameters to flip availability state loops live
+        function toggleListingState(id) {
+            fetch(`/items/${id}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ buyer: 'Modified by Listing Master' })
+            })
+            .then(res => res.json())
+            .then(() => {
+                loadDashboardLedger(); // Refresh grid layout context instantly
+            })
+            .catch(err => alert("Failed to communicate node state update to SQLAlchemy server."));
         }
         
         loadDashboardLedger();
