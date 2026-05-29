@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Asset Matrix Specifications // EcoLoop</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; background: #0b0e09; color: #f4f6f2; padding: 30px; min-height: 100vh; }
+        .detail-wrapper { max-width: 950px; margin: 40px auto; display: grid; grid-template-columns: 1fr 1fr; gap: 40px; background: rgba(20, 26, 17, 0.2); border: 1px solid rgba(255, 255, 255, 0.03); padding: 40px; border-radius: 24px; backdrop-filter: blur(10px); }
+        
+        /* 📸 MULTI-IMAGE GALLERY SYSTEM LAYOUT */
+        .gallery-container { display: flex; flex-direction: column; gap: 16px; }
+        .main-preview-box { height: 350px; background: rgba(255, 255, 255, 0.01); border: 1px solid rgba(255, 255, 255, 0.04); border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 64px; overflow: hidden; }
+        .main-preview-img { width: 100%; height: 100%; object-fit: cover; }
+        .thumbnails-row { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 5px; }
+        .thumb-node { width: 70px; height: 70px; background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.06); border-radius: 8px; cursor: pointer; overflow: hidden; flex-shrink: 0; opacity: 0.6; transition: all 0.2s; }
+        .thumb-node:hover, .thumb-node.active { opacity: 1; border-color: #7ec139; }
+        .thumb-node img { width: 100%; height: 100%; object-fit: cover; }
+
+        /* 📊 ASSET CONFIGURATION DETAILS */
+        .specs-panel { display: flex; flex-direction: column; text-align: left; }
+        .faculty-tag { align-self: flex-start; background: rgba(126, 193, 57, 0.1); border: 1px solid #7ec139; color: #7ec139; font-size: 11px; font-weight: 700; padding: 4px 12px; border-radius: 20px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .product-title { font-size: 32px; color: #fff; font-weight: 700; margin-top: 14px; }
+        .seller-node { color: #878f82; font-size: 13.5px; margin-top: 4px; border-bottom: 1px solid rgba(255,255,255,0.04); padding-bottom: 16px; }
+        .product-desc { color: #d1d5db; font-size: 15px; line-height: 1.6; margin-top: 20px; margin-bottom: 25px; }
+        .price-badge { font-size: 28px; font-weight: 700; color: #ba7517; margin-bottom: 30px; display: flex; align-items: baseline; gap: 6px; }
+        .price-currency { font-size: 16px; color: #878f82; }
+
+        /* 🧱 DEPLOY ACTION BUTTONS */
+        .btn-action-hub { display: flex; gap: 12px; margin-top: auto; }
+        .btn-core { flex: 1; display: flex; align-items: center; justify-content: center; gap: 8px; padding: 15px; border-radius: 12px; font-weight: 600; font-size: 15px; cursor: pointer; border: none; transition: all 0.2s; }
+        .btn-core.buy { background: #7ec139; color: #0b0e09; }
+        .btn-core.buy:hover:not(:disabled) { background: #96dd4f; box-shadow: 0 0 20px rgba(126, 193, 57, 0.3); }
+        .btn-core.back { background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.06); color: #fff; }
+        .btn-core.back:hover { background: rgba(255, 255, 255, 0.06); }
+        .btn-core:disabled { opacity: 0.4; cursor: not-allowed; background: #374151 !important; color: #9ca3af !important; border: none !important; }
+
+        nav { display: flex; justify-content: space-between; align-items: center; padding: 20px 40px; background: rgba(17, 22, 15, 0.8); border-bottom: 1px solid rgba(255,255,255,0.03); backdrop-filter: blur(10px); margin: -30px -30px 0 -30px; }
+        nav ul { display: flex; list-style: none; gap: 24px; align-items: center; }
+        .status-node { display: flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 700; letter-spacing: 0.5px; }
+        .status-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <div class="status-node" onclick="window.location.href='/student'" style="cursor:pointer">
+            <span class="status-dot" style="background:#7ec139"></span>
+            <span class="status-text">FCI LIVE PORTAL ENVIRONMENT</span>
+        </div>
+        <ul>
+            <li onclick="window.location.href='/'" style="cursor:pointer">Home</li>
+            <li onclick="window.location.href='/student'" style="cursor:pointer; color:#7ec139; font-weight:700;">Explore</li>
+            <li onclick="window.location.href='/dashboard'" style="cursor:pointer">Dashboard</li>
+            <li onclick="logout()" style="cursor:pointer; color:#dc2626; font-weight:700;"><i class="ti ti-logout"></i> Logout</li>
+        </ul>
+    </nav>
+
+    <div class="detail-wrapper">
+        <div class="gallery-container">
+            <div class="main-preview-box" id="mainPreview">📦</div>
+            <div class="thumbnails-row" id="thumbnailsContainer"></div>
+        </div>
+
+        <div class="specs-panel">
+            <span class="faculty-tag" id="facultyBadge">FCI Node</span>
+            <h1 class="product-title" id="prodTitle">Loading Asset Parameters...</h1>
+            <div class="seller-node">Listed by: <span id="sellerName" style="color: #fff; font-weight: 600;">---</span></div>
+            
+            <p class="product-desc" id="prodDesc">Decrypting dataset elements from central SQL repositories mapping infrastructure loops...</p>
+            
+            <div class="price-badge">
+                <span class="price-currency">RM</span>
+                <span id="prodPrice">0.00</span>
+            </div>
+
+            <div class="btn-action-hub">
+                <button class="btn-core back" onclick="window.location.href='/student'"><i class="ti ti-arrow-narrow-left"></i> Back to Node</button>
+                <button class="btn-core buy" id="purchaseBtn" onclick="executeAcquisition()"><i class="ti ti-shopping-cart"></i> Acquire Material</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+        if (!currentUser.name) { window.location.href = '/login'; }
+
+        function logout() { localStorage.clear(); window.location.href = '/'; }
+
+        // EXTRACT ID NODES FROM THE CURRENT URL PATHWAY
+        const urlSegments = window.location.pathname.split('/');
+        const itemId = urlSegments[urlSegments.length - 1];
+
+        let targetItem = null;
+        const EMOJI_MAP = { 'FCI': '💻' };
+
+        function loadItemContext() {
+            fetch('/items')
+                .then(res => res.json())
+                .then(data => {
+                    targetItem = data.find(i => i.id == itemId);
+                    if (!targetItem) {
+                        alert("Asset vector node missing inside server registries.");
+                        window.location.href = '/student';
+                        return;
+                    }
+                    renderProductData();
+                }).catch(err => console.error("API Fetch Fault:", err));
+        }
+
+        function renderProductData() {
+            document.getElementById('prodTitle').textContent = targetItem.name;
+            document.getElementById('sellerName').textContent = targetItem.student;
+            document.getElementById('prodDesc').textContent = targetItem.description || "No metadata description string accompanied this listing.";
+            document.getElementById('prodPrice').textContent = parseFloat(targetItem.price).toFixed(2);
+            
+            const itemFaculty = targetItem.faculty || 'FCI';
+            document.getElementById('facultyBadge').textContent = `${itemFaculty} Node`;
+
+            // DEPLOY MULTI-IMAGE EXTRACTOR PATTERN
+            const mainPreview = document.getElementById('mainPreview');
+            const thumbsContainer = document.getElementById('thumbnailsContainer');
+            
+            const imagesList = targetItem.image ? targetItem.image.split('|||') : [];
+
+            if (imagesList.length > 0) {
+                // Set default thumbnail frame view
+                mainPreview.innerHTML = `<img src="${imagesList[0]}" class="main-preview-img" id="activePreviewImg"/>`;
+                
+                // Build interactive thumb row
+                thumbsContainer.innerHTML = imagesList.map((imgSrc, index) => `
+                    <div class="thumb-node ${index === 0 ? 'active' : ''}" onclick="swapPreviewFrame('${imgSrc}', this)">
+                        <img src="${imgSrc}" />
+                    </div>
+                `).join('');
+            } else {
+                mainPreview.innerHTML = EMOJI_MAP[itemFaculty] || '📦';
+                thumbsContainer.innerHTML = '';
+            }
+
+            // AUDIT ITEM FLAGS FOR SALE STATES
+            const purchaseBtn = document.getElementById('purchaseBtn');
+            if (targetItem.sold === 1 || targetItem.sold === true) {
+                purchaseBtn.textContent = "Sold Out / Deactivated";
+                purchaseBtn.disabled = true;
+            }
+        }
+
+        function swapPreviewFrame(imgSrc, thumbElement) {
+            document.getElementById('activePreviewImg').src = imgSrc;
+            document.querySelectorAll('.thumb-node').forEach(t => t.classList.remove('active'));
+            thumbElement.classList.add('active');
+        }
+
+        function executeAcquisition() {
+            if (!confirm(`Confirm asset transfer routing for RM ${parseFloat(targetItem.price).toFixed(2)}?`)) return;
+
+            fetch(`/items/${targetItem.id}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ buyer: currentUser.name })
+            })
+            .then(res => res.json())
+            .then(() => {
+                alert("Acquisition loop acknowledged! Asset locked under your profile node.");
+                window.location.href = '/student';
+            })
+            .catch(err => alert("Acquisition pipeline connection timed out."));
+        }
+
+        loadItemContext();
+    </script>
+</body>
+</html>
