@@ -221,6 +221,7 @@
                 const thumbnail = imagesList.length > 0 ? imagesList[0] : null;
                 const displayFaculty = item.faculty ? item.faculty : 'FCI';
 
+                // REDIRECTION ADDED HERE: Wrapped the student text element in an underline hover route interceptor anchor mapping to /profile/
                 return `
                 <div class="item-card" onclick="window.location.href='/product/${item.id}'" style="cursor:pointer; ${item.sold ? 'opacity: 0.5;' : ''}">
                     <div class="card-visual">
@@ -228,7 +229,9 @@
                     </div>
                     <div class="card-body">
                         <span class="item-title">${item.name}</span>
-                        <span style="font-size:11px; color:#7ec139; font-weight:700; margin-top:3px; text-transform:uppercase;">${displayFaculty} Node</span>
+                        <div style="font-size:12px; color:#878f82; margin: 4px 0 8px 0;">
+                            Listed by: <span onclick="event.stopPropagation(); window.location.href='/profile/' + encodeURIComponent('${item.student}')" style="color: #7ec139; font-weight: 700; cursor: pointer; text-decoration: underline;">${item.student}</span> · <span style="text-transform:uppercase; font-weight:600;">${displayFaculty} Node</span>
+                        </div>
                         <span class="item-desc">${item.description}</span>
                         <span class="item-price">RM ${parseFloat(item.price).toFixed(2)}</span>
                         <div class="card-footer">

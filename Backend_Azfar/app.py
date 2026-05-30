@@ -54,6 +54,11 @@ def serve_admin_moderator_panel():
 def serve_product_detail_page(item_id):
     return send_from_directory(FRONTEND_DIR, "product_detail.html")
 
+@app.route("/profile/<string:username>")
+def serve_seller_profile_page(username):
+    # This serves the generic profile template; the frontend JavaScript reads the URL parameter to populate it
+    return send_from_directory(FRONTEND_DIR, "seller_profile.html")
+
 
 # ==========================================
 # 🔍 ECOLOOP DYNAMIC JINJA2 SEARCH ENGINE
