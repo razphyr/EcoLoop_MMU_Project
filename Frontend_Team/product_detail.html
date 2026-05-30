@@ -80,7 +80,8 @@
         <div class="specs-panel">
             <span class="faculty-tag" id="facultyBadge">FCI Node</span>
             <h1 class="product-title" id="prodTitle">Loading Asset Parameters...</h1>
-            <div class="seller-node">Listed by: <span id="sellerName" style="color: #fff; font-weight: 600;">---</span></div>
+            
+            <div class="seller-node">Listed by: <span id="sellerName">---</span></div>
             
             <div class="product-desc" id="prodDesc">Decrypting dataset elements from central SQL repositories infrastructure loops...</div>
             
@@ -167,12 +168,16 @@
             const totalPrice = basePrice + serviceCharge;
 
             document.getElementById('prodTitle').textContent = targetItem.name;
-            document.getElementById('sellerName').textContent = targetItem.student;
+            
+            // REDIRECTION ADDED HERE: Dynamically building an inline anchor with URL token components pointing to /profile/
+            document.getElementById('sellerName').innerHTML = `
+                <span onclick="window.location.href='/profile/' + encodeURIComponent('${targetItem.student}')" style="color: #7ec139; font-weight: 600; text-decoration: underline; cursor: pointer;">
+                    ${targetItem.student}
+                </span>`;
             
             document.getElementById('prodDesc').textContent = targetItem.description || "No product specifications metadata attached to this listing.";
             document.getElementById('prodPrice').textContent = totalPrice.toFixed(2);
             
-            // Set Modal calculation tags directly
             document.getElementById('breakdownBase').textContent = `RM ${basePrice.toFixed(2)}`;
             document.getElementById('breakdownFee').textContent = `RM ${serviceCharge.toFixed(2)}`;
 
@@ -212,7 +217,6 @@
         function closePaymentModal() { document.getElementById('paymentModal').classList.remove('open'); }
 
         function executeAcquisition() {
-            // Process database state synchronization asynchronously
             fetch(`/items/${targetItem.id}`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
@@ -220,11 +224,9 @@
             })
             .then(res => res.json())
             .then(() => {
-                // EXCLUSIVE COMMUNICATION LOOP: Trigger direct mail node connection pre-filled with transaction metrics parameters
                 const subject = encodeURIComponent(`EcoLoop MMU - Meetup Request: ${targetItem.name}`);
                 const body = encodeURIComponent(`Hello ${targetItem.student},\n\nI have reserved your listing [${targetItem.name}] on EcoLoop for RM ${parseFloat(targetItem.price).toFixed(2)}.\n\nLet's arrange a physical meetup at the FCI Building to handle the handover.\n\nBest regards,\n${currentUser.name}`);
                 
-                // Falling back to a clean mock student email domain string structure for the presentation layer
                 const mockEmail = `${targetItem.student.toLowerCase().replace(/\s+/g, '')}@student.mmu.edu.my`;
                 
                 alert("Payment Confirmed! Launching direct secure communications link with the seller node.");
