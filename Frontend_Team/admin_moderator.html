@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>EcoLoop MMU — Marketplace Moderator Hub</title>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+    <style>
+        /* ==========================================================================
+           🛡️ STANDALONE GLASSMORPHIC VISUALS - MARKET ITEM POLICING MATRIX
+           ========================================================================== */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: 
+                radial-gradient(circle at 10% 75%, rgba(220, 38, 38, 0.15) 0%, transparent 45%),
+                radial-gradient(circle at 85% 80%, #065f46 0%, #111827 60%, #0f172a 100%);
+            color: #ffffff;
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        .sidebar {
+            position: fixed;
+            top: 0; left: 0; width: 240px; height: 100vh;
+            background: rgba(15, 23, 42, 0.55);
+            backdrop-filter: blur(15px);
+            border-right: 1px solid rgba(255, 255, 255, 0.06);
+            display: flex;
+            flex-direction: column;
+            padding: 2rem 1.2rem;
+            z-index: 10;
+        }
+
+        .logo {
+            font-size: 26px;
+            font-weight: 700;
+            color: #4ade80;
+            text-shadow: 0 0 15px rgba(74, 222, 128, 0.55);
+            margin-bottom: 4px;
+        }
+
+        .logo-sub {
+            font-size: 11px;
+            color: #94a3b8;
+            text-transform: uppercase;
+            font-weight: 700;
+            margin-bottom: 2.5rem;
+            letter-spacing: 1px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 11px 14px;
+            border-radius: 10px;
+            font-size: 14px;
+            color: #94a3b8;
+            cursor: pointer;
+            transition: all .2s ease;
+            margin-bottom: 6px;
+        }
+
+        .nav-item.active {
+            background: rgba(74, 222, 128, 0.12);
+            color: #4ade80;
+            border-left: 3px solid #4ade80;
+        }
+
+        .nav-item:hover:not(.active) {
+            background: rgba(255, 255, 255, 0.04);
+            color: #ffffff;
+            transform: translateX(3px);
+        }
+
+        .main {
+            margin-left: 240px;
+            padding: 2.5rem;
+            min-height: 100vh;
+            position: relative;
+            z-index: 2;
+            text-align: left;
+        }
+
+        .topbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 2.5rem;
+        }
+
+        .page-title {
+            font-size: 32px;
+            font-weight: 700;
+            color: #4ade80;
+        }
+
+        .page-sub { font-size: 14px; color: #94a3b8; margin-top: 4px; }
+
+        .admin-badge {
+            background: rgba(220, 38, 38, 0.12);
+            border: 1px solid rgba(220, 38, 38, 0.3);
+            color: #ef4444;
+            font-size: 12px;
+            font-weight: 700;
+            padding: 6px 14px;
+            border-radius: 30px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin-bottom: 2.5rem;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.07);
+            border-radius: 16px;
+            padding: 1.4rem;
+        }
+
+        .stat-val { font-size: 30px; font-weight: 700; color: #ffffff; }
+        .stat-lbl { font-size: 11px; font-weight: 600; color: #94a3b8; margin-top: 6px; text-transform: uppercase; }
+
+        .table-wrap {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 18px;
+            overflow: hidden;
+        }
+
+        table { width: 100%; border-collapse: collapse; }
+        thead tr { background: rgba(255, 255, 255, 0.02); border-bottom: 1px solid rgba(255, 255, 255, 0.06); }
+        th { padding: 16px 20px; font-size: 11px; font-weight: 700; color: #64748b; text-transform: uppercase; text-align: left; }
+        td { padding: 16px 20px; font-size: 14px; color: #e2e8f0; border-bottom: 1px solid rgba(255, 255, 255, 0.04); }
+        
+        .status-badge { font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 6px; text-transform: uppercase; display: inline-block; }
+        .status-badge.active { background: rgba(74, 222, 128, 0.12); color: #4ade80; border: 1px solid rgba(74, 222, 128, 0.2); }
+        .status-badge.hidden-sold { background: rgba(220, 38, 38, 0.12); color: #ef4444; border: 1px solid rgba(220, 38, 38, 0.2); }
+
+        .screenshot-preview {
+            width: 60px; height: 45px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.08); object-fit: cover;
+        }
+
+        .btn-mod-action {
+            background: transparent; padding: 6px 14px; border-radius: 8px; font-size: 12px; font-weight: 700; cursor: pointer; transition: all 0.2s ease;
+        }
+        .btn-mod-action.toggle { border: 1px solid #38bdf8; color: #38bdf8; margin-right: 6px; }
+        .btn-mod-action.toggle:hover { background: #38bdf8; color: #0f172a; }
+        .btn-mod-action.delete { border: 1px solid #ef4444; color: #ef4444; }
+        .btn-mod-action.delete:hover { background: #ef4444; color: #fff; box-shadow: 0 0 12px rgba(239, 68, 68, 0.4); }
+    </style>
+</head>
+<body>
+
+<div class="sidebar">
+    <div class="logo">EcoLoop</div>
+    <div class="logo-sub">MMU Admin Panel</div>
+    <div class="nav-item" onclick="window.location.href='/admin'"><i class="ti ti-layout-dashboard"></i> Helpdesk Core</div>
+    <div class="nav-item active" onclick="window.location.href='/admin/items'"><i class="ti ti-building-store"></i> Student Panel</div>
+    <div class="nav-item" onclick="localStorage.clear(); window.location.href='/'" style="color:#ef4444;"><i class="ti ti-logout"></i> Exit Terminal</div>
+</div>
+
+<div class="main">
+    <div class="topbar">
+        <div>
+            <div class="page-title">Marketplace Repository Moderation</div>
+            <div class="page-sub">Monitor student activity, hide explicit materials, or wipe bad content from the server listings</div>
+        </div>
+        <div>
+            <span class="admin-badge"><i class="ti ti-shield-alert"></i> Content Moderator</span>
+        </div>
+    </div>
+
+    <div class="stats">
+        <div class="stat-card"><div class="stat-val" id="m-total">0</div><div class="stat-lbl">Total Submissions</div></div>
+        <div class="stat-card"><div class="stat-val" id="m-active" style="color: #4ade80">0</div><div class="stat-lbl">Active Marketplace Listings</div></div>
+        <div class="stat-card"><div class="stat-val" id="m-hidden" style="color: #ef4444">0</div><div class="stat-lbl">Hidden / Flagged Nodes</div></div>
+    </div>
+
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>Visual</th>
+                    <th>Material Description Details</th>
+                    <th>Asset Cost</th>
+                    <th>Listed By</th>
+                    <th>Visibility State</th>
+                    <th>Moderator Police Action</th>
+                </tr>
+            </thead>
+            <tbody id="moderatorTable"></tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    const userSession = JSON.parse(localStorage.getItem('currentUser') || '{}');
+    if (userSession.role !== 'admin') window.location.href = '/login';
+
+    function fetchMarketItemsForPolicing() {
+        fetch('/items')
+        .then(res => res.json())
+        .then(data => {
+            document.getElementById('m-total').textContent = data.length;
+            document.getElementById('m-active').textContent = data.filter(i => !i.sold).length;
+            document.getElementById('m-hidden').textContent = data.filter(i => i.sold).length;
+
+            const tbody = document.getElementById('moderatorTable');
+            if (data.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:#64748b; padding:40px;">No listed student items found inside database networks.</td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = data.map(item => {
+                const imgArray = item.image ? item.image.split('|||') : [];
+                const mainThumb = imgArray.length > 0 ? imgArray[0] : null;
+
+                return `
+                <tr>
+                    <td>
+                        ${mainThumb ? `<img src="${mainThumb}" class="screenshot-preview" />` : `<span style="font-size:22px;">📦</span>`}
+                    </td>
+                    <td>
+                        <div style="font-weight:600; color:#fff; font-size:15px;">${item.name}</div>
+                        <div style="font-size:12px; color:#64748b; margin-top:2px; max-width:280px; line-height:1.4;">${item.description}</div>
+                    </td>
+                    <td style="color:#ba7517; font-weight:700;">RM ${parseFloat(item.price).toFixed(2)}</td>
+                    <td>${item.student}<br><span style="font-size:11px; color:#64748b;">${item.level}</span></td>
+                    <td>
+                        <span class="status-badge ${item.sold ? 'hidden-sold' : 'active'}">
+                            ${item.sold ? 'Hidden / Flagged' : 'Visible'}
+                        </span>
+                    </td>
+                    <td>
+                        <button class="btn-mod-action toggle" onclick="toggleVisibilityNode(${item.id})">Hide / Unhide</button>
+                        <button class="btn-mod-action delete" onclick="nukeProblematicListing(${item.id})">Delete</button>
+                    </td>
+                </tr>`;
+            }).join('');
+        });
+    }
+
+    function toggleVisibilityNode(id) {
+        fetch(`/items/${id}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ buyer: 'Flagged by Admin Moderator' })
+        }).then(() => fetchMarketItemsForPolicing());
+    }
+
+    function nukeProblematicListing(id) {
+        if (!confirm("🚨 SYSTEM ALERT: Are you absolutely certain you want to permanently delete and wipe this item listing node from the server database structure? This cannot be undone.")) return;
+        fetch(`/items/${id}`, { method: 'DELETE' })
+        .then(() => fetchMarketItemsForPolicing());
+    }
+
+    fetchMarketItemsForPolicing();
+</script>
+</body>
+</html>

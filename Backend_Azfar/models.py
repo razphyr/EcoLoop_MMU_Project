@@ -15,15 +15,18 @@ class User(db.Model):
         return {"id": self.id, "name": self.name, "student_id": self.student_id, "level": self.level, "email": self.email, "role": self.role}
 
 class Item(db.Model):
+    __tablename__ = 'items'
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(100), nullable=False)
+    name = db.Column(db.String(150), nullable=False)
     price = db.Column(db.Float, nullable=False)
-    student = db.Column(db.String(100), nullable=False)   
-    level = db.Column(db.String(50), nullable=False)       
-    sold = db.Column(db.Boolean, default=False, nullable=False)
-    description = db.Column(db.String(255), nullable=False)
-    buyer = db.Column(db.String(100), nullable=True)       
-    image = db.Column(db.Text, nullable=True) 
+    student = db.Column(db.String(150), nullable=False)
+    level = db.Column(db.String(50), nullable=True, default="Degree")
+    description = db.Column(db.Text, nullable=True, default="Ecosystem trade asset listed across faculty nodes.")
+    sold = db.Column(db.Boolean, default=False)
+    buyer = db.Column(db.String(150), nullable=True)
+    image = db.Column(db.Text, nullable=True)
+    # ADDED FOR MAATHESH FRONTEND COMPATIBILITY
+    faculty = db.Column(db.String(50), nullable=True, default="FCI") 
 
 class Report(db.Model):
     id = db.Column(db.Integer, primary_key=True)

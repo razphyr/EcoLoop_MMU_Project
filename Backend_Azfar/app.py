@@ -8,7 +8,6 @@ from models import db, Item, User, Report
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 FRONTEND_DIR = os.path.abspath(os.path.join(BASE_DIR, "..", "Frontend_Team"))
 
-# Explicitly set the template folder so render_template can find your HTML files
 app = Flask(__name__, template_folder=FRONTEND_DIR, static_folder=FRONTEND_DIR, static_url_path='')
 CORS(app)
 
@@ -49,12 +48,16 @@ def serve_admin_panel():
 
 @app.route("/admin/items")
 def serve_admin_moderator_panel():
-    # Points to your brand new standalone file to avoid any student_panel redirects
     return send_from_directory(FRONTEND_DIR, "admin_moderator.html")
 
 @app.route("/product/<int:item_id>")
 def serve_product_detail_page(item_id):
     return send_from_directory(FRONTEND_DIR, "product_detail.html")
+
+@app.route("/profile/<string:username>")
+def serve_seller_profile_page(username):
+    # This serves the generic profile template; the frontend JavaScript reads the URL parameter to populate it
+    return send_from_directory(FRONTEND_DIR, "seller_profile.html")
 
 
 # ==========================================
@@ -63,14 +66,10 @@ def serve_product_detail_page(item_id):
 @app.route("/search", methods=["GET"])
 def search_marketplace_items():
     query_param = request.args.get("query", "").strip()
-    
-    # Query database columns for text matches against name or description strings
     matched_items = Item.query.filter(
         (Item.name.like(f"%{query_param}%")) | 
         (Item.description.like(f"%{query_param}%"))
     ).all()
-    
-    # Render template server-side and inject parameters into result.html cleanly
     return render_template("result.html", query=query_param, items=matched_items)
 
 
@@ -197,16 +196,18 @@ def get_items():
     all_items = Item.query.all()
     output = []
     for i in all_items:
+        # Cross-Compatible Translation: Maps raw boolean flags back into integer choices for Maathesh arrays
         output.append({
             "id": i.id, 
             "name": i.name, 
             "price": i.price, 
             "student": i.student, 
-            "level": i.level, 
-            "sold": i.sold, 
-            "description": i.description, 
+            "level": i.level if i.level else "Degree", 
+            "sold": 1 if i.sold else 0, 
+            "description": i.description if i.description else "Ecosystem trade asset.", 
             "buyer": i.buyer,
-            "image": getattr(i, "image", None)
+            "image": getattr(i, "image", None),
+            "faculty": i.faculty if i.faculty else "FCI"
         })
     return jsonify(output)
 
@@ -217,29 +218,51 @@ def add_item():
         name=data.get("name"), 
         price=float(data.get("price")), 
         student=data.get("student"), 
-        level=data.get("level"), 
-        description=data.get("description"),
-        image=data.get("image")
+        faculty=data.get("faculty", "FCI"),
+        level=data.get("level", "Degree"), 
+        description=data.get("description", "Ecosystem trade asset."),
+        image=data.get("image", None),
+        sold=False
     )
     db.session.add(new_item)
     db.session.commit()
-    return jsonify({"message": "Added"}), 201
+    
+    return jsonify({
+        "id": new_item.id,
+        "name": new_item.name,
+        "price": new_item.price,
+        "student": new_item.student,
+        "faculty": new_item.faculty,
+        "sold": 0
+    }), 201
 
 @app.route("/items/<int:item_id>", methods=["PUT"])
 def toggle_item(item_id):
     item = Item.query.get(item_id)
+    if not item:
+        return jsonify({"error": "Item not found"}), 404
+        
     data = request.json or {}
     item.sold = not item.sold
     item.buyer = data.get("buyer") if item.sold else None
     db.session.commit()
-    return jsonify({"message": "Toggled"})
+    
+    return jsonify({
+        "id": item.id,
+        "name": item.name,
+        "price": item.price,
+        "student": item.student,
+        "faculty": item.faculty if item.faculty else "FCI",
+        "sold": 1 if item.sold else 0
+    })
 
 @app.route("/items/<int:item_id>", methods=["DELETE"])
 def delete_item(item_id):
     item = Item.query.get(item_id)
-    db.session.delete(item)
-    db.session.commit()
-    return jsonify({"message": "Deleted"})
+    if item:
+        db.session.delete(item)
+        db.session.commit()
+    return jsonify({"message": "deleted"})
 
 
 if __name__ == "__main__":

@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FCI Marketplace Matrix // EcoLoop</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; background: #0b0e09; color: #f4f6f2; padding: 30px; min-height: 100vh; }
+        .market-wrapper { max-width: 1100px; margin: 40px auto; }
+        .welcome-banner { background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.05); padding: 30px; border-radius: 20px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
+        .welcome-text h1 { font-size: 28px; color: #fff; }
+        .welcome-text p { color: #878f82; font-size: 14px; margin-top: 6px; }
+        .user-badge { color: #7ec139; font-weight: 700; }
+        .market-actions { display: flex; gap: 12px; }
+        .btn-panel { background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.08); color: #fff; padding: 12px 20px; border-radius: 12px; cursor: pointer; font-weight: 600; font-size: 14px; display: flex; align-items: center; gap: 8px; }
+        .btn-panel.primary { background: #7ec139; border-color: #7ec139; color: #0b0e09; }
+        .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 35px; }
+        .stat-node { background: rgba(255, 255, 255, 0.01); border: 1px solid rgba(255, 255, 255, 0.04); border-radius: 16px; padding: 20px 24px; text-align: left; }
+        .stat-val { font-size: 36px; font-weight: 700; color: #fff; }
+        .stat-lbl { font-size: 11px; color: #878f82; margin-top: 8px; text-transform: uppercase; }
+        
+        .filters-row { display: flex; gap: 10px; margin-bottom: 30px; background: rgba(255, 255, 255, 0.02); padding: 6px; border-radius: 14px; display: inline-flex; flex-wrap: wrap; align-items: center; }
+        .filter-btn { background: transparent; border: none; border-radius: 10px; padding: 8px 18px; font-size: 14px; color: #878f82; cursor: pointer; }
+        .filter-btn.active { background: rgba(255, 255, 255, 0.04); color: #7ec139; }
+        
+        .search-control { background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.06); border-radius: 10px; padding: 8px 14px; color: #fff; font-size: 13px; outline: none; width: 160px; }
+        .search-control::placeholder { color: #555; }
+        .search-control:focus { border-color: #7ec139; }
+
+        .items-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 24px; }
+        .item-card { background: rgba(20, 26, 17, 0.2); border: 1px solid rgba(255, 255, 255, 0.03); border-radius: 20px; overflow: hidden; display: flex; flex-direction: column; transition: transform 0.2s; }
+        .item-card:hover { transform: translateY(-4px); }
+        .card-visual { height: 160px; background: rgba(255, 255, 255, 0.01); display: flex; align-items: center; justify-content: center; font-size: 42px; border-bottom: 1px solid rgba(255,255,255,0.02); overflow: hidden; }
+        .product-img { width: 100%; height: 100%; object-fit: cover; }
+        .card-body { padding: 20px; flex-grow: 1; display: flex; flex-direction: column; text-align: left; }
+        .item-title { color: #fff; font-size: 18px; font-weight: 600; }
+        .item-desc { color: #878f82; font-size: 13.5px; margin-bottom: 15px; margin-top: 4px; }
+        .item-price { color: #ba7517; font-size: 20px; font-weight: 700; margin-top: auto; }
+        .card-footer { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid rgba(255, 255, 255, 0.03); padding-top: 14px; margin-top: 12px; }
+        .status-badge { font-size: 12px; font-weight: bold; }
+        .status-badge.available { color: #7ec139; }
+        .status-badge.sold { color: #dc2626; }
+        .btn-buy { background: transparent; border: 1px solid #7ec139; color: #7ec139; padding: 6px 14px; border-radius: 8px; cursor: pointer; font-weight: 600; }
+        .btn-buy:hover { background: #7ec139; color: #0b0e09; }
+        
+        .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.75); backdrop-filter: blur(6px); z-index: 100; align-items: center; justify-content: center; }
+        .modal-overlay.open { display: flex; }
+        .modal-box { background: #11160f; border: 1px solid rgba(255, 255, 255, 0.06); width: 390px; padding: 30px; border-radius: 20px; }
+        .modal-box h3 { font-size: 22px; color: #fff; margin-bottom: 20px; }
+        .input-group { margin-bottom: 16px; text-align: left; }
+        .input-group label { display: block; font-size: 11px; color: #878f82; font-weight: 700; text-transform: uppercase; margin-bottom: 6px; }
+        .input-group input, .input-group select, .input-group textarea { width: 100%; padding: 12px; background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.06); border-radius: 10px; color: #fff; outline: none; font-size: 14px; box-sizing: border-box; }
+        .modal-buttons { display: flex; gap: 10px; margin-top: 25px; }
+        .btn-modal { flex: 1; padding: 12px; border-radius: 10px; font-weight: 600; cursor: pointer; border: none; }
+        .btn-modal.confirm { background: #7ec139; color: #0b0e09; }
+        .btn-modal.cancel { background: rgba(255,255,255,0.04); color: #fff; }
+
+        nav { display: flex; justify-content: space-between; align-items: center; padding: 20px 40px; background: rgba(17, 22, 15, 0.8); border-bottom: 1px solid rgba(255,255,255,0.03); backdrop-filter: blur(10px); }
+        nav ul { display: flex; list-style: none; gap: 24px; align-items: center; }
+        .status-node { display: flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 700; letter-spacing: 0.5px; }
+        .status-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <div class="status-node" onclick="window.location.href='/'" style="cursor:pointer">
+            <span class="status-dot" style="background:#7ec139"></span>
+            <span class="status-text">FCI LIVE PORTAL ENVIRONMENT</span>
+        </div>
+        <ul>
+            <li onclick="window.location.href='/'" style="cursor:pointer">Home</li>
+            <li onclick="window.location.href='/student'" style="cursor:pointer">Explore</li>
+            <li onclick="window.location.href='/dashboard'" style="color:#7ec139; font-weight:700; cursor:pointer">Dashboard</li>
+            <li onclick="logout()" style="cursor:pointer; color:#dc2626; font-weight:700;"><i class="ti ti-logout"></i> Logout</li>
+        </ul>
+    </nav>
+
+    <div class="market-wrapper">
+        <div class="welcome-banner">
+            <div class="welcome-text">
+                <h1>Welcome, <span id="userDisplayName" class="user-badge">User</span></h1>
+                <p>Browsing pre-loved computing assets listed inside the FCI Faculty Node database.</p>
+            </div>
+            <div class="market-actions">
+                <button class="btn-panel" onclick="openReportModal()"><i class="ti ti-alert-circle"></i> Report/Feedback</button>
+                <button class="btn-panel primary" onclick="openModal()"><i class="ti ti-plus"></i> Sell Material</button>
+            </div>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-node"><div class="stat-val" id="s-total">0</div><div class="stat-lbl">FCI Listings</div></div>
+            <div class="stat-node"><div class="stat-val" id="s-avail" style="color:#7ec139">0</div><div class="stat-lbl">Available</div></div>
+            <div class="stat-node"><div class="stat-val" id="s-sold" style="color:#dc2626">0</div><div class="stat-lbl">Sold Out</div></div>
+        </div>
+
+        <div class="filters-row">
+            <button class="filter-btn active" onclick="setFilter('All',this)">All Items</button>
+            <button class="filter-btn" onclick="setFilter('Available',this)">Available</button>
+            <button class="filter-btn" onclick="setFilter('Sold',this)">Sold</button>
+            <button class="filter-btn" onclick="setFilter('FCI',this)">FCI Only</button>
+            
+            <input type="text" id="searchBox" class="search-control" placeholder="Search item name..." oninput="applyStudentFilters()">
+            <input type="number" id="minPrice" class="search-control" placeholder="Min RM" oninput="applyStudentFilters()" style="width: 85px;">
+            <input type="number" id="maxPrice" class="search-control" placeholder="Max RM" oninput="applyStudentFilters()" style="width: 85px;">
+        </div>
+
+        <div class="items-grid" id="itemsContainer"></div>
+    </div>
+
+    <div class="modal-overlay" id="sellModal">
+        <div class="modal-box">
+            <h3>List FCI Material</h3>
+            <form id="itemForm">
+                <div class="input-group"><label>Material Name</label><input type="text" id="itemName" required></div>
+                <div class="input-group"><label>Description</label><input type="text" id="itemDesc" required></div>
+                <div class="input-group"><label>Price (RM)</label><input type="number" id="itemPrice" required></div>
+                
+                <div class="input-group">
+                    <label>Target Faculty Node</label>
+                    <select id="itemFaculty" required>
+                        <option value="FCI" selected>FCI (Computing)</option>
+                    </select>
+                </div>
+                
+                <div class="input-group"><label>Product Snapshots (Can select multiple)</label><input type="file" id="itemImagesField" accept="image/*" multiple></div>
+                <div class="modal-buttons">
+                    <button type="submit" class="btn-modal confirm">Publish Listing</button>
+                    <button type="button" class="btn-modal cancel" onclick="closeModal()">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="reportModal">
+        <div class="modal-box">
+            <h3>Help & Support Node</h3>
+            <form id="reportForm">
+                <div class="input-group">
+                    <label>Submission Type</label>
+                    <select id="subType">
+                        <option value="Report">Report Bug / Issue</option>
+                        <option value="Feedback">General Feedback</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label>Statement Reasoning</label>
+                    <textarea id="subStatement" rows="4" required></textarea>
+                </div>
+                <div class="input-group"><label>Proof Attachment</label><input type="file" id="subImage" accept="image/*"></div>
+                <div class="modal-buttons">
+                    <button type="submit" class="btn-modal confirm">Submit Node</button>
+                    <button type="button" class="btn-modal cancel" onclick="closeReportModal()">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+        if (!currentUser.name) { window.location.href = '/login'; } 
+        else { document.getElementById('userDisplayName').textContent = currentUser.name; }
+
+        function logout() { localStorage.clear(); window.location.href = '/'; }
+        function openModal() { document.getElementById('sellModal').classList.add('open'); }
+        function closeModal() { document.getElementById('sellModal').classList.remove('open'); document.getElementById('itemForm').reset(); }
+        function openReportModal() { document.getElementById('reportModal').classList.add('open'); }
+        function closeReportModal() { document.getElementById('reportModal').classList.remove('open'); document.getElementById('reportForm').reset(); }
+
+        let marketplaceItems = [];
+        let activeFilter = 'All';
+        let queryFilters = { search: '', min: '', max: '' };
+        
+        const EMOJI_MAP = { 'FCI': '💻' };
+
+        function loadMarketplace() {
+            fetch('/items').then(res => res.json()).then(data => { marketplaceItems = data; renderItems(); });
+        }
+
+        function applyStudentFilters() {
+            queryFilters.search = document.getElementById('searchBox').value.toLowerCase();
+            queryFilters.min = document.getElementById('minPrice').value;
+            queryFilters.max = document.getElementById('maxPrice').value;
+            renderItems();
+        }
+
+        function setFilter(filterType, element) {
+            activeFilter = filterType;
+            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+            element.classList.add('active');
+            renderItems();
+        }
+
+        function renderItems() {
+            const container = document.getElementById('itemsContainer');
+            
+            const filtered = marketplaceItems.filter(item => {
+                const okSearch = !queryFilters.search || item.name.toLowerCase().includes(queryFilters.search);
+                const okMin = !queryFilters.min || item.price >= parseFloat(queryFilters.min);
+                const okMax = !queryFilters.max || item.price <= parseFloat(queryFilters.max);
+                
+                let passBase = true;
+                if (activeFilter === 'Available') passBase = !item.sold;
+                else if (activeFilter === 'Sold') passBase = item.sold;
+                else if (activeFilter !== 'All') passBase = (item.faculty === activeFilter);
+                
+                return okSearch && okMin && okMax && passBase;
+            });
+            
+            updateStats();
+
+            if (filtered.length === 0) {
+                container.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:50px; color:#878f82;">No items matched your specific faculty filter queries inside the node.</div>`;
+                return;
+            }
+
+            container.innerHTML = filtered.map(item => {
+                const imagesList = item.image ? item.image.split('|||') : [];
+                const thumbnail = imagesList.length > 0 ? imagesList[0] : null;
+                const displayFaculty = item.faculty ? item.faculty : 'FCI';
+
+                // REDIRECTION ADDED HERE: Wrapped the student text element in an underline hover route interceptor anchor mapping to /profile/
+                return `
+                <div class="item-card" onclick="window.location.href='/product/${item.id}'" style="cursor:pointer; ${item.sold ? 'opacity: 0.5;' : ''}">
+                    <div class="card-visual">
+                        ${thumbnail ? `<img src="${thumbnail}" class="product-img" />` : (EMOJI_MAP[displayFaculty] || '📦')}
+                    </div>
+                    <div class="card-body">
+                        <span class="item-title">${item.name}</span>
+                        <div style="font-size:12px; color:#878f82; margin: 4px 0 8px 0;">
+                            Listed by: <span onclick="event.stopPropagation(); window.location.href='/profile/' + encodeURIComponent('${item.student}')" style="color: #7ec139; font-weight: 700; cursor: pointer; text-decoration: underline;">${item.student}</span> · <span style="text-transform:uppercase; font-weight:600;">${displayFaculty} Node</span>
+                        </div>
+                        <span class="item-desc">${item.description}</span>
+                        <span class="item-price">RM ${parseFloat(item.price).toFixed(2)}</span>
+                        <div class="card-footer">
+                            <span class="status-badge ${item.sold ? 'sold' : 'available'}">${item.sold ? 'Sold' : 'Available'}</span>
+                            ${item.sold ? '' : `<button class="btn-buy" onclick="event.stopPropagation(); purchaseItem(${item.id})">Buy</button>`}
+                        </div>
+                    </div>
+                </div>`;
+            }).join('');
+        }
+
+        function updateStats() {
+            document.getElementById('s-total').textContent = marketplaceItems.length;
+            document.getElementById('s-avail').textContent = marketplaceItems.filter(i => !i.sold).length;
+            document.getElementById('s-sold').textContent = marketplaceItems.filter(i => i.sold).length;
+        }
+
+        function purchaseItem(id) {
+            fetch(`/items/${id}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ buyer: currentUser.name }) }).then(() => { loadMarketplace(); });
+        }
+
+        document.getElementById('reportForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const type = document.getElementById('subType').value;
+            const statement = document.getElementById('subStatement').value;
+            const file = document.getElementById('subImage').files[0];
+
+            if (file) {
+                const reader = new FileReader();
+                reader.onloadend = function() { transmitTicket(type, statement, reader.result); }
+                reader.readAsDataURL(file);
+            } else {
+                transmitTicket(type, statement, null);
+            }
+        });
+
+        function transmitTicket(type, statement, imgData) {
+            fetch('/api/reports', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ type: type, statement: statement, image: imgData, user_name: currentUser.name })
+            }).then(() => {
+                alert("Support request node successfully broadcasted to admin terminal!");
+                closeReportModal();
+            });
+        }
+
+        document.getElementById('itemForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const name = document.getElementById('itemName').value;
+            const description = document.getElementById('itemDesc').value;
+            const price = document.getElementById('itemPrice').value;
+            const faculty = document.getElementById('itemFaculty').value;
+            const files = document.getElementById('itemImagesField').files;
+
+            if (files.length > 0) {
+                let encodedArray = [];
+                let completedCount = 0;
+
+                for (let i = 0; i < files.length; i++) {
+                    const reader = new FileReader();
+                    reader.onloadend = function() {
+                        encodedArray.push(reader.result);
+                        completedCount++;
+                        if (completedCount === files.length) {
+                            transmitItem(name, description, price, faculty, encodedArray.join('|||'));
+                        }
+                    }
+                    reader.readAsDataURL(files[i]);
+                }
+            } else {
+                transmitItem(name, description, price, faculty, null);
+            }
+        });
+
+        function transmitItem(name, description, price, faculty, multiImgString) {
+            fetch('/items', { 
+                method: 'POST', headers: { 'Content-Type': 'application/json' }, 
+                body: JSON.stringify({ name, description, price: parseFloat(price), student: currentUser.name, level: currentUser.level, faculty: faculty, image: multiImgString }) 
+            }).then(() => { closeModal(); loadMarketplace(); });
+        }
+
+        loadMarketplace();
+    </script>
+</body>
+</html>
