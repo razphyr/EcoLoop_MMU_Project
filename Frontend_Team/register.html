@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Account // EcoLoop</title>
+    <link rel="stylesheet" href="register_style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <!-- Ambient background orbs -->
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+
+    <!-- Node Button — fixed top-left corner -->
+    <a href="/" class="node-return-btn">
+        <span class="node-dot"></span>
+        <span class="node-label">NODE // RETURN HOME</span>
+    </a>
+
+    <div class="auth-card">
+        <!-- Decorative corner lines -->
+        <span class="corner tl"></span>
+        <span class="corner tr"></span>
+        <span class="corner bl"></span>
+        <span class="corner br"></span>
+
+        <div class="card-header">
+            <div class="eco-badge">ECO<span>LOOP</span></div>
+            <h2>Create Account</h2>
+            <p class="subtitle">FCI REPOSITORIES MARKETPLACE NETWORK</p>
+        </div>
+
+        <form action="/register" method="POST" novalidate>
+            <div class="input-group">
+                <label for="fullname">Full Name</label>
+                <div class="input-wrap">
+                    <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                        <circle cx="12" cy="7" r="4"/>
+                    </svg>
+                    <input id="fullname" name="fullname" type="text" placeholder="John Doe" autocomplete="name">
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label for="studentid">Student ID</label>
+                <div class="input-wrap">
+                    <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <rect x="2" y="5" width="20" height="14" rx="2"/>
+                        <path d="M16 10h2M16 14h2M6 10h6M6 14h4"/>
+                    </svg>
+                    <input id="studentid" name="studentid" type="text" placeholder="1211101234" autocomplete="off">
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label for="level">Academic Level</label>
+                <div class="input-wrap select-wrap">
+                    <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <path d="M22 10v6M2 10l10-5 10 5-10 5z"/>
+                        <path d="M6 12v5c3 3 9 3 12 0v-5"/>
+                    </svg>
+                    <select id="level" name="level">
+                        <option value="" disabled selected>Select your level</option>
+                        <option value="foundation">Foundation</option>
+                        <option value="degree">Degree</option>
+                        <option value="masters">Masters</option>
+                        <option value="phd">PhD</option>
+                    </select>
+                    <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="6 9 12 15 18 9"/>
+                    </svg>
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label for="email">MMU Student Email</label>
+                <div class="input-wrap">
+                    <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <rect x="2" y="4" width="20" height="16" rx="2"/>
+                        <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>
+                    </svg>
+                    <input id="email" name="email" type="email" placeholder="username@student.mmu.edu.my" autocomplete="email">
+                </div>
+            </div>
+
+            <button type="submit" class="auth-btn">
+                <span class="btn-text">AUTHORIZE ENTRY</span>
+                <svg class="btn-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <path d="M5 12h14M12 5l7 7-7 7"/>
+                </svg>
+            </button>
+        </form>
+
+        <p class="login-link">Already registered? <a href="/login">Sign in →</a></p>
+    </div>
+
+    <script>
+        // Enhanced glow effect on focus
+        const fields = document.querySelectorAll('input, select');
+        fields.forEach(field => {
+            const wrap = field.closest('.input-wrap');
+            field.addEventListener('focus', () => {
+                wrap.classList.add('active');
+            });
+            field.addEventListener('blur', () => {
+                wrap.classList.remove('active');
+                if (field.value) wrap.classList.add('filled');
+                else wrap.classList.remove('filled');
+            });
+        });
+
+        // Button ripple effect
+        const btn = document.querySelector('.auth-btn');
+        btn.addEventListener('click', function(e) {
+            const ripple = document.createElement('span');
+            ripple.className = 'ripple';
+            const rect = btn.getBoundingClientRect();
+            ripple.style.left = (e.clientX - rect.left) + 'px';
+            ripple.style.top  = (e.clientY - rect.top)  + 'px';
+            btn.appendChild(ripple);
+            setTimeout(() => ripple.remove(), 600);
+        });
+    </script>
+</body>
+</html>
