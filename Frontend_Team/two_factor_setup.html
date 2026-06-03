@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Link Authenticator Node // EcoLoop</title>
+    <link rel="stylesheet" href="login_style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="orb orb-1"></div><div class="orb orb-2"></div>
+
+    <div class="auth-card" style="max-width: 480px;">
+        <div class="card-header">
+            <div class="eco-badge">SECURITY<span>GATE</span></div>
+            <h2>Activate 2FA Profile</h2>
+            <p class="subtitle">STREAMLINED MULTI-FACTOR LOCK MECHANISM</p>
+        </div>
+
+        <div style="text-align: left; font-size: 13.5px; color: #7a90a4; line-height: 1.6; margin-bottom: 25px;">
+            <p style="margin-bottom: 12px; color: #fff; font-weight:600;">Account Profile Initializing:</p>
+            <p>Your unique account verification passcode has been dynamically generated. Please submit the token below to switch your profile state to activated status.</p>
+        </div>
+
+        <div style="background: rgba(4,8,16,0.9); border: 1px dashed rgba(242,106,69,0.3); padding: 14px; border-radius: 10px; color: #ff8460; font-family: 'Space Mono', monospace; font-size: 16px; font-weight: 700; letter-spacing: 1px; text-align: center; margin-bottom: 25px;" id="tokenDisplayNode">
+            GENERATING_TOKEN...
+        </div>
+
+        <form id="setupOtpForm" novalidate>
+            <div class="input-group">
+                <label for="setupOtpCode">Confirm Activation Code</label>
+                <div class="input-wrap">
+                    <input id="setupOtpCode" type="text" style="text-align: center; font-family: 'Space Mono', monospace; color: #fff; background: transparent; border: none; width: 100%; padding: 12px;" placeholder="ECO-XXXX" required autocomplete="off">
+                </div>
+            </div>
+            <button type="submit" class="auth-btn">ACTIVATE DEVICE SECURITY LINK</button>
+        </form>
+    </div>
+
+    <script>
+        const pendingEmail = localStorage.getItem('pending2faEmail');
+        const pendingToken = localStorage.getItem('pending2faToken');
+        
+        if (!pendingEmail || !pendingToken) { window.location.href = '/login'; }
+        document.getElementById('tokenDisplayNode').textContent = pendingToken;
+
+        document.getElementById('setupOtpForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const inputVal = document.getElementById('setupOtpCode').value.trim();
+
+            fetch('/api/verify-otp', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email: pendingEmail, otp: inputVal })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.error) {
+                    alert(data.error);
+                } else {
+                    alert("Handshake Complete! Profile node verified and locked successfully.");
+                    localStorage.setItem('currentUser', JSON.stringify(data.user));
+                    localStorage.removeItem('pending2faEmail');
+                    localStorage.removeItem('pending2faToken');
+                    window.location.href = data.user.role === 'admin' ? '/admin' : '/student';
+                }
+            })
+            .catch(err => alert("Failed to complete activation handshakes."));
+        });
+    </script>
+</body>
+</html>

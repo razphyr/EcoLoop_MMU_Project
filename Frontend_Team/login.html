@@ -103,7 +103,7 @@
 
         // --- AZFAR'S SECURE DATABASE SQL PIPELINE CONNECTORS ---
         document.getElementById('loginForm').addEventListener('submit', function(e) {
-            e.preventDefault(); // Intercept browser reloads to save active session state parameters
+            e.preventDefault(); 
             
             const usernameVal = document.getElementById('username').value.trim();
             const passwordVal = document.getElementById('password').value;
@@ -123,14 +123,20 @@
                 if (data.error) { 
                     alert(data.error); 
                 } else {
-                    // Lock authenticated identity variables securely into memory
-                    localStorage.setItem('currentUser', JSON.stringify(data.user));
-                    
-                    // Route node views based on verified SQLAlchemy model role flags
-                    if (data.user.role === 'admin') { 
-                        window.location.href = '/admin'; 
-                    } else { 
-                        window.location.href = '/student'; 
+                    // Check our standalone two_factor_linked custom security states redirection path
+                    if (data.action === "setup_required") {
+                        localStorage.setItem('pending2faEmail', data.email);
+                        localStorage.setItem('pending2faToken', data.token_id);
+                        window.location.href = '/setup-2fa';
+                    } 
+                    else if (data.action === "otp_required") {
+                        localStorage.setItem('pendingVerifyEmail', data.email);
+                        window.location.href = '/verify-login-otp';
+                    }
+                    else {
+                        // Regular login handling if standard bypass route applies
+                        localStorage.setItem('currentUser', JSON.stringify(data.user));
+                        window.location.href = data.user.role === 'admin' ? '/admin' : '/student';
                     }
                 }
             })

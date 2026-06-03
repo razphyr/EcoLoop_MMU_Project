@@ -1,4 +1,4 @@
-from app import app
+from TEst_Broke_Bite.app import app
 from models import db, User
 
 with app.app_context():

@@ -11,11 +11,8 @@ class User(db.Model):
     email = db.Column(db.String(120), unique=True, nullable=False)
     password = db.Column(db.String(100), nullable=False)
     role = db.Column(db.String(20), default='user')
-    otp_secret = db.Column(db.String(32))
     phone = db.Column(db.String(20), nullable=True)
-
-    def to_dict(self):
-        return {"id": self.id, "name": self.name, "student_id": self.student_id, "level": self.level, "email": self.email, "role": self.role}
+    two_factor_linked = db.Column(db.Boolean, default=False)
 
 class Item(db.Model):
     __tablename__ = 'items'
@@ -24,11 +21,10 @@ class Item(db.Model):
     price = db.Column(db.Float, nullable=False)
     student = db.Column(db.String(150), nullable=False)
     level = db.Column(db.String(50), nullable=True, default="Degree")
-    description = db.Column(db.Text, nullable=True, default="Ecosystem trade asset listed across faculty nodes.")
+    description = db.Column(db.Text, nullable=True, default="Ecosystem trade asset listed across faculty platform.")
     sold = db.Column(db.Boolean, default=False)
     buyer = db.Column(db.String(150), nullable=True)
     image = db.Column(db.Text, nullable=True)
-    # ADDED FOR MAATHESH FRONTEND COMPATIBILITY
     faculty = db.Column(db.String(50), nullable=True, default="FCI") 
 
 class Report(db.Model):
