@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Create Account // EcoLoop</title>
     <link rel="stylesheet" href="register_style.css">
-    <link rel="stylesheet" href="login_style.css">
     <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
@@ -104,7 +103,7 @@
             </button>
         </form>
 
-        <p class="login-link" style="margin-top: 25px; font-size: 13px; color: #52594e; text-align: center;">Already registered? <a href="/login" style="color:#7ec139; text-decoration:none; font-weight:600;">Sign in →</a></p>
+        <p class="login-link">Already registered? <a href="/login">Sign in →</a></p>
     </div>
 
     <script>
@@ -119,6 +118,12 @@
                 wrap.classList.remove('active');
                 if (field.value) wrap.classList.add('filled');
                 else wrap.classList.remove('filled');
+            });
+
+            // Re-adding typing flash animation hook
+            field.addEventListener('input', () => {
+                wrap.classList.add('typing-flash');
+                setTimeout(() => wrap.classList.remove('typing-flash'), 150);
             });
         });
 
@@ -135,9 +140,9 @@
             });
         }
 
-        // --- YOUR SECURE ASYNC REGISTRATION PIPELINE LOOP ---
+        // --- AZFAR'S SECURE ASYNC REGISTRATION PIPELINE LOOP ---
         document.getElementById('registerForm').addEventListener('submit', function(e) {
-            e.preventDefault(); // Stop destructive standard page-reload form crashes
+            e.preventDefault(); 
 
             const fullname = document.getElementById('fullname').value.trim();
             const studentid = document.getElementById('studentid').value.trim();
@@ -172,7 +177,7 @@
             })
             .catch(err => {
                 console.error("Pipeline failure:", err);
-                alert("Failed to establish data network packets trace to app.py backend server.");
+                alert("Failed to establish data network packets trace to backend server.");
             });
         });
     </script>
