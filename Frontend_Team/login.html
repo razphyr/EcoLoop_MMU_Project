@@ -9,19 +9,16 @@
 </head>
 <body>
 
-    <!-- Ambient background orbs -->
     <div class="orb orb-1"></div>
     <div class="orb orb-2"></div>
     <div class="orb orb-3"></div>
 
-    <!-- Node Button — fixed top-left corner -->
     <a href="/" class="node-return-btn">
         <span class="node-dot"></span>
         <span class="node-label">NODE // RETURN HOME</span>
     </a>
 
     <div class="auth-card">
-        <!-- Decorative corner lines -->
         <span class="corner tl"></span>
         <span class="corner tr"></span>
         <span class="corner bl"></span>
@@ -33,7 +30,7 @@
             <p class="subtitle">FCI REPOSITORIES MARKETPLACE NETWORK</p>
         </div>
 
-        <form action="/login" method="POST" novalidate>
+        <form id="loginForm" novalidate>
             <div class="input-group">
                 <label for="username">MMU Email or Student ID</label>
                 <div class="input-wrap">
@@ -71,10 +68,11 @@
     </div>
 
     <script>
-        // Typing flash glow effect
+        // --- TEAMMATE'S INTERACTIVE UI ENHANCEMENTS ---
         const inputs = document.querySelectorAll('input');
         inputs.forEach(input => {
             const wrap = input.closest('.input-wrap');
+            if (!wrap) return;
 
             input.addEventListener('input', () => {
                 wrap.classList.add('typing-flash');
@@ -89,16 +87,57 @@
             });
         });
 
-        // Button ripple
+        // Button ripple interaction engine
         const btn = document.querySelector('.auth-btn');
-        btn.addEventListener('click', function(e) {
-            const ripple = document.createElement('span');
-            ripple.className = 'ripple';
-            const rect = btn.getBoundingClientRect();
-            ripple.style.left = (e.clientX - rect.left) + 'px';
-            ripple.style.top  = (e.clientY - rect.top)  + 'px';
-            btn.appendChild(ripple);
-            setTimeout(() => ripple.remove(), 600);
+        if (btn) {
+            btn.addEventListener('click', function(e) {
+                const ripple = document.createElement('span');
+                ripple.className = 'ripple';
+                const rect = btn.getBoundingClientRect();
+                ripple.style.left = (e.clientX - rect.left) + 'px';
+                ripple.style.top  = (e.clientY - rect.top)  + 'px';
+                btn.appendChild(ripple);
+                setTimeout(() => ripple.remove(), 600);
+            });
+        }
+
+        // --- AZFAR'S SECURE DATABASE SQL PIPELINE CONNECTORS ---
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault(); // Intercept browser reloads to save active session state parameters
+            
+            const usernameVal = document.getElementById('username').value.trim();
+            const passwordVal = document.getElementById('password').value;
+
+            if (!usernameVal || !passwordVal) {
+                alert("Please fill in all access verification fields.");
+                return;
+            }
+
+            fetch('/api/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username: usernameVal, password: passwordVal })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.error) { 
+                    alert(data.error); 
+                } else {
+                    // Lock authenticated identity variables securely into memory
+                    localStorage.setItem('currentUser', JSON.stringify(data.user));
+                    
+                    // Route node views based on verified SQLAlchemy model role flags
+                    if (data.user.role === 'admin') { 
+                        window.location.href = '/admin'; 
+                    } else { 
+                        window.location.href = '/student'; 
+                    }
+                }
+            })
+            .catch(err => {
+                console.error("Link link fault:", err);
+                alert("Failed to reach central app.py repository network. Ensure backend thread is running.");
+            });
         });
     </script>
 </body>

@@ -55,7 +55,7 @@ body {
     100% { background-position:   0% 50%; }
 }
 
-/* Ambient orbs */
+/* Ambient orbs layer mechanics */
 .orb {
     position: fixed;
     border-radius: 50%;
@@ -74,7 +74,7 @@ body {
     66%       { transform: translate(-30px, 40px) scale(0.94); }
 }
 
-/* Node button */
+/* Return Home Navigation control */
 .node-return-btn {
     position: fixed;
     top: 28px;
@@ -120,7 +120,7 @@ body {
     50%       { box-shadow: 0 0 14px var(--accent), 0 0 30px var(--accent-glow); }
 }
 
-/* Auth card */
+/* Primary Glassmorphic Form Shield */
 .auth-card {
     position: relative;
     z-index: 10;
@@ -147,7 +147,7 @@ body {
     to   { opacity: 1; transform: translateY(0) scale(1); }
 }
 
-/* Corner marks */
+/* Tech frame corner micro-accents */
 .corner {
     position: absolute;
     width: 14px; height: 14px;
@@ -158,7 +158,6 @@ body {
 .corner.bl { bottom: 14px; left: 14px;    border-right-color: transparent; border-top-color:    transparent; }
 .corner.br { bottom: 14px; right: 14px;   border-left-color:  transparent; border-top-color:    transparent; }
 
-/* Card header */
 .card-header {
     text-align: center;
     margin-bottom: 38px;
@@ -195,7 +194,7 @@ h2 {
     text-transform: uppercase;
 }
 
-/* Input groups */
+/* Form block components layout */
 .input-group {
     margin-bottom: 18px;
     animation: fieldIn 0.6s cubic-bezier(0.16,1,0.3,1) both;
@@ -219,6 +218,7 @@ label {
     transition: color 0.3s;
 }
 
+.input-group:visited label,
 .input-group:focus-within label {
     color: var(--accent);
 }
@@ -280,7 +280,7 @@ input::placeholder {
     font-weight: 300;
 }
 
-/* Submit button */
+/* System entrance transaction controller */
 .auth-btn {
     position: relative;
     overflow: hidden;
@@ -335,7 +335,6 @@ input::placeholder {
     to { transform: translate(-50%, -50%) scale(30); opacity: 0; }
 }
 
-/* Footer */
 .auth-footer {
     text-align: center;
     margin-top: 28px;
