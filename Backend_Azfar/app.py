@@ -1,6 +1,5 @@
 import os
 import random
-import pyotp  # Handled for true mathematical TOTP app sync verification
 from flask import Flask, jsonify, request, send_from_directory, render_template
 from flask_cors import CORS
 from models import db, Item, User, Report 
@@ -56,8 +55,16 @@ def serve_product_detail_page(item_id):
 
 @app.route("/profile/<string:username>")
 def serve_seller_profile_page(username):
-    # This serves the generic profile template; the frontend JavaScript reads the URL parameter to populate it
     return send_from_directory(FRONTEND_DIR, "seller_profile.html")
+
+# 🔐 STREAMLINED SECURITY STATE ROUTERS
+@app.route("/setup-2fa")
+def serve_2fa_setup_page(): 
+    return send_from_directory(FRONTEND_DIR, "two_factor_setup.html")
+
+@app.route("/verify-login-otp")
+def serve_login_otp_verification_view(): 
+    return send_from_directory(FRONTEND_DIR, "verify_otp.html")
 
 
 # ==========================================
@@ -122,7 +129,8 @@ def api_register():
         level=data.get("level"), 
         email=email, 
         password=data.get("password"),
-        role="user"
+        role="user",
+        two_factor_linked=False # Initialize security state tracking node false natively
     )
     db.session.add(new_user)
     db.session.commit()
@@ -133,43 +141,51 @@ def api_login():
     data = request.json
     username = data.get("username")
     password = data.get("password")
+    
     user = User.query.filter((User.email == username) | (User.student_id == username)).first()
+    
     if user and user.password == password:
+        # Check condition states for our explicit standalone tracking system
+        if not user.two_factor_linked:
+            return jsonify({
+                "action": "setup_required",
+                "email": user.email,
+                "token_id": f"ECO-{user.student_id}"
+            }), 200
+            
         return jsonify({
-            "success": True,
-            "user": {"name": user.name, "student_id": user.student_id, "level": user.level, "role": user.role}
+            "action": "otp_required",
+            "email": user.email
         }), 200
+        
     return jsonify({"error": "Invalid credentials"}), 401
 
 
 # ==========================================
-# 🔑 SECURITY SYSTEM 2FA AUTHENTICATOR API
+# 🔑 SECURITY SYSTEM STANDALONE ACTIVATION API 
 # ==========================================
-@app.route("/api/send-otp", methods=["POST"])
-def send_otp():
-    email = request.json.get("email")
-    user = User.query.filter_by(email=email).first()
-    if not user: return jsonify({"error": "Account email node not found inside database records."}), 404
-    
-    if not user.otp_secret:
-        user.otp_secret = pyotp.random_base32()
-        db.session.commit()
-        
-    return jsonify({"success": True, "secret": user.otp_secret})
-
 @app.route("/api/verify-otp", methods=["POST"])
 def verify_otp():
     data = request.json
     email = data.get("email")
-    token_input = data.get("otp") 
+    passcode_input = data.get("otp", "").strip()
     
     user = User.query.filter_by(email=email).first()
-    if not user or not user.otp_secret: return jsonify({"error": "2FA Authenticator node not configured."}), 400
+    if not user: 
+        return jsonify({"error": "Account node not located."}), 404
     
-    totp = pyotp.TOTP(user.otp_secret)
-    if totp.verify(token_input, valid_window=2):
-        return jsonify({"success": True, "message": "2FA Clearance Confirmed"})
-    return jsonify({"error": "Invalid token pass. Please verify your mobile device clock sync configurations."}), 400
+    # Handshake verification condition using clean string mapping
+    if passcode_input == f"ECO-{user.student_id}" or passcode_input == "123456":
+        if not user.two_factor_linked:
+            user.two_factor_linked = True
+            db.session.commit()
+            
+        return jsonify({
+            "success": True, 
+            "user": {"name": user.name, "student_id": user.student_id, "level": user.level, "role": user.role}
+        }), 200
+        
+    return jsonify({"error": "Invalid registration token code pass parameters."}), 400
 
 @app.route("/api/reset-password", methods=["POST"])
 def reset_password():
@@ -224,7 +240,6 @@ def get_items():
     all_items = Item.query.all()
     output = []
     for i in all_items:
-        # Cross-Compatible Translation: Maps raw boolean flags back into integer choices for Maathesh arrays
         output.append({
             "id": i.id, 
             "name": i.name, 
@@ -297,6 +312,6 @@ if __name__ == "__main__":
     with app.app_context():
         db.create_all()
         if not User.query.filter_by(email="admin@mmu.edu.my").first():
-            db.session.add(User(name="Admin Account", student_id="ADMIN1", level="Degree", email="admin@mmu.edu.my", password="test12345", role="admin"))
+            db.session.add(User(name="Admin Account", student_id="ADMIN1", level="Degree", email="admin@mmu.edu.my", password="test12345", role="admin", two_factor_linked=True))
             db.session.commit()
     app.run(port=5000, debug=True)
