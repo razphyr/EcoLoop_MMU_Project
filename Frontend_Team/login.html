@@ -3,32 +3,37 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EcoLoop // Faculty Login</title>
+    <title>Portal Login // EcoLoop</title>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:opsz,wght@9..40;300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="login_style.css">
 </head>
 <body>
 
     <a href="/" class="status-node">
         <span class="status-dot"></span>
-        Node // Return Home
+        <span>NODE // RETURN HOME</span>
     </a>
 
     <div class="auth-card">
-        <h1 class="main-title">Portal Login</h1>
-        <p class="subtitle">FCI Repositories Marketplace Network</p>
+        <div class="card-header">
+            <h2 class="main-title">Portal Login</h2>
+            <p class="subtitle">FCI REPOSITORIES MARKETPLACE NETWORK</p>
+        </div>
 
-        <form id="loginForm">
+        <form id="loginForm" novalidate>
             <div class="form-group">
                 <label for="username">MMU Email or Student ID</label>
-                <input type="text" id="username" name="username" class="input-control" placeholder="ID or @student.mmu.edu.my" required autocomplete="off">
+                <input id="username" class="input-control" name="username" type="text" placeholder="ID or @student.mmu.edu.my" required autocomplete="off">
             </div>
 
             <div class="form-group">
                 <label for="password">Password</label>
-                <input type="password" id="password" name="password" class="input-control" placeholder="••••••••" required>
+                <input id="password" class="input-control" name="password" type="password" placeholder="••••••••" required>
             </div>
 
-            <button type="submit" class="btn-login">Authorize Entry</button>
+            <button type="submit" class="btn-login">
+                AUTHORIZE ENTRY
+            </button>
         </form>
 
         <div class="auth-footer">
@@ -38,21 +43,32 @@
     </div>
 
     <script>
-        // Teammate's Reactive Real-Time Typing Transition Wave Mechanics
+        // --- TEAMMATE'S GLASSMORPHISM INTERACTIVE MOTIONS ---
         const inputs = document.querySelectorAll('.input-control');
-
         inputs.forEach(input => {
             input.addEventListener('input', () => {
                 input.classList.add('typing-flash');
-                setTimeout(() => {
-                    input.classList.remove('typing-flash');
-                }, 150);
+                setTimeout(() => input.classList.remove('typing-flash'), 150);
             });
         });
 
-        // Your Secure Production Database Session Handler Mapping
+        // Button ripple trigger engine
+        const btn = document.querySelector('.btn-login');
+        if (btn) {
+            btn.addEventListener('click', function(e) {
+                const ripple = document.createElement('span');
+                ripple.className = 'ripple';
+                const rect = btn.getBoundingClientRect();
+                ripple.style.left = (e.clientX - rect.left) + 'px';
+                ripple.style.top  = (e.clientY - rect.top)  + 'px';
+                btn.appendChild(ripple);
+                setTimeout(() => ripple.remove(), 600);
+            });
+        }
+
+        // --- AZFAR'S SECURE DATABASE SQL MAPPING LOOP ---
         document.getElementById('loginForm').addEventListener('submit', function(e) {
-            e.preventDefault();
+            e.preventDefault(); 
             
             const usernameVal = document.getElementById('username').value;
             const passwordVal = document.getElementById('password').value;
@@ -68,19 +84,11 @@
                     alert(data.error); 
                 } else {
                     localStorage.setItem('currentUser', JSON.stringify(data.user));
-                    
-                    // Route user nodes cleanly based on verified system permissions parameters
-                    if (data.user.role === 'admin') { 
-                        window.location.href = '/admin'; 
-                    } else { 
-                        window.location.href = '/student'; 
-                    }
+                    if (data.user.role === 'admin') { window.location.href = '/admin'; } 
+                    else { window.location.href = '/student'; }
                 }
             })
-            .catch(err => {
-                console.error("Authentication link fault:", err);
-                alert("Failed to reach the database server node.");
-            });
+            .catch(err => alert("Authentication node connection fault. Ensure app.py server is live."));
         });
     </script>
 </body>

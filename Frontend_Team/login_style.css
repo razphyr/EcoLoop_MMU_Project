@@ -121,7 +121,7 @@ body::after {
     transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
 }
 
-/* Base focus style when field is targeted */
+/* Focus state aura highlights */
 .input-control:focus {
     border-color: #e06343 !important; 
     background: rgba(5, 11, 20, 0.85) !important;
@@ -144,13 +144,12 @@ body::after {
     transition: none !important; 
 }
 
-/* Retains a warm steady circuit glow if input has alphanumeric text inside */
 .input-control:not(:placeholder-shown) {
     border-color: rgba(224, 99, 67, 0.5) !important;
     box-shadow: 0 0 10px rgba(224, 99, 67, 0.1);
 }
 
-/* 🧱 CORE BUTTON & FOOTER */
+/* 🧱 BUTTON & FOOTER NAVIGATION LAYOUTS */
 .btn-login {
     width: 100%;
     background: #e06343 !important; 
@@ -165,6 +164,8 @@ body::after {
     letter-spacing: 1.5px;
     margin-top: 10px;
     transition: all 0.2s ease;
+    position: relative;
+    overflow: hidden;
 }
 
 .btn-login:hover {
@@ -190,7 +191,7 @@ body::after {
 
 .auth-footer a:hover { color: #e06343 !important; text-decoration: underline; }
 
-/* 🚨 PREMIUM FLOATING NODE BADGE */
+/* 🚨 PREMIUM FLOATING HOME NODE BADGE */
 .status-node {
     position: absolute;
     top: 35px;
@@ -241,4 +242,6 @@ body::after {
 }
 
 @keyframes nodepulse { 0% { transform: scale(0.6); opacity: 0.8; } 50% { opacity: 0.4; } 100% { transform: scale(1.5); opacity: 0; } }
-.floating-bg { display: none !important; }
+
+.ripple { position: absolute; background: rgba(255, 255, 255, 0.3); border-radius: 50%; pointer-events: none; transform: scale(0); animation: rippleEffect 0.6s linear; }
+@keyframes rippleEffect { to { transform: scale(4); opacity: 0; } }
