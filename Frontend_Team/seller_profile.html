@@ -16,8 +16,11 @@
         .seller-info h1 { font-size: 28px; color: #fff; font-weight: 700; }
         .seller-info p { color: #878f82; font-size: 14px; margin-top: 4px; }
         
-        .btn-contact-node { position: absolute; right: 40px; top: 50%; transform: translateY(-50%); background: #7ec139; color: #0b0e09; border: none; padding: 12px 24px; border-radius: 12px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 8px; transition: all 0.2s; }
+        .contact-hub-actions { position: absolute; right: 40px; top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; gap: 10px; }
+        .btn-contact-node { background: #7ec139; color: #0b0e09; border: none; padding: 12px 20px; border-radius: 12px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: all 0.2s; text-decoration: none; font-size: 13.5px; width: 180px; }
         .btn-contact-node:hover { background: #96dd4f; box-shadow: 0 0 15px rgba(126, 193, 57, 0.3); }
+        .btn-contact-node.wa { background: #25d366; color: #fff; }
+        .btn-contact-node.wa:hover { background: #4ae082; box-shadow: 0 0 15px rgba(37, 211, 102, 0.3); }
 
         /* Inventory Showcase Sub-grid */
         .showcase-title { font-size: 20px; color: #fff; margin-bottom: 20px; text-align: left; font-weight: 600; border-bottom: 1px solid rgba(255,255,255,0.04); padding-bottom: 10px; }
@@ -59,9 +62,14 @@
             <div class="seller-info">
                 <h1 id="sellerHeaderName">Loading Profile Node...</h1>
                 <p id="sellerEmailNode">---@student.mmu.edu.my</p>
+                <p id="sellerPhoneNode" style="color:#878f82; font-size:14px; margin-top:2px;">Contact Num: Not Supplied</p>
                 <p style="margin-top: 6px; color: #7ec139; font-weight: 600;"><i class="ti ti-shield-check"></i> Verified FCI Student Seller</p>
             </div>
-            <button class="btn-contact-node" id="directMailBtn"><i class="ti ti-mail-fast"></i> Contact Seller</button>
+            
+            <div class="contact-hub-actions">
+                <button class="btn-contact-node" id="directMailBtn"><i class="ti ti-mail-fast"></i> Email Seller</button>
+                <a href="#" class="btn-contact-node wa" id="whatsAppBtn" style="display:none;" target="_blank"><i class="ti ti-brand-whatsapp"></i> Chat on WhatsApp</a>
+            </div>
         </div>
 
         <h3 class="showcase-title">Active Listings From This Node</h3>
@@ -69,7 +77,6 @@
     </div>
 
     <script>
-        // Extract username parameter string safely directly out of the URL path
         const urlSegments = window.location.pathname.split('/');
         const rawUsername = decodeURIComponent(urlSegments[urlSegments.length - 1]);
 
@@ -78,11 +85,26 @@
         const mockEmail = `${rawUsername.toLowerCase().replace(/\s+/g, '')}@student.mmu.edu.my`;
         document.getElementById('sellerEmailNode').textContent = mockEmail;
 
-        // Configure Mail Client Launcher button parameters
         document.getElementById('directMailBtn').onclick = function() {
             const subject = encodeURIComponent(`EcoLoop MMU - Marketplace Inquiry`);
             window.location.href = `mailto:${mockEmail}?subject=${subject}`;
         };
+
+        // NEW: Fetch phone numbers directly via your updated user metadata repository loop
+        function loadSellerProfileMetadata() {
+            fetch(`/api/user/${encodeURIComponent(rawUsername)}`)
+                .then(res => res.json())
+                .then(userProfile => {
+                    if (userProfile.phone) {
+                        const cleanPhone = userProfile.phone.replace(/[^0-9]/g, '');
+                        document.getElementById('sellerPhoneNode').textContent = `Mobile: ${userProfile.phone}`;
+                        
+                        const waBtn = document.getElementById('whatsAppBtn');
+                        waBtn.href = `https://wa.me/${cleanPhone}?text=${encodeURIComponent('Hello, I saw your asset listings listed on EcoLoop MMU!')}`;
+                        waBtn.style.display = 'flex';
+                    }
+                }).catch(err => console.error("Metadata Fetch Fault:", err));
+        }
 
         const EMOJI_MAP = { 'FCI': '💻' };
 
@@ -90,7 +112,6 @@
             fetch('/items')
                 .then(res => res.json())
                 .then(data => {
-                    // Gather only the items owned by this specific seller
                     const sellerItems = data.filter(i => i.student === rawUsername);
                     const container = document.getElementById('sellerItemsContainer');
 
@@ -103,7 +124,7 @@
                         const imagesList = item.image ? item.image.split('|||') : [];
                         const thumbnail = imagesList.length > 0 ? imagesList[0] : null;
                         const basePrice = parseFloat(item.price);
-                        const displayPrice = basePrice * 1.06; // Include platform service charge block
+                        const displayPrice = basePrice * 1.06;
 
                         return `
                         <div class="item-card" onclick="window.location.href='/product/${item.id}'" style="cursor:pointer; ${item.sold ? 'opacity: 0.5;' : ''}">
@@ -120,6 +141,7 @@
                 });
         }
 
+        loadSellerProfileMetadata();
         loadSellerInventory();
     </script>
 </body>

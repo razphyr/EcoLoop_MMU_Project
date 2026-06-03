@@ -185,7 +185,6 @@
         .role-badge.selling { background: rgba(16, 185, 129, 0.12); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.2); }
         .role-badge.acquired { background: rgba(186, 117, 23, 0.12); color: #ba7517; border: 1px solid rgba(186, 117, 23, 0.2); }
 
-        /* ✨ INTERACTIVE ACTION TOGGLES */
         .btn-status-toggle {
             background: rgba(16, 185, 129, 0.1);
             border: 1px solid #10b981;
@@ -217,6 +216,50 @@
             font-size: 15px;
             font-weight: 500;
         }
+        
+        /* ⚙️ INTEGRATED CUSTOM PARAMETER FORM CONTROLS */
+        .profile-control-box {
+            display: flex;
+            gap: 16px;
+            align-items: flex-end;
+            width: 100%;
+            margin-top: 14px;
+        }
+        .phone-field-wrap {
+            flex: 1;
+        }
+        .phone-field-wrap input {
+            width: 100%;
+            padding: 12px 16px;
+            background: rgba(5, 11, 20, 0.5);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            border-radius: 10px;
+            color: #fff;
+            outline: none;
+            font-size: 14px;
+            transition: border-color 0.2s;
+        }
+        .phone-field-wrap input:focus {
+            border-color: #10b981;
+            box-shadow: 0 0 10px rgba(16, 185, 129, 0.15);
+        }
+        .btn-profile-submit {
+            background: #10b981;
+            color: #081111;
+            border: none;
+            padding: 13px 24px;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 13px;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            transition: all 0.2s;
+        }
+        .btn-profile-submit:hover {
+            background: #34d399;
+            box-shadow: 0 0 15px rgba(16, 185, 129, 0.3);
+        }
     </style>
 </head>
 <body>
@@ -238,6 +281,22 @@
         <h2>Your Workspace History</h2>
         <p class="section-desc">Track items you are currently selling or assets you have acquired inside the node.</p>
         
+        <!-- 👤 PARAMETERS LOCK CARD BLOCK: Added settings form matching your structural specifications -->
+        <div class="ledger-card" style="margin-bottom: 35px; display: block;">
+            <h4 style="font-size: 1.2rem; color: #fff; font-weight: 600; display: flex; align-items: center; gap: 8px;">
+                <i class="ti ti-settings-automation" style="color: #10b981;"></i> Profile Contact Node Configuration
+            </h4>
+            <p style="font-size: 13.5px; color: #64748b; margin-top: 4px;">Supply your active mobile communications sequence below to append WhatsApp links for potential item buyers.</p>
+            
+            <div class="profile-control-box">
+                <div class="phone-field-wrap">
+                    <label style="display: block; font-size: 10px; font-weight: 700; text-transform: uppercase; color: #10b981; margin-bottom: 6px; letter-spacing: 0.5px;">WhatsApp Contact Number</label>
+                    <input type="text" id="userPhoneInput" placeholder="e.g. 60123456789">
+                </div>
+                <button class="btn-profile-submit" onclick="saveProfilePhoneParameters()">Update Node</button>
+            </div>
+        </div>
+
         <div id="dashboardContainer" class="grid-container"></div>
     </div>
 
@@ -249,7 +308,6 @@
             fetch('/items')
             .then(res => res.json())
             .then(data => {
-                // Filter listings matching your current active session username
                 const myTransactions = data.filter(i => i.student === user.name || i.buyer === user.name);
                 const container = document.getElementById('dashboardContainer');
                 
@@ -283,7 +341,6 @@
             }).catch(err => console.error("Database connection failure:", err));
         }
 
-        // COMPATIBILITY ACTION: Integrates backend parameters to flip availability state loops live
         function toggleListingState(id) {
             fetch(`/items/${id}`, {
                 method: 'PUT',
@@ -292,12 +349,40 @@
             })
             .then(res => res.json())
             .then(() => {
-                loadDashboardLedger(); // Refresh grid layout context instantly
+                loadDashboardLedger();
             })
             .catch(err => alert("Failed to communicate node state update to SQLAlchemy server."));
         }
+
+        // 📞 API INTEGRATION LINKS: Pulls current telephone value to populate text inputs on load loops
+        function fetchCurrentPhone() {
+            if (!user.name) return;
+            fetch(`/api/user/${encodeURIComponent(user.name)}`)
+                .then(res => res.json())
+                .then(data => {
+                    if (data.phone) { document.getElementById('userPhoneInput').value = data.phone; }
+                }).catch(err => console.error("Profile node parameter retrieval faulted:", err));
+        }
+
+        // 📞 API INTEGRATION LINKS: Commits form values to target database record fields dynamically
+        function saveProfilePhoneParameters() {
+            const phoneVal = document.getElementById('userPhoneInput').value.trim();
+            fetch(`/api/user/${encodeURIComponent(user.name)}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ phone: phoneVal })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) { 
+                    alert("Mobile verification data locked inside your profile repository successfully."); 
+                }
+            })
+            .catch(err => alert("Failed to commit profile updates to SQLAlchemy routing engine."));
+        }
         
         loadDashboardLedger();
+        fetchCurrentPhone();
     </script>
 </body>
 </html>

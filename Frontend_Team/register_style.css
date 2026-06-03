@@ -43,8 +43,6 @@ body {
     align-items: center;
     font-family: 'DM Sans', sans-serif;
     overflow: hidden;
-
-    /* 5-stop gradient — peach → pink → violet → navy → deep navy */
     background: linear-gradient(
         -40deg,
         var(--grad-peach),
@@ -105,7 +103,6 @@ body {
     top: 28px;
     left: 28px;
     z-index: 100;
-
     display: flex;
     align-items: center;
     gap: 10px;
@@ -155,31 +152,24 @@ body {
     -webkit-backdrop-filter: blur(24px);
     border: 1px solid rgba(255,255,255,0.07);
     border-radius: var(--radius-card);
-    padding: 52px 44px 44px;
+    padding: 42px 44px 44px; /* Shaved down top padding slightly to make room for password row */
     width: 100%;
     max-width: 440px;
-    box-shadow:
-        0 20px 60px rgba(0,0,0,0.6),
-        inset 0 1px 0 rgba(255,255,255,0.06);
-
+    box-shadow: 0 20px 60px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.06);
     animation: cardIn 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
     transition: transform 0.45s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.45s ease;
 }
 
 .auth-card:hover {
     transform: translateY(-6px) scale(1.015);
-    box-shadow:
-        0 30px 70px rgba(0,0,0,0.7),
-        0 0 40px rgba(242,106,69,0.06),
-        inset 0 1px 0 rgba(255,255,255,0.08);
+    box-shadow: 0 30px 70px rgba(0,0,0,0.7), 0 0 40px rgba(242,106,69,0.06), inset 0 1px 0 rgba(255,255,255,0.08);
 }
 
 @keyframes cardIn {
     from { opacity: 0; transform: translateY(30px) scale(0.97); }
-    to   { opacity: 1; transform: translateY(0)    scale(1); }
+    to   { opacity: 1; transform: translateY(0)  scale(1); }
 }
 
-/* ── Decorative corner marks ── */
 .corner {
     position: absolute;
     width: 14px; height: 14px;
@@ -190,11 +180,7 @@ body {
 .corner.bl { bottom: 14px; left: 14px;    border-right-color: transparent; border-top-color:    transparent; }
 .corner.br { bottom: 14px; right: 14px;   border-left-color:  transparent; border-top-color:    transparent; }
 
-/* ────────────────────────────── Card header ── */
-.card-header {
-    text-align: center;
-    margin-bottom: 38px;
-}
+.card-header { text-align: center; margin-bottom: 25px; }
 
 .eco-badge {
     display: inline-block;
@@ -206,17 +192,17 @@ body {
     border: 1px solid rgba(242,106,69,0.25);
     border-radius: 4px;
     padding: 4px 10px;
-    margin-bottom: 16px;
+    margin-bottom: 12px;
 }
 .eco-badge span { color: rgba(242,106,69,0.55); }
 
 h2 {
     font-family: 'DM Sans', sans-serif;
     font-weight: 700;
-    font-size: 2rem;
+    font-size: 1.8rem;
     color: var(--text-primary);
     letter-spacing: -0.5px;
-    margin-bottom: 6px;
+    margin-bottom: 4px;
 }
 
 .subtitle {
@@ -229,14 +215,9 @@ h2 {
 
 /* ────────────────────────────── Input groups ── */
 .input-group {
-    margin-bottom: 18px;
+    margin-bottom: 14px;
     animation: fieldIn 0.6s cubic-bezier(0.16,1,0.3,1) both;
 }
-.input-group:nth-child(1) { animation-delay: 0.1s; }
-.input-group:nth-child(2) { animation-delay: 0.17s; }
-.input-group:nth-child(3) { animation-delay: 0.24s; }
-.input-group:nth-child(4) { animation-delay: 0.31s; }
-
 @keyframes fieldIn {
     from { opacity: 0; transform: translateX(-10px); }
     to   { opacity: 1; transform: translateX(0); }
@@ -249,86 +230,68 @@ label {
     letter-spacing: 1.5px;
     color: var(--text-secondary);
     text-transform: uppercase;
-    margin-bottom: 9px;
+    margin-bottom: 6px;
     transition: color 0.3s;
 }
 
-.input-group:focus-within label {
-    color: var(--accent);
-}
+.input-group:focus-within label { color: var(--accent); }
 
-/* ── Input wrap (holds icon + field) ── */
 .input-wrap {
     position: relative;
     border: 1px solid var(--input-border);
     border-radius: var(--radius-input);
     background: var(--input-bg);
-    transition:
-        border-color 0.3s ease,
-        box-shadow 0.3s ease;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
-.input-wrap.active {
+.input-wrap.active,
+.input-wrap.typing-flash {
     border-color: var(--accent);
-    box-shadow:
-        0 0 0 3px var(--accent-glow),
-        0 0 20px rgba(242,106,69,0.15);
+    box-shadow: 0 0 0 3px var(--accent-glow), 0 0 20px rgba(242,106,69,0.15);
 }
 
-.input-wrap.filled {
-    border-color: rgba(242,106,69,0.3);
+.input-wrap.typing-flash {
+    box-shadow: 0 0 0 3px var(--accent-glow), 0 0 30px rgba(242,106,69,0.4);
+    transition: none;
 }
+
+.input-wrap.filled { border-color: rgba(242,106,69,0.3); }
 
 .input-icon {
     position: absolute;
-    left: 14px;
-    top: 50%;
+    left: 14px; top: 50%;
     transform: translateY(-50%);
-    width: 15px;
-    height: 15px;
+    width: 15px; height: 15px;
     color: var(--text-muted);
     pointer-events: none;
     transition: color 0.3s;
 }
 
-.input-wrap.active .input-icon {
-    color: var(--accent);
-}
+.input-wrap.active .input-icon { color: var(--accent); }
 
 input, select {
     width: 100%;
-    padding: 13px 14px 13px 40px;
+    padding: 11px 14px 11px 40px;
     background: transparent;
     border: none;
     border-radius: var(--radius-input);
     color: var(--text-primary);
     font-family: 'DM Sans', sans-serif;
-    font-size: 0.9rem;
+    font-size: 0.88rem;
     font-weight: 400;
     outline: none;
     appearance: none;
     -webkit-appearance: none;
 }
 
-input::placeholder {
-    color: var(--text-muted);
-    font-weight: 300;
-}
+input::placeholder { color: var(--text-muted); font-weight: 300; }
 
-/* ── Select specific ── */
-.select-wrap select {
-    cursor: pointer;
-}
-
-.select-wrap select option {
-    background: #0d1829;
-    color: var(--text-primary);
-}
+.select-wrap select { cursor: pointer; }
+.select-wrap select option { background: #0d1829; color: var(--text-primary); }
 
 .chevron {
     position: absolute;
-    right: 14px;
-    top: 50%;
+    right: 14px; top: 50%;
     transform: translateY(-50%);
     width: 14px; height: 14px;
     color: var(--text-muted);
@@ -346,8 +309,8 @@ input::placeholder {
     position: relative;
     overflow: hidden;
     width: 100%;
-    margin-top: 24px;
-    padding: 15px 24px;
+    margin-top: 18px;
+    padding: 14px 24px;
     background: linear-gradient(135deg, var(--accent) 0%, #e05535 100%);
     border: none;
     border-radius: var(--radius-input);
@@ -377,15 +340,9 @@ input::placeholder {
     box-shadow: 0 4px 12px rgba(242,106,69,0.3);
 }
 
-.btn-arrow {
-    width: 16px; height: 16px;
-    transition: transform 0.3s;
-}
-.auth-btn:hover .btn-arrow {
-    transform: translateX(4px);
-}
+.btn-arrow { width: 16px; height: 16px; transition: transform 0.3s; }
+.auth-btn:hover .btn-arrow { transform: translateX(4px); }
 
-/* Ripple */
 .ripple {
     position: absolute;
     border-radius: 50%;
@@ -395,14 +352,12 @@ input::placeholder {
     animation: rippleAnim 0.6s ease-out forwards;
     pointer-events: none;
 }
-@keyframes rippleAnim {
-    to { transform: translate(-50%, -50%) scale(30); opacity: 0; }
-}
+@keyframes rippleAnim { to { transform: translate(-50%, -50%) scale(30); opacity: 0; } }
 
 /* ────────────────────────────── Footer link ── */
 .login-link {
     text-align: center;
-    margin-top: 24px;
+    margin-top: 20px;
     font-size: 0.8rem;
     color: var(--text-muted);
     animation: fieldIn 0.6s cubic-bezier(0.16,1,0.3,1) 0.5s both;

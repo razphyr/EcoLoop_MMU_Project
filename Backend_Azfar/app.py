@@ -61,6 +61,34 @@ def serve_seller_profile_page(username):
 
 
 # ==========================================
+# 👤 USER ACCOUNT DATA SETTINGS MODULE API
+# ==========================================
+@app.route("/api/user/<string:username>", methods=["GET"])
+def get_user_profile_data(username):
+    user = User.query.filter_by(name=username).first()
+    if not user:
+        return jsonify({"error": "User profile node not located."}), 404
+    return jsonify({
+        "name": user.name,
+        "email": user.email,
+        "level": user.level,
+        "phone": user.phone if user.phone else ""
+    }), 200
+
+@app.route("/api/user/<string:username>", methods=["PUT"])
+def update_user_profile_data(username):
+    user = User.query.filter_by(name=username).first()
+    if not user:
+        return jsonify({"error": "User record missing."}), 404
+        
+    data = request.json or {}
+    user.phone = data.get("phone", "").strip()
+    db.session.commit()
+    
+    return jsonify({"success": True, "message": "Phone parameters synchronized successfully."}), 200
+
+
+# ==========================================
 # 🔍 ECOLOOP DYNAMIC JINJA2 SEARCH ENGINE
 # ==========================================
 @app.route("/search", methods=["GET"])
