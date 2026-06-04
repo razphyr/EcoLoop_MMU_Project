@@ -25,7 +25,6 @@
             padding: 30px;
         }
 
-        /* 🔥 BRAND-MATCHED RADIANT LIQUID BACKGROUND LAYER */
         body::before {
             content: "";
             position: fixed;
@@ -132,17 +131,23 @@
             padding: 24px;
             border-radius: 16px;
             display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 20px;
+            flex-direction: column;
+            gap: 16px;
             backdrop-filter: blur(16px);
             transition: all 0.3s ease;
         }
 
+        .card-main-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+            width: 100%;
+        }
+
         .ledger-card:hover {
-            transform: translateX(4px);
             border-color: rgba(16, 185, 129, 0.4);
-            box-shadow: 0 15px 35px rgba(0,0,0,0.4), 0 0 15px rgba(16, 185, 129, 0.1);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.4), 0 0 15px rgba(16, 185, 129, 0.05);
         }
 
         .item-details h4 {
@@ -150,6 +155,9 @@
             color: #ffffff;
             margin-bottom: 6px;
             font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
 
         .item-details p {
@@ -163,6 +171,7 @@
             flex-direction: column;
             align-items: flex-end;
             gap: 8px;
+            flex-shrink: 0;
         }
 
         .item-cost {
@@ -185,11 +194,41 @@
         .role-badge.selling { background: rgba(16, 185, 129, 0.12); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.2); }
         .role-badge.acquired { background: rgba(186, 117, 23, 0.12); color: #ba7517; border: 1px solid rgba(186, 117, 23, 0.2); }
 
+        .state-tag {
+            font-size: 10px;
+            font-weight: 800;
+            padding: 3px 8px;
+            border-radius: 4px;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+        .state-tag.available { background: rgba(16, 185, 129, 0.15); color: #10b981; border: 1px solid #10b981; }
+        .state-tag.pending { background: rgba(234, 179, 8, 0.15); color: #eab308; border: 1px solid #eab308; }
+        .state-tag.sold { background: rgba(239, 68, 68, 0.15); color: #ef4444; border: 1px solid #ef4444; }
+
+        /* 🎛️ SLIDE-DOWN ACTION DRAWER CONTROL INTERFACE */
+        .fulfillment-drawer {
+            display: none;
+            width: 100%;
+            background: rgba(5, 11, 10, 0.6);
+            border: 1px dashed rgba(16, 185, 129, 0.25);
+            padding: 20px;
+            border-radius: 12px;
+            margin-top: 5px;
+            animation: slideDownIn 0.25s ease-out;
+        }
+        .fulfillment-drawer.open { display: block; }
+
+        @keyframes slideDownIn {
+            from { opacity: 0; transform: translateY(-8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
         .btn-status-toggle {
             background: rgba(16, 185, 129, 0.1);
             border: 1px solid #10b981;
             color: #10b981;
-            padding: 6px 14px;
+            padding: 8px 16px;
             border-radius: 8px;
             cursor: pointer;
             font-size: 12px;
@@ -197,14 +236,26 @@
             text-transform: uppercase;
             letter-spacing: 0.5px;
             transition: all 0.2s ease;
-            margin-top: 4px;
         }
-
         .btn-status-toggle:hover {
             background: #10b981;
             color: #081111;
             box-shadow: 0 0 12px rgba(16, 185, 129, 0.4);
         }
+
+        .btn-submit-proof {
+            background: #10b981;
+            border: none;
+            color: #081111;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 13px;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-submit-proof:hover { background: #34d399; box-shadow: 0 0 15px rgba(16, 185, 129, 0.3); }
 
         .empty-state {
             text-align: center;
@@ -217,49 +268,12 @@
             font-weight: 500;
         }
         
-        /* ⚙️ INTEGRATED CUSTOM PARAMETER FORM CONTROLS */
-        .profile-control-box {
-            display: flex;
-            gap: 16px;
-            align-items: flex-end;
-            width: 100%;
-            margin-top: 14px;
-        }
-        .phone-field-wrap {
-            flex: 1;
-        }
-        .phone-field-wrap input {
-            width: 100%;
-            padding: 12px 16px;
-            background: rgba(5, 11, 20, 0.5);
-            border: 1px solid rgba(16, 185, 129, 0.2);
-            border-radius: 10px;
-            color: #fff;
-            outline: none;
-            font-size: 14px;
-            transition: border-color 0.2s;
-        }
-        .phone-field-wrap input:focus {
-            border-color: #10b981;
-            box-shadow: 0 0 10px rgba(16, 185, 129, 0.15);
-        }
-        .btn-profile-submit {
-            background: #10b981;
-            color: #081111;
-            border: none;
-            padding: 13px 24px;
-            border-radius: 10px;
-            font-weight: 700;
-            font-size: 13px;
-            cursor: pointer;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            transition: all 0.2s;
-        }
-        .btn-profile-submit:hover {
-            background: #34d399;
-            box-shadow: 0 0 15px rgba(16, 185, 129, 0.3);
-        }
+        .profile-control-box { display: flex; gap: 16px; align-items: flex-end; width: 100%; margin-top: 14px; }
+        .phone-field-wrap { flex: 1; }
+        .phone-field-wrap input { width: 100%; padding: 12px 16px; background: rgba(5, 11, 20, 0.5); border: 1px solid rgba(16, 185, 129, 0.2); border-radius: 10px; color: #fff; outline: none; font-size: 14px; }
+        .phone-field-wrap input:focus { border-color: #10b981; box-shadow: 0 0 10px rgba(16, 185, 129, 0.15); }
+        .btn-profile-submit { background: #10b981; color: #081111; border: none; padding: 13px 24px; border-radius: 10px; font-weight: 700; font-size: 13px; cursor: pointer; text-transform: uppercase; transition: all 0.2s; }
+        .btn-profile-submit:hover { background: #34d399; box-shadow: 0 0 15px rgba(16, 185, 129, 0.3); }
     </style>
 </head>
 <body>
@@ -281,7 +295,6 @@
         <h2>Your Workspace History</h2>
         <p class="section-desc">Track items you are currently selling or assets you have acquired inside the node.</p>
         
-        <!-- 👤 PARAMETERS LOCK CARD BLOCK: Added settings form matching your structural specifications -->
         <div class="ledger-card" style="margin-bottom: 35px; display: block;">
             <h4 style="font-size: 1.2rem; color: #fff; font-weight: 600; display: flex; align-items: center; gap: 8px;">
                 <i class="ti ti-settings-automation" style="color: #10b981;"></i> Profile Contact Node Configuration
@@ -318,43 +331,107 @@
 
                 container.innerHTML = myTransactions.map(i => {
                     const isOwner = i.student === user.name;
-                    const isSold = (i.sold === 1 || i.sold === true);
+                    const itemStatus = i.status || "available";
+                    const isSold = itemStatus === "sold";
                     
                     return `
-                    <div class="ledger-card" style="${isSold ? 'opacity: 0.75;' : ''}">
-                        <div class="item-details">
-                            <h4 style="${isSold ? 'text-decoration: line-through; color: #64748b;' : ''}">${i.name}</h4>
-                            <p>${i.description || 'No description provided.'}</p>
-                            <div style="margin-top: 10px; font-size: 12px; color: #64748b;">
-                                ${isOwner ? `<span>Listing Node Presence // <b style="color: ${isSold ? '#ef4444' : '#10b981'};">${isSold ? 'SOLD' : 'AVAILABLE'}</b></span>` : `<span>Acquired from: <b style="color: #10b981;">${i.student}</b></span>`}
+                    <div class="ledger-card" style="${isSold ? 'opacity: 0.75;' : ''}" id="card-${i.id}">
+                        <div class="card-main-content">
+                            <div class="item-details">
+                                <h4>
+                                    <span>${i.name}</span>
+                                    <span class="state-tag ${itemStatus}">${itemStatus}</span>
+                                </h4>
+                                <p>${i.description || 'No description provided.'}</p>
+                                <div style="margin-top: 10px; font-size: 12px; color: #64748b; display: flex; flex-direction: column; gap: 4px;">
+                                    ${isOwner ? `<span>Listing Status // Owner Ledger</span>` : `<span>Acquired from: <b style="color: #10b981;">${i.student}</b></span>`}
+                                    ${itemStatus === 'pending' ? 
+                                        (isOwner ? 
+                                            `<span>⚠️ Reserved by: <b style="color: #eab308;">${i.buyer}</b>. Action required to complete escrow clearance.</span>` : 
+                                            `<span>⏳ Order reserved. Meet up with <b>${i.student}</b> on campus to fulfill handover.</span>`
+                                        ) : ''
+                                    }
+                                    ${isSold && i.delivery_proof ? 
+                                        `<div><a href="${i.delivery_proof}" target="_blank" style="color: #10b981; font-weight: 600; text-decoration: underline;"><i class="ti ti-photo"></i> View Delivery Handover Proof Photo</a></div>` : ''
+                                    }
+                                </div>
+                            </div>
+                            <div class="metrics-block">
+                                <span class="item-cost">RM ${parseFloat(i.price).toFixed(2)}</span>
+                                <span class="role-badge ${isOwner ? 'selling' : 'acquired'}">
+                                    ${isOwner ? 'Selling' : 'Bought'}
+                                </span>
+                                ${isOwner && itemStatus === 'pending' ? `
+                                    <button class="btn-status-toggle" onclick="toggleFulfillmentDrawer(${i.id})">
+                                        <i class="ti ti-truck-delivery"></i> Fulfill Handover
+                                    </button>
+                                ` : ''}
                             </div>
                         </div>
-                        <div class="metrics-block">
-                            <span class="item-cost">RM ${parseFloat(i.price).toFixed(2)}</span>
-                            <span class="role-badge ${isOwner ? 'selling' : 'acquired'}">
-                                ${isOwner ? 'Selling Asset' : 'Acquired Asset'}
-                            </span>
-                            ${isOwner ? `<button class="btn-status-toggle" onclick="toggleListingState(${i.id})">Toggle Status</button>` : ''}
-                        </div>
+
+                        ${isOwner && itemStatus === 'pending' ? `
+                            <div class="fulfillment-drawer" id="drawer-${i.id}">
+                                <h5 style="color: #fff; font-size: 13px; font-weight: 700; margin-bottom: 4px; display: flex; align-items: center; gap: 6px;">
+                                    <i class="ti ti-camera" style="color: #10b981;"></i> Handover Validation Matrix
+                                </h5>
+                                <p style="font-size: 12px; color: #64748b; margin-bottom: 14px;">Please capture or select a physical image highlighting delivery confirmation with ${i.buyer} at the campus meetup location.</p>
+                                
+                                <div style="display: flex; flex-direction: column; gap: 12px;">
+                                    <input type="file" id="proofUpload-${i.id}" accept="image/*" style="font-size: 12px; color: #94a3b8;">
+                                    <div style="display: flex; gap: 8px; justify-content: flex-end;">
+                                        <button class="btn-submit-proof" onclick="submitHandoverProof(${i.id})">Complete & Release Escrow</button>
+                                    </div>
+                                </div>
+                            </div>
+                        ` : ''}
                     </div>`;
                 }).join('');
             }).catch(err => console.error("Database connection failure:", err));
         }
 
-        function toggleListingState(id) {
-            fetch(`/items/${id}`, {
-                method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ buyer: 'Modified by Listing Master' })
-            })
-            .then(res => res.json())
-            .then(() => {
-                loadDashboardLedger();
-            })
-            .catch(err => alert("Failed to communicate node state update to SQLAlchemy server."));
+        // Action function to expand/collapse the internal submission drawer
+        function toggleFulfillmentDrawer(itemId) {
+            const targetedDrawer = document.getElementById(`drawer-${itemId}`);
+            if (targetedDrawer) {
+                targetedDrawer.classList.toggle('open');
+            }
         }
 
-        // 📞 API INTEGRATION LINKS: Pulls current telephone value to populate text inputs on load loops
+        // Base64 file parsing script to transmit parameters safely to SQLite
+        function submitHandoverProof(itemId) {
+            const fileSelector = document.getElementById(`proofUpload-${itemId}`);
+            if (!fileSelector.files || fileSelector.files.length === 0) {
+                alert("Fulfillment Interrupted: Visual proof image attachment is mandatory.");
+                return;
+            }
+
+            const chosenFile = fileSelector.files[0];
+            const memoryStreamReader = new FileReader();
+            
+            memoryStreamReader.onloadend = function() {
+                const base64StringData = memoryStreamReader.result;
+                
+                fetch(`/items/${itemId}/confirm-sold`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ delivery_proof: base64StringData })
+                })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.error) {
+                        alert(data.error);
+                    } else {
+                        alert("Handover fully verified! The listing node has permanently moved to SOLD status matrix.");
+                        loadDashboardLedger();
+                    }
+                })
+                .catch(err => alert("Communication fault with SQLAlchemy root server pipeline."));
+            };
+            
+            memoryStreamReader.readAsDataURL(chosenFile);
+        }
+
+        // Profile API endpoints mappings
         function fetchCurrentPhone() {
             if (!user.name) return;
             fetch(`/api/user/${encodeURIComponent(user.name)}`)
@@ -364,7 +441,6 @@
                 }).catch(err => console.error("Profile node parameter retrieval faulted:", err));
         }
 
-        // 📞 API INTEGRATION LINKS: Commits form values to target database record fields dynamically
         function saveProfilePhoneParameters() {
             const phoneVal = document.getElementById('userPhoneInput').value.trim();
             fetch(`/api/user/${encodeURIComponent(user.name)}`, {
@@ -374,11 +450,9 @@
             })
             .then(res => res.json())
             .then(data => {
-                if (data.success) { 
-                    alert("Mobile verification data locked inside your profile repository successfully."); 
-                }
+                if (data.success) { alert("Mobile data locked inside your profile repository successfully."); }
             })
-            .catch(err => alert("Failed to commit profile updates to SQLAlchemy routing engine."));
+            .catch(err => alert("Failed to commit profile updates to routing engine."));
         }
         
         loadDashboardLedger();

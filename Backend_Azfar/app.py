@@ -14,6 +14,8 @@ app.config['SQLALCHEMY_DATABASE_URI'] = f"sqlite:///{os.path.join(BASE_DIR, 'eco
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db.init_app(app)
 
+LIVE_OTP_REGISTRY = {}
+
 # ==========================================
 # 🌐 HTML STATIC FILE PAGE ROUTERS
 # ==========================================
@@ -46,21 +48,16 @@ def serve_admin_panel():
     return send_from_directory(FRONTEND_DIR, "admin_panel.html")
 
 @app.route("/admin/items")
-def serve_admin_moderator_panel():
+def serve_admin_moderator_panel(): 
     return send_from_directory(FRONTEND_DIR, "admin_moderator.html")
 
 @app.route("/product/<int:item_id>")
-def serve_product_detail_page(item_id):
+def serve_product_detail_page(item_id): 
     return send_from_directory(FRONTEND_DIR, "product_detail.html")
 
 @app.route("/profile/<string:username>")
-def serve_seller_profile_page(username):
+def serve_seller_profile_page(username): 
     return send_from_directory(FRONTEND_DIR, "seller_profile.html")
-
-# 🔐 STREAMLINED SECURITY STATE ROUTERS
-@app.route("/setup-2fa")
-def serve_2fa_setup_page(): 
-    return send_from_directory(FRONTEND_DIR, "two_factor_setup.html")
 
 @app.route("/verify-login-otp")
 def serve_login_otp_verification_view(): 
@@ -73,7 +70,7 @@ def serve_login_otp_verification_view():
 @app.route("/api/user/<string:username>", methods=["GET"])
 def get_user_profile_data(username):
     user = User.query.filter_by(name=username).first()
-    if not user:
+    if not user: 
         return jsonify({"error": "User profile node not located."}), 404
     return jsonify({
         "name": user.name,
@@ -85,7 +82,7 @@ def get_user_profile_data(username):
 @app.route("/api/user/<string:username>", methods=["PUT"])
 def update_user_profile_data(username):
     user = User.query.filter_by(name=username).first()
-    if not user:
+    if not user: 
         return jsonify({"error": "User record missing."}), 404
         
     data = request.json or {}
@@ -109,28 +106,23 @@ def search_marketplace_items():
 
 
 # ==========================================
-# 🔐 ACCOUNT ACCESS & REGISTRATION GATEWAY API
+# 🔐 SECURE STREAMLINED IN-PLATFORM AUTHENTICATION API
 # ==========================================
 @app.route("/api/register", methods=["POST"])
 def api_register():
     data = request.json
     email = data.get("email", "").lower().strip()
     
-    if not (email.endswith("@student.mmu.edu.my") or email.endswith("@mmu.edu.my")):
-        return jsonify({"error": "Access Denied: Only official MMU email addresses are permitted to register."}), 403
+    if not (email.endswith("@student.mmu.edu.my") or email.endswith("@mmu.edu.my") or email.endswith("@gmail.com")):
+        return jsonify({"error": "Access Denied: Please use a valid email schema node."}), 403
     
     existing_user = User.query.filter((User.email == email) | (User.student_id == data.get("student_id"))).first()
-    if existing_user:
-        return jsonify({"error": "A profile node with this Email or Student ID already exists."}), 400
+    if existing_user: 
+        return jsonify({"error": "Profile records exist."}), 400
 
     new_user = User(
-        name=data.get("name"), 
-        student_id=data.get("student_id"),
-        level=data.get("level"), 
-        email=email, 
-        password=data.get("password"),
-        role="user",
-        two_factor_linked=False # Initialize security state tracking node false natively
+        name=data.get("name"), student_id=data.get("student_id"),
+        level=data.get("level"), email=email, password=data.get("password"), role="user"
     )
     db.session.add(new_user)
     db.session.commit()
@@ -145,47 +137,45 @@ def api_login():
     user = User.query.filter((User.email == username) | (User.student_id == username)).first()
     
     if user and user.password == password:
-        # Check condition states for our explicit standalone tracking system
-        if not user.two_factor_linked:
-            return jsonify({
-                "action": "setup_required",
-                "email": user.email,
-                "token_id": f"ECO-{user.student_id}"
-            }), 200
-            
+        generated_code = str(random.randint(100000, 999999))
+        LIVE_OTP_REGISTRY[user.email] = {"code": generated_code}
+        
+        print("\n" + "="*60)
+        print(f"🚨 CLiC SECURITY ENGINE BROADCAST")
+        print(f"📥 OTP DISPATCH TARGET: {user.email}")
+        print(f"🔢 SYSTEM PASSCODE TOKEN VALUE: {generated_code}")
+        print("="*60 + "\n")
+        
         return jsonify({
             "action": "otp_required",
-            "email": user.email
+            "email": user.email,
+            "simulated_token": generated_code,
+            "recipient_name": user.name.upper()
         }), 200
         
-    return jsonify({"error": "Invalid credentials"}), 401
+    return jsonify({"error": "Invalid login credentials configuration string."}), 401
 
 
-# ==========================================
-# 🔑 SECURITY SYSTEM STANDALONE ACTIVATION API 
-# ==========================================
 @app.route("/api/verify-otp", methods=["POST"])
 def verify_otp():
     data = request.json
     email = data.get("email")
-    passcode_input = data.get("otp", "").strip()
+    token_input = data.get("otp", "").strip()
     
     user = User.query.filter_by(email=email).first()
     if not user: 
-        return jsonify({"error": "Account node not located."}), 404
+        return jsonify({"error": "User account node missing."}), 404
+        
+    cached_record = LIVE_OTP_REGISTRY.get(email)
     
-    # Handshake verification condition using clean string mapping
-    if passcode_input == f"ECO-{user.student_id}" or passcode_input == "123456":
-        if not user.two_factor_linked:
-            user.two_factor_linked = True
-            db.session.commit()
-            
+    if cached_record and cached_record["code"] == token_input:
+        LIVE_OTP_REGISTRY.pop(email, None) 
         return jsonify({
             "success": True, 
             "user": {"name": user.name, "student_id": user.student_id, "level": user.level, "role": user.role}
         }), 200
         
-    return jsonify({"error": "Invalid registration token code pass parameters."}), 400
+    return jsonify({"error": "Invalid 6-digit verification code. Please check your simulated notification alert."}), 400
 
 @app.route("/api/reset-password", methods=["POST"])
 def reset_password():
@@ -206,30 +196,13 @@ def reset_password():
 # ==========================================
 @app.route("/api/reports", methods=["POST"])
 def add_report():
-    data = request.json
-    new_report = Report(
-        type=data.get("type"),
-        statement=data.get("statement"),
-        image=data.get("image"), 
-        user_name=data.get("user_name")
-    )
-    db.session.add(new_report)
+    db.session.add(Report(type=request.json.get("type"), statement=request.json.get("statement"), image=request.json.get("image"), user_name=request.json.get("user_name")))
     db.session.commit()
-    return jsonify({"message": "Report saved"}), 201
+    return jsonify({"message": "saved"}), 201
 
 @app.route("/api/reports", methods=["GET"])
 def get_reports():
-    all_reports = Report.query.all()
-    output = []
-    for r in all_reports:
-        output.append({
-            "id": r.id,
-            "type": r.type,
-            "statement": r.statement,
-            "image": r.image,
-            "user_name": r.user_name
-        })
-    return jsonify(output)
+    return jsonify([{"id":r.id, "type":r.type, "statement":r.statement, "image":r.image, "user_name":r.user_name} for r in Report.query.all()])
 
 
 # ==========================================
@@ -237,22 +210,21 @@ def get_reports():
 # ==========================================
 @app.route("/items", methods=["GET"])
 def get_items():
-    all_items = Item.query.all()
-    output = []
-    for i in all_items:
-        output.append({
-            "id": i.id, 
-            "name": i.name, 
-            "price": i.price, 
-            "student": i.student, 
-            "level": i.level if i.level else "Degree", 
-            "sold": 1 if i.sold else 0, 
-            "description": i.description if i.description else "Ecosystem trade asset.", 
-            "buyer": i.buyer,
-            "image": getattr(i, "image", None),
-            "faculty": i.faculty if i.faculty else "FCI"
-        })
-    return jsonify(output)
+    return jsonify([{
+        "id": i.id, 
+        "name": i.name, 
+        "price": i.price, 
+        "student": i.student, 
+        "level": i.level, 
+        "description": i.description, 
+        "buyer": i.buyer, 
+        "image": getattr(i, "image", None),
+        "faculty": i.faculty,
+        "fee_deducted": getattr(i, "fee_deducted", 0.0),
+        "final_payout": getattr(i, "final_payout", 0.0),
+        "status": getattr(i, "status", "available"),
+        "delivery_proof": getattr(i, "delivery_proof", None)
+    } for i in Item.query.all()]), 200
 
 @app.route("/items", methods=["POST"])
 def add_item():
@@ -261,57 +233,81 @@ def add_item():
         name=data.get("name"), 
         price=float(data.get("price")), 
         student=data.get("student"), 
-        faculty=data.get("faculty", "FCI"),
+        faculty=data.get("faculty", "FCI"), 
         level=data.get("level", "Degree"), 
-        description=data.get("description", "Ecosystem trade asset."),
-        image=data.get("image", None),
-        sold=False
+        description=data.get("description"), 
+        image=data.get("image"), 
+        status="available" 
     )
     db.session.add(new_item)
     db.session.commit()
-    
-    return jsonify({
-        "id": new_item.id,
-        "name": new_item.name,
-        "price": new_item.price,
-        "student": new_item.student,
-        "faculty": new_item.faculty,
-        "sold": 0
-    }), 201
+    return jsonify({"id": new_item.id, "name": new_item.name, "price": new_item.price, "status": new_item.status}), 201
 
+# 💳 RESERVATION ROUTE: Changes status from available -> pending
 @app.route("/items/<int:item_id>", methods=["PUT"])
 def toggle_item(item_id):
     item = Item.query.get(item_id)
-    if not item:
-        return jsonify({"error": "Item not found"}), 404
-        
+    if not item: 
+        return jsonify({"error": "Target marketplace asset missing."}), 404
+    
     data = request.json or {}
-    item.sold = not item.sold
-    item.buyer = data.get("buyer") if item.sold else None
+    buyer_name = data.get("buyer")
+    
+    if item.status != "available":
+        return jsonify({"error": "Item is already reserved or sold."}), 400
+        
+    item.status = "pending"
+    item.buyer = buyer_name
+    
+    # 6% Platform calculation logic parameters
+    item.fee_deducted = round(item.price * 0.06, 2)
+    item.final_payout = round(item.price - item.fee_deducted, 2)
+    
     db.session.commit()
     
     return jsonify({
-        "id": item.id,
-        "name": item.name,
-        "price": item.price,
-        "student": item.student,
-        "faculty": item.faculty if item.faculty else "FCI",
-        "sold": 1 if item.sold else 0
-    })
+        "success": True,
+        "id": item.id, 
+        "status": item.status,
+        "buyer": item.buyer,
+        "fee_charged": item.fee_deducted,
+        "net_payout": item.final_payout
+    }), 200
+
+# 📸 FULFILLMENT CLEARANCE: Changes status from pending -> sold
+@app.route("/items/<int:item_id>/confirm-sold", methods=["POST"])
+def confirm_item_sold(item_id):
+    item = Item.query.get(item_id)
+    if not item:
+        return jsonify({"error": "Item not found."}), 404
+        
+    data = request.json or {}
+    proof_image = data.get("delivery_proof")
+    
+    if not proof_image:
+        return jsonify({"error": "Visual picture proof is mandatory to release platform funds."}), 400
+        
+    if item.status != "pending":
+        return jsonify({"error": "Only pending transaction rows can be finalized."}), 400
+        
+    item.status = "sold"
+    item.delivery_proof = proof_image
+    
+    db.session.commit()
+    return jsonify({"success": True, "status": "sold"}), 200
 
 @app.route("/items/<int:item_id>", methods=["DELETE"])
 def delete_item(item_id):
     item = Item.query.get(item_id)
-    if item:
+    if item: 
         db.session.delete(item)
         db.session.commit()
     return jsonify({"message": "deleted"})
-
 
 if __name__ == "__main__":
     with app.app_context():
         db.create_all()
         if not User.query.filter_by(email="admin@mmu.edu.my").first():
-            db.session.add(User(name="Admin Account", student_id="ADMIN1", level="Degree", email="admin@mmu.edu.my", password="test12345", role="admin", two_factor_linked=True))
+            db.session.add(User(name="Admin Account", student_id="ADMIN1", level="Degree", email="admin@mmu.edu.my", password="test12345", role="admin"))
             db.session.commit()
     app.run(port=5000, debug=True)
