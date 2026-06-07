@@ -206,7 +206,7 @@
         .state-tag.pending { background: rgba(234, 179, 8, 0.15); color: #eab308; border: 1px solid #eab308; }
         .state-tag.sold { background: rgba(239, 68, 68, 0.15); color: #ef4444; border: 1px solid #ef4444; }
 
-        /* 🎛️ SLIDE-DOWN ACTION DRAWER CONTROL INTERFACE */
+        /* 🎛️ SLIDE-DOWN FULFILLMENT PANEL DRAWER */
         .fulfillment-drawer {
             display: none;
             width: 100%;
@@ -235,7 +235,6 @@
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 0.5px;
-            transition: all 0.2s ease;
         }
         .btn-status-toggle:hover {
             background: #10b981;
@@ -257,6 +256,24 @@
         }
         .btn-submit-proof:hover { background: #34d399; box-shadow: 0 0 15px rgba(16, 185, 129, 0.3); }
 
+        /* 🖼️ INLINE IMAGE PROOF THUMBNAIL WRAPPER */
+        .inline-proof-wrapper {
+            margin-top: 12px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 12px;
+            border-radius: 10px;
+            max-width: 250px;
+        }
+        .inline-proof-img {
+            width: 100%;
+            height: auto;
+            border-radius: 6px;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            display: block;
+            margin-top: 8px;
+        }
+
         .empty-state {
             text-align: center;
             padding: 60px;
@@ -265,14 +282,12 @@
             border: 1px dashed rgba(16, 185, 129, 0.2);
             border-radius: 16px;
             font-size: 15px;
-            font-weight: 500;
         }
         
         .profile-control-box { display: flex; gap: 16px; align-items: flex-end; width: 100%; margin-top: 14px; }
         .phone-field-wrap { flex: 1; }
         .phone-field-wrap input { width: 100%; padding: 12px 16px; background: rgba(5, 11, 20, 0.5); border: 1px solid rgba(16, 185, 129, 0.2); border-radius: 10px; color: #fff; outline: none; font-size: 14px; }
-        .phone-field-wrap input:focus { border-color: #10b981; box-shadow: 0 0 10px rgba(16, 185, 129, 0.15); }
-        .btn-profile-submit { background: #10b981; color: #081111; border: none; padding: 13px 24px; border-radius: 10px; font-weight: 700; font-size: 13px; cursor: pointer; text-transform: uppercase; transition: all 0.2s; }
+        .btn-profile-submit { background: #10b981; color: #081111; border: none; padding: 13px 24px; border-radius: 10px; font-weight: 700; font-size: 13px; cursor: pointer; text-transform: uppercase; }
         .btn-profile-submit:hover { background: #34d399; box-shadow: 0 0 15px rgba(16, 185, 129, 0.3); }
     </style>
 </head>
@@ -299,11 +314,11 @@
             <h4 style="font-size: 1.2rem; color: #fff; font-weight: 600; display: flex; align-items: center; gap: 8px;">
                 <i class="ti ti-settings-automation" style="color: #10b981;"></i> Profile Contact Node Configuration
             </h4>
-            <p style="font-size: 13.5px; color: #64748b; margin-top: 4px;">Supply your active mobile communications sequence below to append WhatsApp links for potential item buyers.</p>
+            <p style="font-size: 13.5px; color: #64748b; margin-top: 4px;">Supply your active mobile communications sequence below to keep profile parameters synchronized inside the central datastore grid ledger row space.</p>
             
             <div class="profile-control-box">
                 <div class="phone-field-wrap">
-                    <label style="display: block; font-size: 10px; font-weight: 700; text-transform: uppercase; color: #10b981; margin-bottom: 6px; letter-spacing: 0.5px;">WhatsApp Contact Number</label>
+                    <label style="display: block; font-size: 10px; font-weight: 700; text-transform: uppercase; color: #10b981; margin-bottom: 6px; letter-spacing: 0.5px;">Contact Sequence Number</label>
                     <input type="text" id="userPhoneInput" placeholder="e.g. 60123456789">
                 </div>
                 <button class="btn-profile-submit" onclick="saveProfilePhoneParameters()">Update Node</button>
@@ -330,12 +345,12 @@
                 }
 
                 container.innerHTML = myTransactions.map(i => {
-                    const isOwner = i.student === user.name;
+                    const isOwner = i.student === user.name; 
                     const itemStatus = i.status || "available";
                     const isSold = itemStatus === "sold";
                     
                     return `
-                    <div class="ledger-card" style="${isSold ? 'opacity: 0.75;' : ''}" id="card-${i.id}">
+                    <div class="ledger-card" style="${isSold ? 'opacity: 0.85; cursor: pointer;' : 'cursor: pointer;'}" id="card-${i.id}" onclick="toggleFulfillmentDrawer(${i.id})">
                         <div class="card-main-content">
                             <div class="item-details">
                                 <h4>
@@ -347,13 +362,20 @@
                                     ${isOwner ? `<span>Listing Status // Owner Ledger</span>` : `<span>Acquired from: <b style="color: #10b981;">${i.student}</b></span>`}
                                     ${itemStatus === 'pending' ? 
                                         (isOwner ? 
-                                            `<span>⚠️ Reserved by: <b style="color: #eab308;">${i.buyer}</b>. Action required to complete escrow clearance.</span>` : 
-                                            `<span>⏳ Order reserved. Meet up with <b>${i.student}</b> on campus to fulfill handover.</span>`
+                                            `<span>⚠️ Reserved by: <b style="color: #eab308;">${i.buyer}</b>. Click card or action button to upload proof image asset.</span>` : 
+                                            `<span>⏳ Order reserved. Meet up with <b>${i.student}</b> on campus to fulfill handover parameters.</span>`
                                         ) : ''
                                     }
-                                    ${isSold && i.delivery_proof ? 
-                                        `<div><a href="${i.delivery_proof}" target="_blank" style="color: #10b981; font-weight: 600; text-decoration: underline;"><i class="ti ti-photo"></i> View Delivery Handover Proof Photo</a></div>` : ''
-                                    }
+                                    
+                                    <!-- 🖼️ RESTORED INLINE PICTURE PROOF LOGIC (NO REDIRECTS) -->
+                                    ${isSold && i.delivery_proof ? `
+                                        <div class="inline-proof-wrapper" onclick="event.stopPropagation();">
+                                            <span style="font-size: 11px; color: #10b981; font-weight: 700; display: flex; align-items: center; gap: 4px;">
+                                                <i class="ti ti-shield-check"></i> Handover Verified Photo:
+                                            </span>
+                                            <img src="${i.delivery_proof}" class="inline-proof-img" />
+                                        </div>
+                                    ` : ''}
                                 </div>
                             </div>
                             <div class="metrics-block">
@@ -362,19 +384,20 @@
                                     ${isOwner ? 'Selling' : 'Bought'}
                                 </span>
                                 ${isOwner && itemStatus === 'pending' ? `
-                                    <button class="btn-status-toggle" onclick="toggleFulfillmentDrawer(${i.id})">
+                                    <button class="btn-status-toggle" onclick="event.stopPropagation(); toggleFulfillmentDrawer(${i.id})">
                                         <i class="ti ti-truck-delivery"></i> Fulfill Handover
                                     </button>
                                 ` : ''}
                             </div>
                         </div>
 
-                        ${isOwner && itemStatus === 'pending' ? `
-                            <div class="fulfillment-drawer" id="drawer-${i.id}">
+                        <!-- 🎛️ INLINE DROP-DOWN WORKFLOW ASSIGNMENT MATRIX -->
+                        <div class="fulfillment-drawer" id="drawer-${i.id}" onclick="event.stopPropagation();">
+                            ${isOwner && itemStatus === 'pending' ? `
                                 <h5 style="color: #fff; font-size: 13px; font-weight: 700; margin-bottom: 4px; display: flex; align-items: center; gap: 6px;">
                                     <i class="ti ti-camera" style="color: #10b981;"></i> Handover Validation Matrix
                                 </h5>
-                                <p style="font-size: 12px; color: #64748b; margin-bottom: 14px;">Please capture or select a physical image highlighting delivery confirmation with ${i.buyer} at the campus meetup location.</p>
+                                <p style="font-size: 12px; color: #64748b; margin-bottom: 14px;">Please select a physical image highlighting delivery confirmation with ${i.buyer} at the campus meetup location.</p>
                                 
                                 <div style="display: flex; flex-direction: column; gap: 12px;">
                                     <input type="file" id="proofUpload-${i.id}" accept="image/*" style="font-size: 12px; color: #94a3b8;">
@@ -382,22 +405,28 @@
                                         <button class="btn-submit-proof" onclick="submitHandoverProof(${i.id})">Complete & Release Escrow</button>
                                     </div>
                                 </div>
-                            </div>
-                        ` : ''}
+                            ` : `
+                                <h5 style="color: #fff; font-size: 13px; font-weight: 700; margin-bottom: 4px;">
+                                    <i class="ti ti-info-circle" style="color: #eab308;"></i> Status Details
+                                </h5>
+                                <p style="font-size: 12px; color: #94a3b8;">
+                                    ${itemStatus === 'pending' ? 
+                                        `This item is currently locked in escrow. Once you physically meet up with <b>${i.student}</b> and confirm the item handover, the seller will upload picture proof here to finalize the trade entry.` :
+                                        `This transaction has been successfully completed and verified directly inside the system's database schema registries.`
+                                    }
+                                </p>
+                            `}
+                        </div>
                     </div>`;
                 }).join('');
             }).catch(err => console.error("Database connection failure:", err));
         }
 
-        // Action function to expand/collapse the internal submission drawer
         function toggleFulfillmentDrawer(itemId) {
             const targetedDrawer = document.getElementById(`drawer-${itemId}`);
-            if (targetedDrawer) {
-                targetedDrawer.classList.toggle('open');
-            }
+            if (targetedDrawer) { targetedDrawer.classList.toggle('open'); }
         }
 
-        // Base64 file parsing script to transmit parameters safely to SQLite
         function submitHandoverProof(itemId) {
             const fileSelector = document.getElementById(`proofUpload-${itemId}`);
             if (!fileSelector.files || fileSelector.files.length === 0) {
@@ -427,11 +456,9 @@
                 })
                 .catch(err => alert("Communication fault with SQLAlchemy root server pipeline."));
             };
-            
             memoryStreamReader.readAsDataURL(chosenFile);
         }
 
-        // Profile API endpoints mappings
         function fetchCurrentPhone() {
             if (!user.name) return;
             fetch(`/api/user/${encodeURIComponent(user.name)}`)
@@ -450,7 +477,7 @@
             })
             .then(res => res.json())
             .then(data => {
-                if (data.success) { alert("Mobile data locked inside your profile repository successfully."); }
+                if (data.success) { alert("Data locked inside your profile repository successfully."); }
             })
             .catch(err => alert("Failed to commit profile updates to routing engine."));
         }
