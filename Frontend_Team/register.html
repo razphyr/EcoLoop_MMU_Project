@@ -5,180 +5,185 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Create Account // EcoLoop</title>
     <link rel="stylesheet" href="register_style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
 
+    <!-- Ambient orbs (same as login) -->
     <div class="orb orb-1"></div>
     <div class="orb orb-2"></div>
     <div class="orb orb-3"></div>
 
+    <!-- Return Home node button -->
     <a href="/" class="node-return-btn">
         <span class="node-dot"></span>
-        <span class="node-label">NODE // RETURN HOME</span>
+        Node // Return Home
     </a>
 
-    <div class="auth-card">
-        <span class="corner tl"></span>
-        <span class="corner tr"></span>
-        <span class="corner bl"></span>
-        <span class="corner br"></span>
+    <div class="register-container">
+        <div class="register-card">
 
-        <div class="card-header">
-            <div class="eco-badge">ECO<span>LOOP</span></div>
-            <h2>Create Account</h2>
-            <p class="subtitle">FCI REPOSITORIES MARKETPLACE NETWORK</p>
+            <!-- Corner accents -->
+            <span class="corner tl"></span>
+            <span class="corner tr"></span>
+            <span class="corner bl"></span>
+            <span class="corner br"></span>
+
+            <div class="card-header">
+                <div class="eco-badge">ECO<span>////</span>LOOP</div>
+                <h2>Create Account</h2>
+                <p class="subtitle">FCI Repositories Marketplace Network</p>
+            </div>
+
+            <div id="error-box" class="error-msg" style="display: none;"></div>
+
+            <form id="registerForm">
+
+                <!-- Full Name -->
+                <div class="input-group">
+                    <label for="name">Full Name</label>
+                    <div class="input-wrap" id="wrap-name">
+                        <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
+                        </svg>
+                        <input type="text" id="name" required placeholder="John Doe">
+                    </div>
+                </div>
+
+                <!-- Student ID -->
+                <div class="input-group">
+                    <label for="student_id">Student ID</label>
+                    <div class="input-wrap" id="wrap-student_id">
+                        <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 3H8a2 2 0 0 0-2 2v2h12V5a2 2 0 0 0-2-2z"/>
+                        </svg>
+                        <input type="text" id="student_id" required placeholder="1211101234">
+                    </div>
+                </div>
+
+                <!-- Academic Level -->
+                <div class="input-group">
+                    <label for="level">Academic Level</label>
+                    <div class="input-wrap" id="wrap-level">
+                        <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/>
+                        </svg>
+                        <select id="level" required>
+                            <option value="" disabled selected>Select your level</option>
+                            <option value="Foundation">Foundation</option>
+                            <option value="Diploma">Diploma</option>
+                            <option value="Degree">Bachelor's Degree</option>
+                            <option value="Postgraduate">Postgraduate</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Email -->
+                <div class="input-group">
+                    <label for="email">MMU Student Email</label>
+                    <div class="input-wrap" id="wrap-email">
+                        <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>
+                        </svg>
+                        <input type="email" id="email" required placeholder="username@student.mmu.edu.my">
+                    </div>
+                </div>
+
+                <!-- Password -->
+                <div class="input-group">
+                    <label for="password">Account Password</label>
+                    <div class="input-wrap" id="wrap-password">
+                        <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                        </svg>
+                        <input type="password" id="password" required placeholder="••••••••">
+                        <button type="button" class="toggle-pw" aria-label="Toggle password visibility" onclick="togglePassword()">
+                            <svg id="eye-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16">
+                                <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-register">Sign Up</button>
+            </form>
+
+            <div class="card-footer">
+                <p>Already have an account? <a href="/login">Log In</a></p>
+            </div>
         </div>
-
-        <form id="registerForm" novalidate>
-            <div class="input-group">
-                <label for="fullname">Full Name</label>
-                <div class="input-wrap">
-                    <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-                        <circle cx="12" cy="7" r="4"/>
-                    </svg>
-                    <input id="fullname" name="fullname" type="text" placeholder="John Doe" required autocomplete="name">
-                </div>
-            </div>
-
-            <div class="input-group">
-                <label for="studentid">Student ID</label>
-                <div class="input-wrap">
-                    <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                        <rect x="2" y="5" width="20" height="14" rx="2"/>
-                        <path d="M16 10h2M16 14h2M6 10h6M6 14h4"/>
-                    </svg>
-                    <input id="studentid" name="studentid" type="text" placeholder="1211101234" required autocomplete="off">
-                </div>
-            </div>
-
-            <div class="input-group">
-                <label for="level">Academic Level</label>
-                <div class="input-wrap select-wrap">
-                    <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                        <path d="M22 10v6M2 10l10-5 10 5-10 5z"/>
-                        <path d="M6 12v5c3 3 9 3 12 0v-5"/>
-                    </svg>
-                    <select id="level" name="level" required>
-                        <option value="" disabled selected>Select your level</option>
-                        <option value="Foundation">Foundation</option>
-                        <option value="Degree">Degree</option>
-                        <option value="Masters">Masters</option>
-                        <option value="PhD">PhD</option>
-                    </select>
-                    <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <polyline points="6 9 12 15 18 9"/>
-                    </svg>
-                </div>
-            </div>
-
-            <div class="input-group">
-                <label for="email">MMU Student Email</label>
-                <div class="input-wrap">
-                    <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                        <rect x="2" y="4" width="20" height="16" rx="2"/>
-                        <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>
-                    </svg>
-                    <input id="email" name="email" type="email" placeholder="username@student.mmu.edu.my" required autocomplete="email">
-                </div>
-            </div>
-
-            <div class="input-group">
-                <label for="password">Account Password</label>
-                <div class="input-wrap">
-                    <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                        <rect x="3" y="11" width="18" height="11" rx="2"/>
-                        <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
-                    </svg>
-                    <input id="password" name="password" type="password" placeholder="••••••••" required>
-                </div>
-            </div>
-
-            <button type="submit" class="auth-btn">
-                <span class="btn-text">AUTHORIZE ENTRY</span>
-                <svg class="btn-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                    <path d="M5 12h14M12 5l7 7-7 7"/>
-                </svg>
-            </button>
-        </form>
-
-        <p class="login-link">Already registered? <a href="/login">Sign in →</a></p>
     </div>
 
     <script>
-        // --- TEAMMATE'S INTERACTIVE UI ACTIONS ---
-        const fields = document.querySelectorAll('input, select');
+        // ── Typing flash + active glow ──────────────────────────
+        const fields = document.querySelectorAll('.input-group input, .input-group select');
+
         fields.forEach(field => {
             const wrap = field.closest('.input-wrap');
-            if (!wrap) return;
-            
+
             field.addEventListener('focus', () => wrap.classList.add('active'));
-            field.addEventListener('blur', () => {
+            field.addEventListener('blur',  () => {
                 wrap.classList.remove('active');
                 if (field.value) wrap.classList.add('filled');
-                else wrap.classList.remove('filled');
+                else             wrap.classList.remove('filled');
             });
-
-            // Re-adding typing flash animation hook
             field.addEventListener('input', () => {
                 wrap.classList.add('typing-flash');
                 setTimeout(() => wrap.classList.remove('typing-flash'), 150);
             });
         });
 
-        const btn = document.querySelector('.auth-btn');
-        if (btn) {
-            btn.addEventListener('click', function(e) {
-                const ripple = document.createElement('span');
-                ripple.className = 'ripple';
-                const rect = btn.getBoundingClientRect();
-                ripple.style.left = (e.clientX - rect.left) + 'px';
-                ripple.style.top  = (e.clientY - rect.top)  + 'px';
-                btn.appendChild(ripple);
-                setTimeout(() => ripple.remove(), 600);
-            });
+        // ── Password toggle ─────────────────────────────────────
+        function togglePassword() {
+            const pw = document.getElementById('password');
+            pw.type = pw.type === 'password' ? 'text' : 'password';
         }
 
-        // --- AZFAR'S SECURE ASYNC REGISTRATION PIPELINE LOOP ---
-        document.getElementById('registerForm').addEventListener('submit', function(e) {
-            e.preventDefault(); 
+        // ── Button ripple ────────────────────────────────────────
+        document.querySelector('.btn-register').addEventListener('click', function(e) {
+            const ripple = document.createElement('span');
+            ripple.classList.add('ripple');
+            const rect = this.getBoundingClientRect();
+            ripple.style.left = (e.clientX - rect.left) + 'px';
+            ripple.style.top  = (e.clientY - rect.top)  + 'px';
+            this.appendChild(ripple);
+            setTimeout(() => ripple.remove(), 700);
+        });
 
-            const fullname = document.getElementById('fullname').value.trim();
-            const studentid = document.getElementById('studentid').value.trim();
-            const level = document.getElementById('level').value;
-            const email = document.getElementById('email').value.trim();
-            const password = document.getElementById('password').value;
+        // ── Form submission ──────────────────────────────────────
+        document.getElementById('registerForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
 
-            if (!fullname || !studentid || !level || !email || !password) {
-                alert("All verification metrics fields must be completed.");
-                return;
-            }
+            const errorBox = document.getElementById('error-box');
+            errorBox.style.display = 'none';
 
-            fetch('/api/register', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    name: fullname,
-                    student_id: studentid,
-                    level: level,
-                    email: email,
-                    password: password
-                })
-            })
-            .then(res => res.json())
-            .then(data => {
-                if (data.error) {
-                    alert(data.error);
-                } else {
-                    alert("Account profile synchronized successfully inside EcoLoop database registries!");
+            const payload = {
+                name:       document.getElementById('name').value,
+                student_id: document.getElementById('student_id').value,
+                level:      document.getElementById('level').value,
+                email:      document.getElementById('email').value,
+                password:   document.getElementById('password').value
+            };
+
+            try {
+                const response = await fetch('/api/register', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    alert("Registration successful! Redirecting to login...");
                     window.location.href = '/login';
+                } else {
+                    errorBox.textContent = result.error || "An error occurred during registration.";
+                    errorBox.style.display = 'block';
                 }
-            })
-            .catch(err => {
-                console.error("Pipeline failure:", err);
-                alert("Failed to establish data network packets trace to backend server.");
-            });
+            } catch (err) {
+                errorBox.textContent = "Unable to connect to the authentication server.";
+                errorBox.style.display = 'block';
+            }
         });
     </script>
 </body>
