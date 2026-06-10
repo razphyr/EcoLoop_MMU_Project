@@ -64,19 +64,33 @@ def serve_login_otp_verification_view():
     return send_from_directory(FRONTEND_DIR, "verify_otp.html")
 
 
-# ==========================================
-# 👤 USER ACCOUNT DATA SETTINGS MODULE API
-# ==========================================
+# =======================================================
+# 👤 USER PROFILE SENSITIVE DATA MASK ENGINE API
+# =======================================================
 @app.route("/api/user/<string:username>", methods=["GET"])
 def get_user_profile_data(username):
-    user = User.query.filter_by(name=username).first()
-    if not user: 
+    user_record = User.query.filter_by(name=username).first()
+    if not user_record: 
         return jsonify({"error": "User profile node not located."}), 404
+        
+    requester_role = request.args.get("role", "user").lower().strip()
+    requester_name = request.args.get("requester", "").strip()
+
+    if requester_role == "admin" or requester_name == user_record.name:
+        return jsonify({
+            "name": user_record.name,
+            "email": user_record.email,
+            "level": user_record.level,
+            "phone": user_record.phone if user_record.phone else "Not Supplied",
+            "role": user_record.role
+        }), 200
+        
     return jsonify({
-        "name": user.name,
-        "email": user.email,
-        "level": user.level,
-        "phone": user.phone if user.phone else ""
+        "name": user_record.name,
+        "level": user_record.level,
+        "email": "[PROTECTED - ADMIN ONLY]",
+        "phone": "[PROTECTED - ADMIN ONLY]",
+        "role": user_record.role
     }), 200
 
 @app.route("/api/user/<string:username>", methods=["PUT"])
@@ -141,9 +155,9 @@ def api_login():
         LIVE_OTP_REGISTRY[user.email] = {"code": generated_code}
         
         print("\n" + "="*60)
-        print(f"🚨 CLiC SECURITY ENGINE")
+        print(f"🚨 CLiC SECURITY ENGINE BROADCAST")
         print(f"📥 OTP DISPATCH TARGET: {user.email}")
-        print(f"🔢 SYSTEM PASSCODE TOKEN: {generated_code}")
+        print(f"🔢 SYSTEM PASSCODE TOKEN VALUE: {generated_code}")
         print("="*60 + "\n")
         
         return jsonify({
@@ -164,18 +178,13 @@ def api_send_otp():
     data = request.json or {}
     email = data.get("email", "").lower().strip()
     
-    # 🔍 Verify user exists inside your SQLite records
     user = User.query.filter_by(email=email).first()
     if not user:
         return jsonify({"error": "FCI Identity Fault: This email destination does not exist."}), 444
 
-    # 🔢 Generate a fresh 6-digit secure token
     generated_otp = str(random.randint(100000, 999999))
-    
-    # 💾 Cache the code in memory for verification validation checks
     LIVE_OTP_REGISTRY[email] = {"code": generated_otp}
     
-    # 📟 GRAPHICAL TERMINAL BROADCAST INTERCEPT ENGINE
     print("\n" + "═"*60)
     print(" 🛡️  SECURITY MATRIX INTERCEPT: TWO-FACTOR VERIFICATION GENERATED")
     print(f" 📥 TARGET MAIL ADDRESS NODE : {email}")
@@ -185,9 +194,8 @@ def api_send_otp():
     return jsonify({
         "success": True, 
         "message": "Security token outputted to active server terminal lines.",
-        "secret": f"MMU-SECURE-SEED-{generated_otp[:3]}-{generated_otp[3:]}" # Formatted for your HTML secret key text holder block
+        "secret": f"MMU-SECURE-SEED-{generated_otp[:3]}-{generated_otp[3:]}"
     }), 200
-
 
 @app.route("/api/verify-otp", methods=["POST"])
 def verify_otp():
@@ -209,7 +217,6 @@ def verify_otp():
         }), 200
         
     return jsonify({"error": "Invalid 6-digit verification code. Please check your backend terminal console."}), 400
-
 
 @app.route("/api/reset-password", methods=["POST"])
 def reset_password():
@@ -257,7 +264,8 @@ def get_items():
         "fee_deducted": getattr(i, "fee_deducted", 0.0),
         "final_payout": getattr(i, "final_payout", 0.0),
         "status": getattr(i, "status", "available"),
-        "delivery_proof": getattr(i, "delivery_proof", None)
+        "delivery_proof": getattr(i, "delivery_proof", None),
+        "published_date": getattr(i, "published_date", "10-Jun-2026") # Injected current timeline payload stamp
     } for i in Item.query.all()]), 200
 
 @app.route("/items", methods=["POST"])
@@ -277,10 +285,6 @@ def add_item():
     db.session.commit()
     return jsonify({"id": new_item.id, "name": new_item.name, "price": new_item.price, "status": new_item.status}), 201
 
-
-# =========================================================
-#  💳 RESERVATION ROUTE: Changes status from available -> pending
-#==========================================================  
 @app.route("/items/<int:item_id>", methods=["PUT"])
 def toggle_item(item_id):
     item = Item.query.get(item_id)
@@ -296,7 +300,6 @@ def toggle_item(item_id):
     item.status = "pending"
     item.buyer = buyer_name
     
-    # 6% Platform calculation logic parameters
     item.fee_deducted = round(item.price * 0.06, 2)
     item.final_payout = round(item.price - item.fee_deducted, 2)
     
@@ -311,8 +314,6 @@ def toggle_item(item_id):
         "net_payout": item.final_payout
     }), 200
 
-
-# 📸 FULFILLMENT CLEARANCE: Changes status from pending -> sold
 @app.route("/items/<int:item_id>/confirm-sold", methods=["POST"])
 def confirm_item_sold(item_id):
     item = Item.query.get(item_id)
@@ -333,7 +334,6 @@ def confirm_item_sold(item_id):
     
     db.session.commit()
     return jsonify({"success": True, "status": "sold"}), 200
-
 
 @app.route("/items/<int:item_id>", methods=["DELETE"])
 def delete_item(item_id):

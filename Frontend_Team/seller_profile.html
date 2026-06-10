@@ -3,146 +3,192 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Seller Node Profile // EcoLoop</title>
-    <link rel="stylesheet" href="../style.css">
+    <title>FCI Student Profile Node // EcoLoop</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
     <style>
-        body { font-family: 'Segoe UI', sans-serif; background: #0b0e09; color: #f4f6f2; padding: 30px; min-height: 100vh; }
-        .profile-wrapper { max-width: 1000px; margin: 40px auto; }
-        
-        /* Profile Header Box */
-        .seller-identity-card { background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.05); padding: 40px; border-radius: 24px; display: flex; align-items: center; gap: 30px; margin-bottom: 40px; text-align: left; position: relative; backdrop-filter: blur(10px); }
-        .seller-avatar { width: 80px; height: 80px; background: rgba(126, 193, 57, 0.1); border: 1px solid #7ec139; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 36px; color: #7ec139; }
-        .seller-info h1 { font-size: 28px; color: #fff; font-weight: 700; }
-        .seller-info p { color: #878f82; font-size: 14px; margin-top: 4px; }
-        
-        .contact-hub-actions { position: absolute; right: 40px; top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; gap: 10px; }
-        .btn-contact-node { background: #7ec139; color: #0b0e09; border: none; padding: 12px 20px; border-radius: 12px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: all 0.2s; text-decoration: none; font-size: 13.5px; width: 180px; }
-        .btn-contact-node:hover { background: #96dd4f; box-shadow: 0 0 15px rgba(126, 193, 57, 0.3); }
-        .btn-contact-node.wa { background: #25d366; color: #fff; }
-        .btn-contact-node.wa:hover { background: #4ae082; box-shadow: 0 0 15px rgba(37, 211, 102, 0.3); }
+        /* ==========================================================
+            🌌 PREMIUM FOREST MATRIX THEME - ANONYMIZED PROFILE VIEW
+            🎨 Palette: Obsidian Jade | Emerald Glow | Muted Amber
+           ========================================================== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
 
-        /* Inventory Showcase Sub-grid */
-        .showcase-title { font-size: 20px; color: #fff; margin-bottom: 20px; text-align: left; font-weight: 600; border-bottom: 1px solid rgba(255,255,255,0.04); padding-bottom: 10px; }
-        .items-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 24px; }
-        
-        .item-card { background: rgba(20, 26, 17, 0.2); border: 1px solid rgba(255, 255, 255, 0.03); border-radius: 20px; overflow: hidden; display: flex; flex-direction: column; transition: transform 0.2s; }
-        .item-card:hover { transform: translateY(-4px); }
-        .card-visual { height: 160px; background: rgba(255, 255, 255, 0.01); display: flex; align-items: center; justify-content: center; font-size: 42px; border-bottom: 1px solid rgba(255,255,255,0.02); overflow: hidden; }
-        .product-img { width: 100%; height: 100%; object-fit: cover; }
-        .card-body { padding: 20px; flex-grow: 1; display: flex; flex-direction: column; text-align: left; }
-        .item-title { color: #fff; font-size: 18px; font-weight: 600; }
-        .item-desc { color: #878f82; font-size: 13.5px; margin-bottom: 15px; margin-top: 4px; }
-        .item-price { color: #ba7517; font-size: 20px; font-weight: 700; margin-top: auto; }
+        body {
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            overflow: hidden; 
+            position: relative;
+            background-color: #081111 !important; /* Deep obsidian jade base */
+        }
 
-        nav { display: flex; justify-content: space-between; align-items: center; padding: 20px 40px; background: rgba(17, 22, 15, 0.8); border-bottom: 1px solid rgba(255,255,255,0.03); backdrop-filter: blur(10px); margin: -30px -30px 0 -30px; }
-        nav ul { display: flex; list-style: none; gap: 24px; align-items: center; }
-        .status-node { display: flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 700; letter-spacing: 0.5px; }
-        .status-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            z-index: 1;
+            pointer-events: none;
+            background: radial-gradient(circle at 85% 50%, rgba(16, 185, 129, 0.3) 0%, transparent 55%),
+                        radial-gradient(circle at 15% 50%, rgba(31, 23, 38, 0.6) 0%, transparent 60%);
+            background-size: 150% 150%;
+        }
+
+        .profile-card {
+            background: rgba(11, 24, 23, 0.85) !important;
+            border: 1px solid rgba(16, 185, 129, 0.15);
+            padding: 40px;
+            border-radius: 24px;
+            max-width: 500px;
+            width: 100%;
+            backdrop-filter: blur(20px);
+            display: flex;
+            align-items: center;
+            gap: 28px;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.75);
+            z-index: 5;
+            position: relative;
+        }
+
+        .avatar-circle {
+            width: 84px;
+            height: 84px;
+            border-radius: 50%;
+            border: 2px solid #10b981;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 38px;
+            color: #10b981;
+            background: rgba(16, 185, 129, 0.05);
+            box-shadow: 0 0 15px rgba(16, 185, 129, 0.15);
+            flex-shrink: 0;
+        }
+
+        .profile-info {
+            text-align: left;
+            overflow: hidden;
+        }
+
+        .profile-info h2 {
+            font-size: 1.8rem;
+            color: #ffffff;
+            margin-bottom: 6px;
+            font-weight: 700;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            overflow: hidden;
+        }
+
+        /* 🔒 SECURE ANONYMOUS DISPLAY TAG */
+        .secure-notice {
+            font-size: 13px;
+            color: #94a3b8;
+            margin: 6px 0 16px 0;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-weight: 500;
+        }
+
+        .verified-badge {
+            color: #10b981;
+            font-size: 11px;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            background: rgba(16, 185, 129, 0.1);
+            padding: 4px 10px;
+            border-radius: 6px;
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            width: fit-content;
+        }
+
+        .btn-back {
+            margin-top: 18px;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            color: #64748b;
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            transition: all 0.2s ease;
+        }
+
+        .btn-back:hover {
+            border-color: #10b981;
+            color: #10b981;
+            background: rgba(16, 185, 129, 0.02);
+            box-shadow: 0 0 12px rgba(16, 185, 129, 0.1);
+        }
     </style>
 </head>
 <body>
 
-    <nav>
-        <div class="status-node" onclick="window.location.href='/student'" style="cursor:pointer">
-            <span class="status-dot" style="background:#7ec139"></span>
-            <span class="status-text">FCI SELLER VERIFICATION NODE</span>
+    <div class="profile-card">
+        <div class="avatar-circle">
+            <i class="ti ti-user-shield"></i>
         </div>
-        <ul>
-            <li onclick="window.location.href='/'" style="cursor:pointer">Home</li>
-            <li onclick="window.location.href='/student'" style="cursor:pointer">Explore</li>
-            <li onclick="window.location.href='/dashboard'" style="cursor:pointer">Dashboard</li>
-            <li onclick="localStorage.clear(); window.location.href='/'" style="cursor:pointer; color:#dc2626; font-weight:700;"><i class="ti ti-logout"></i> Logout</li>
-        </ul>
-    </nav>
-
-    <div class="profile-wrapper">
-        <div class="seller-identity-card">
-            <div class="seller-avatar"><i class="ti ti-user-circle"></i></div>
-            <div class="seller-info">
-                <h1 id="sellerHeaderName">Loading Profile Node...</h1>
-                <p id="sellerEmailNode">---@student.mmu.edu.my</p>
-                <p id="sellerPhoneNode" style="color:#878f82; font-size:14px; margin-top:2px;">Contact Num: Not Supplied</p>
-                <p style="margin-top: 6px; color: #7ec139; font-weight: 600;"><i class="ti ti-shield-check"></i> Verified FCI Student Seller</p>
+        <div class="profile-info">
+            <h2 id="profileName">Loading User...</h2>
+            
+            <!-- 🔒 PUBLIC ANONYMIZATION notice (Replaces raw phone / email displays) -->
+            <div class="secure-notice">
+                <i class="ti ti-lock-square-rounded" style="color: #ba7517; font-size: 16px;"></i>
+                <span>Contact Managed via EcoLoop Administrator</span>
             </div>
             
-            <div class="contact-hub-actions">
-                <button class="btn-contact-node" id="directMailBtn"><i class="ti ti-mail-fast"></i> Email Seller</button>
-                <a href="#" class="btn-contact-node wa" id="whatsAppBtn" style="display:none;" target="_blank"><i class="ti ti-brand-whatsapp"></i> Chat on WhatsApp</a>
+            <div class="verified-badge">
+                <i class="ti ti-shield-check"></i> Verified FCI Student Seller
             </div>
+            
+            <button class="btn-back" onclick="window.history.back()">
+                <i class="ti ti-arrow-left"></i> Return to Feed
+            </button>
         </div>
-
-        <h3 class="showcase-title">Active Listings From This Node</h3>
-        <div class="items-grid" id="sellerItemsContainer"></div>
     </div>
 
     <script>
-        const urlSegments = window.location.pathname.split('/');
-        const rawUsername = decodeURIComponent(urlSegments[urlSegments.length - 1]);
+        // Parse the target username string parameter dynamically out of browser URI paths
+        const pathSegments = window.location.pathname.split('/');
+        const targetUsername = decodeURIComponent(pathSegments[pathSegments.length - 1]);
 
-        document.getElementById('sellerHeaderName').textContent = rawUsername;
-        
-        const mockEmail = `${rawUsername.toLowerCase().replace(/\s+/g, '')}@student.mmu.edu.my`;
-        document.getElementById('sellerEmailNode').textContent = mockEmail;
+        function loadAnonymizedProfile() {
+            // Fetch configuration details cleanly passing current credentials context
+            const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+            const queryParams = `?role=${encodeURIComponent(currentUser.role || 'user')}&requester=${encodeURIComponent(currentUser.name || '')}`;
 
-        document.getElementById('directMailBtn').onclick = function() {
-            const subject = encodeURIComponent(`EcoLoop MMU - Marketplace Inquiry`);
-            window.location.href = `mailto:${mockEmail}?subject=${subject}`;
-        };
-
-        // NEW: Fetch phone numbers directly via your updated user metadata repository loop
-        function loadSellerProfileMetadata() {
-            fetch(`/api/user/${encodeURIComponent(rawUsername)}`)
-                .then(res => res.json())
-                .then(userProfile => {
-                    if (userProfile.phone) {
-                        const cleanPhone = userProfile.phone.replace(/[^0-9]/g, '');
-                        document.getElementById('sellerPhoneNode').textContent = `Mobile: ${userProfile.phone}`;
-                        
-                        const waBtn = document.getElementById('whatsAppBtn');
-                        waBtn.href = `https://wa.me/${cleanPhone}?text=${encodeURIComponent('Hello, I saw your asset listings listed on EcoLoop MMU!')}`;
-                        waBtn.style.display = 'flex';
-                    }
-                }).catch(err => console.error("Metadata Fetch Fault:", err));
-        }
-
-        const EMOJI_MAP = { 'FCI': '💻' };
-
-        function loadSellerInventory() {
-            fetch('/items')
+            fetch(`/api/user/${encodeURIComponent(targetUsername)}${queryParams}`)
                 .then(res => res.json())
                 .then(data => {
-                    const sellerItems = data.filter(i => i.student === rawUsername);
-                    const container = document.getElementById('sellerItemsContainer');
-
-                    if (sellerItems.length === 0) {
-                        container.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:50px; color:#878f82;">This student node does not have any active listings inside the repository.</div>`;
-                        return;
+                    if (data.error) {
+                        document.getElementById('profileName').textContent = "Profile Node Missing";
+                    } else {
+                        document.getElementById('profileName').textContent = data.name;
                     }
-
-                    container.innerHTML = sellerItems.map(item => {
-                        const imagesList = item.image ? item.image.split('|||') : [];
-                        const thumbnail = imagesList.length > 0 ? imagesList[0] : null;
-                        const basePrice = parseFloat(item.price);
-                        const displayPrice = basePrice * 1.06;
-
-                        return `
-                        <div class="item-card" onclick="window.location.href='/product/${item.id}'" style="cursor:pointer; ${item.sold ? 'opacity: 0.5;' : ''}">
-                            <div class="card-visual">
-                                ${thumbnail ? `<img src="${thumbnail}" class="product-img" />` : (EMOJI_MAP[item.faculty || 'FCI'] || '📦')}
-                            </div>
-                            <div class="card-body">
-                                <span class="item-title">${item.name}</span>
-                                <span class="item-desc">${item.description || 'No description provided.'}</span>
-                                <span class="item-price">RM ${displayPrice.toFixed(2)}</span>
-                            </div>
-                        </div>`;
-                    }).join('');
+                })
+                .catch(err => {
+                    console.error("Identity retrieval faulted:", err);
+                    document.getElementById('profileName').textContent = "Connection Error";
                 });
         }
 
-        loadSellerProfileMetadata();
-        loadSellerInventory();
+        loadAnonymizedProfile();
     </script>
 </body>
 </html>
