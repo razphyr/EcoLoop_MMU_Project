@@ -3,251 +3,366 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Asset Matrix Specifications // EcoLoop</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Marketplace Asset Node // EcoLoop</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+    
     <style>
-        body { font-family: 'Segoe UI', sans-serif; background: #0b0e09; color: #f4f6f2; padding: 30px; min-height: 100vh; }
-        .detail-wrapper { max-width: 950px; margin: 40px auto; display: grid; grid-template-columns: 1fr 1fr; gap: 40px; background: rgba(20, 26, 17, 0.2); border: 1px solid rgba(255, 255, 255, 0.03); padding: 40px; border-radius: 24px; backdrop-filter: blur(10px); position: relative; }
-        
-        /* 📸 MULTI-IMAGE GALLERY SYSTEM LAYOUT */
-        .gallery-container { display: flex; flex-direction: column; gap: 16px; }
-        .main-preview-box { height: 350px; background: rgba(255, 255, 255, 0.01); border: 1px solid rgba(255, 255, 255, 0.04); border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 64px; overflow: hidden; }
-        .main-preview-img { width: 100%; height: 100%; object-fit: cover; }
-        .thumbnails-row { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 5px; }
-        .thumb-node { width: 70px; height: 70px; background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.06); border-radius: 8px; cursor: pointer; overflow: hidden; flex-shrink: 0; opacity: 0.6; transition: all 0.2s; }
-        .thumb-node:hover, .thumb-node.active { opacity: 1; border-color: #7ec139; }
-        .thumb-node img { width: 100%; height: 100%; object-fit: cover; }
+        /* ==========================================================
+            🌌 PREMIUM FOREST MATRIX THEME - ITEM DETAILS VIEW
+            🎨 Palette: Obsidian Jade | Emerald Glow | Muted Amber
+           ========================================================== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
 
-        /* 📊 ASSET CONFIGURATION DETAILS */
-        .specs-panel { display: flex; flex-direction: column; text-align: left; }
-        .faculty-tag { align-self: flex-start; background: rgba(126, 193, 57, 0.1); border: 1px solid #7ec139; color: #7ec139; font-size: 11px; font-weight: 700; padding: 4px 12px; border-radius: 20px; text-transform: uppercase; letter-spacing: 0.5px; }
-        .product-title { font-size: 32px; color: #fff; font-weight: 700; margin-top: 14px; }
-        .seller-node { color: #878f82; font-size: 13.5px; margin-top: 4px; border-bottom: 1px solid rgba(255,255,255,0.04); padding-bottom: 16px; }
-        .product-desc { color: #d1d5db; font-size: 15px; line-height: 1.6; margin-top: 20px; margin-bottom: 25px; }
-        .price-badge { font-size: 28px; font-weight: 700; color: #ba7517; margin-bottom: 30px; display: flex; align-items: baseline; gap: 6px; }
-        .price-currency { font-size: 16px; color: #878f82; }
+        body {
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 40px;
+            background-color: #081111 !important; /* Deep obsidian jade base */
+            color: #f4f6f2;
+            position: relative;
+        }
 
-        /* 🧱 DEPLOY ACTION BUTTONS */
-        .btn-action-hub { display: flex; gap: 12px; margin-top: auto; }
-        .btn-core { flex: 1; display: flex; align-items: center; justify-content: center; gap: 8px; padding: 15px; border-radius: 12px; font-weight: 600; font-size: 15px; cursor: pointer; border: none; transition: all 0.2s; }
-        .btn-core.buy { background: #7ec139; color: #0b0e09; }
-        .btn-core.buy:hover:not(:disabled) { background: #96dd4f; box-shadow: 0 0 20px rgba(126, 193, 57, 0.3); }
-        .btn-core.back { background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.06); color: #fff; }
-        .btn-core.back:hover { background: rgba(255, 255, 255, 0.06); }
-        .btn-core:disabled { opacity: 0.4; cursor: not-allowed; background: #374151 !important; color: #9ca3af !important; border: none !important; }
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            z-index: 1;
+            pointer-events: none;
+            background: radial-gradient(circle at 80% 20%, rgba(16, 185, 129, 0.15) 0%, transparent 50%),
+                        radial-gradient(circle at 20% 80%, rgba(5, 150, 105, 0.1) 0%, transparent 50%);
+        }
 
-        /* 💳 DUITNOW PLATFORM ESCROW MODAL BOX */
-        .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(8px); z-index: 100; align-items: center; justify-content: center; }
-        .modal-overlay.open { display: flex; }
-        .payment-box { background: #11160f; border: 1px solid rgba(126, 193, 57, 0.2); width: 420px; padding: 30px; border-radius: 24px; text-align: center; box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
-        .payment-box h3 { font-size: 20px; color: #fff; margin-bottom: 5px; }
-        .payment-breakdown { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); border-radius: 12px; padding: 15px; margin: 20px 0; text-align: left; font-size: 14px; }
-        
-        .qr-placeholder { width: 180px; height: 180px; margin: 20px auto; background: #fff; border-radius: 16px; padding: 15px; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; border: 4px solid #ef4444; }
-        .qr-logo-text { font-weight: 900; color: #ef4444; font-size: 15px; letter-spacing: -0.5px; border: 2px solid #ef4444; padding: 2px 6px; border-radius: 4px; margin-bottom: 8px; text-transform: uppercase; }
-        
-        .seller-connect-card { display: flex; align-items: center; gap: 12px; background: rgba(126, 193, 57, 0.05); border: 1px dashed rgba(126, 193, 57, 0.2); border-radius: 12px; padding: 12px 16px; margin-top: 15px; text-align: left; }
-        .seller-connect-card i { font-size: 24px; color: #7ec139; }
+        .product-container {
+            max-width: 1000px;
+            width: 100%;
+            background: rgba(11, 24, 23, 0.85) !important;
+            border: 1px solid rgba(16, 185, 129, 0.15);
+            border-radius: 24px;
+            padding: 40px;
+            backdrop-filter: blur(20px);
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.75);
+            display: flex;
+            gap: 40px;
+            z-index: 5;
+        }
 
-        nav { display: flex; justify-content: space-between; align-items: center; padding: 20px 40px; background: rgba(17, 22, 15, 0.8); border-bottom: 1px solid rgba(255,255,255,0.03); backdrop-filter: blur(10px); margin: -30px -30px 0 -30px; }
-        nav nav ul { display: flex; list-style: none; gap: 24px; align-items: center; }
-        .status-node { display: flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 700; letter-spacing: 0.5px; }
-        .status-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+        .product-image-section {
+            flex: 1;
+            max-width: 450px;
+        }
+
+        .main-img-holder {
+            width: 100%;
+            height: 380px;
+            background: rgba(6, 13, 13, 0.8);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .main-img-holder img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .product-details-section {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .product-header h1 {
+            font-size: 2.2rem;
+            color: #ffffff;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .seller-meta {
+            font-size: 14px;
+            color: #94a3b8;
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 20px;
+            border-bottom: 1px solid rgba(16, 185, 129, 0.1);
+            padding-bottom: 15px;
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .seller-meta a {
+            color: #10b981;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .seller-meta a:hover {
+            text-decoration: underline;
+        }
+
+        .product-description {
+            font-size: 15px;
+            color: #94a3b8;
+            line-height: 1.6;
+            margin-bottom: 25px;
+            background: rgba(6, 13, 13, 0.4);
+            padding: 15px;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.03);
+        }
+
+        /* 🎚️ RESTRUCTURED TRANSPARENT PRICING CORE UI */
+        .pricing-breakdown-card {
+            background: rgba(6, 13, 13, 0.6);
+            border: 1px solid rgba(16, 185, 129, 0.15);
+            padding: 20px;
+            border-radius: 14px;
+            margin-bottom: 25px;
+        }
+
+        .price-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .price-row .label {
+            color: #878f82;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        /* ✨ FIXED: Kept clean, fully visible, and removed the line-through styling */
+        .price-row .value.original {
+            color: #e2e8f0;
+            font-size: 16px;
+            font-weight: 600;
+            opacity: 0.9;
+        }
+
+        .activation-statement {
+            color: #ba7517;
+            font-size: 12px;
+            font-weight: 600;
+            margin: 12px 0;
+            padding: 10px;
+            background: rgba(186, 117, 23, 0.04);
+            border-left: 3px solid #ba7517;
+            border-radius: 4px;
+            line-height: 1.4;
+        }
+
+        .final-price-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px dashed rgba(255, 255, 255, 0.08);
+            padding-top: 14px;
+            margin-top: 10px;
+        }
+
+        .final-price-row .label {
+            color: #ffffff;
+            font-size: 15px;
+            font-weight: 700;
+        }
+
+        .final-price-row .value.final {
+            font-size: 30px;
+            font-weight: 700;
+            color: #feaf17;
+            text-shadow: 0 2px 10px rgba(254, 175, 23, 0.15);
+        }
+
+        .btn-acquire {
+            width: 100%;
+            background: #10b981 !important;
+            color: #ffffff !important;
+            border: none;
+            padding: 16px;
+            font-size: 1rem;
+            font-weight: 700;
+            border-radius: 12px;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.2);
+        }
+
+        .btn-acquire:hover {
+            background: #059669 !important;
+            box-shadow: 0 0 25px rgba(16, 185, 129, 0.4);
+            transform: translateY(-1px);
+        }
+
+        .btn-back-nav {
+            background: transparent;
+            border: none;
+            color: #64748b;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 20px;
+            transition: color 0.15s ease;
+        }
+
+        .btn-back-nav:hover {
+            color: #10b981;
+        }
     </style>
 </head>
 <body>
 
-    <nav>
-        <div class="status-node" onclick="window.location.href='/student'" style="cursor:pointer">
-            <span class="status-dot" style="background:#7ec139"></span>
-            <span class="status-text">FCI LIVE PORTAL ENVIRONMENT</span>
-        </div>
-        <ul>
-            <li onclick="window.location.href='/'" style="cursor:pointer">Home</li>
-            <li onclick="window.location.href='/student'" style="cursor:pointer; color:#7ec139; font-weight:700;">Explore</li>
-            <li onclick="window.location.href='/dashboard'" style="cursor:pointer">Dashboard</li>
-            <li onclick="logout()" style="cursor:pointer; color:#dc2626; font-weight:700;"><i class="ti ti-logout"></i> Logout</li>
-        </ul>
-    </nav>
-
-    <div class="detail-wrapper">
-        <div class="gallery-container">
-            <div class="main-preview-box" id="mainPreview">📦</div>
-            <div class="thumbnails-row" id="thumbnailsContainer"></div>
-        </div>
-
-        <div class="specs-panel">
-            <span class="faculty-tag" id="facultyBadge">FCI Node</span>
-            <h1 class="product-title" id="prodTitle">Loading Asset Parameters...</h1>
-            
-            <div class="seller-node">Listed by: <span id="sellerName">---</span></div>
-            
-            <div class="product-desc" id="prodDesc">Decrypting dataset elements from central SQL repositories...</div>
-            
-            <div class="price-badge">
-                <span class="price-currency">RM</span>
-                <span id="prodPrice">0.00</span>
-            </div>
-
-            <div class="btn-action-hub">
-                <button class="btn-core back" onclick="window.location.href='/student'"><i class="ti ti-arrow-narrow-left"></i> Back to Node</button>
-                <button class="btn-core buy" id="purchaseBtn" onclick="openPaymentModal()"><i class="ti ti-shopping-cart"></i> Acquire Material</button>
+    <div class="product-container">
+        
+        <div class="product-image-section">
+            <button class="btn-back-nav" onclick="window.history.back()">
+                <i class="ti ti-arrow-left"></i> Back to Marketplace
+            </button>
+            <div class="main-img-holder">
+                <img id="productImg" src="placeholder.png" alt="Marketplace Asset">
             </div>
         </div>
-    </div>
 
-    <div class="modal-overlay" id="paymentModal">
-        <div class="payment-box">
-            <h3>Campus Meetup Checkout</h3>
-            <p style="font-size: 13px; color: #878f82; margin-top: 4px;">Secure asset reservation & platform processing fee clearance</p>
-            
-            <div class="payment-breakdown">
-                <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
-                    <span style="color:#878f82;">Item Base Price (Pay Seller COD):</span>
-                    <span style="font-weight:600; color:#fff;" id="breakdownBase">RM 0.00</span>
+        <div class="product-details-section">
+            <div>
+                <div class="product-header">
+                    <h1 id="productTitle">Loading Item Specification...</h1>
+                    
+                    <div class="seller-meta">
+                        <div class="meta-item">
+                            <i class="ti ti-user-circle"></i>
+                            <span>Listed by: <a href="#" id="sellerLink">Manager</a></span>
+                        </div>
+                        <!-- 📅 NEW: PUBLISHED DATE METADATA TAG NODE -->
+                        <div class="meta-item" style="color: #64748b;">
+                            <i class="ti ti-calendar-event" style="color: #ba7517;"></i>
+                            <span>Published: <span id="publishDateNode" style="color: #94a3b8; font-weight: 500;">Loading...</span></span>
+                        </div>
+                    </div>
                 </div>
-                <div style="display:flex; justify-content:space-between; color:#7ec139; font-weight:600;">
-                    <span>Platform Service Charge (6%):</span>
-                    <span id="breakdownFee">RM 0.00</span>
+
+                <p class="product-description" id="productDesc">
+                    Retrieving structural ledger information from the localized database row...
+                </p>
+            </div>
+
+            <div>
+                <div class="pricing-breakdown-card">
+                    <div class="price-row">
+                        <span class="label">Original Price:</span>
+                        <span class="value original" id="originalPriceNode">RM 0.00</span>
+                    </div>
+
+                    <div class="activation-statement">
+                        ⚠️ By using this website will charge 6% for website activation
+                    </div>
+
+                    <div class="final-price-row">
+                        <span class="label">Finalised Price:</span>
+                        <span class="value final" id="finalisedPriceNode">RM 0.00</span>
+                    </div>
                 </div>
+
+                <button class="btn-acquire" id="acquireBtn">
+                    <i class="ti ti-shopping-cart-discount"></i> Acquire Material
+                </button>
             </div>
 
-            <p style="font-size: 12px; font-weight:700; color:#ef4444; text-transform:uppercase; letter-spacing:0.5px;">Scan to clear 6% platform fee</p>
-            
-            <div class="qr-placeholder">
-                <div class="qr-logo-text">DuitNow</div>
-                <i class="ti ti-qrcode" style="font-size: 80px; color:#111;"></i>
-                <div style="font-size:10px; color:#555; font-weight:700; margin-top:5px;">ECOLOOP MMU ESCROW</div>
-            </div>
-
-            <div class="seller-connect-card">
-                <i class="ti ti-message-circle"></i>
-                <div>
-                    <div style="font-size:13px; font-weight:700; color:#fff;">Direct Peer Mail Connection</div>
-                    <div style="font-size:11px; color:#878f82;" id="mailPromptText">Click below to finalize meetup details.</div>
-                </div>
-            </div>
-
-            <div class="modal-buttons" style="display:flex; gap:10px; margin-top:25px;">
-                <button class="btn-modal cancel" style="flex:1; padding:12px; border-radius:10px; font-weight:600; background:rgba(255,255,255,0.04); color:#fff; border:none; cursor:pointer;" onclick="closePaymentModal()">Cancel</button>
-                <button class="btn-modal confirm" style="flex:1; padding:12px; border-radius:10px; font-weight:600; background:#7ec139; color:#0b0e09; border:none; cursor:pointer;" onclick="executeAcquisition()">Paid & Connect</button>
-            </div>
         </div>
     </div>
 
     <script>
-        const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
-        if (!currentUser.name) { window.location.href = '/login'; }
+        const pathParts = window.location.pathname.split('/');
+        const itemId = pathParts[pathParts.length - 1];
 
-        function logout() { localStorage.clear(); window.location.href = '/'; }
-
-        const urlSegments = window.location.pathname.split('/');
-        const itemId = urlSegments[urlSegments.length - 1];
-
-        let targetItem = null;
-        const EMOJI_MAP = { 'FCI': '💻' };
-
-        function loadItemContext() {
-            fetch('/items')
+        function fetchProductSpecificationNode() {
+            fetch(`/items`) 
                 .then(res => res.json())
-                .then(data => {
-                    targetItem = data.find(i => i.id == itemId);
-                    if (!targetItem) {
-                        alert("Asset vector missing inside server registries.");
-                        window.location.href = '/student';
+                .then(items => {
+                    const currentItem = items.find(i => i.id == itemId);
+                    if (!currentItem) {
+                        document.getElementById('productTitle').textContent = "Asset Node Missing";
                         return;
                     }
-                    renderProductData();
-                }).catch(err => console.error("API Fetch Fault:", err));
+
+                    document.getElementById('productTitle').textContent = currentItem.name;
+                    document.getElementById('productDesc').textContent = currentItem.description;
+                    document.getElementById('sellerLink').textContent = currentItem.student;
+                    document.getElementById('sellerLink').href = `/profile/${encodeURIComponent(currentItem.student)}`;
+                    
+                    // Inject the item's publication timeline stamp
+                    document.getElementById('publishDateNode').textContent = currentItem.published_date || "10-Jun-2026";
+                    
+                    if(currentItem.image) {
+                        document.getElementById('productImg').src = currentItem.image;
+                    }
+
+                    const rawBasePrice = parseFloat(currentItem.price);
+                    const feeSurcharge = rawBasePrice * 0.06;
+                    const computedTotal = rawBasePrice + feeSurcharge;
+
+                    document.getElementById('originalPriceNode').textContent = `RM ${rawBasePrice.toFixed(2)}`;
+                    document.getElementById('finalisedPriceNode').textContent = `RM ${computedTotal.toFixed(2)}`;
+
+                    if (currentItem.status !== "available") {
+                        const acquireBtn = document.getElementById('acquireBtn');
+                        acquireBtn.textContent = "Asset Escrow Locked";
+                        acquireBtn.style.background = "#334155";
+                        acquireBtn.style.cursor = "not-allowed";
+                        acquireBtn.disabled = true;
+                    }
+                })
+                .catch(err => console.error("Database tracking fault:", err));
         }
 
-        function renderProductData() {
-            const basePrice = parseFloat(targetItem.price);
-            const serviceCharge = basePrice * 0.06;
-            const totalPrice = basePrice + serviceCharge;
-
-            document.getElementById('prodTitle').textContent = targetItem.name;
+        document.getElementById('acquireBtn').addEventListener('click', function() {
+            const activeBuyer = JSON.parse(localStorage.getItem('currentUser') || '{}').name || "Anonymous Student";
             
-            document.getElementById('sellerName').innerHTML = `
-                <span onclick="window.location.href='/profile/' + encodeURIComponent('${targetItem.student}')" style="color: #7ec139; font-weight: 600; text-decoration: underline; cursor: pointer;">
-                    ${targetItem.student}
-                </span>`;
-            
-            document.getElementById('prodDesc').textContent = targetItem.description || "No product specifications metadata attached to this listing.";
-            document.getElementById('prodPrice').textContent = totalPrice.toFixed(2);
-            
-            document.getElementById('breakdownBase').textContent = `RM ${basePrice.toFixed(2)}`;
-            document.getElementById('breakdownFee').textContent = `RM ${serviceCharge.toFixed(2)}`;
-
-            const itemFaculty = targetItem.faculty || 'FCI';
-            document.getElementById('facultyBadge').textContent = `${itemFaculty} Node`;
-
-            const mainPreview = document.getElementById('mainPreview');
-            const thumbsContainer = document.getElementById('thumbnailsContainer');
-            const imagesList = targetItem.image ? targetItem.image.split('|||') : [];
-
-            if (imagesList.length > 0) {
-                mainPreview.innerHTML = `<img src="${imagesList[0]}" class="main-preview-img" id="activePreviewImg"/>`;
-                thumbsContainer.innerHTML = imagesList.map((imgSrc, index) => `
-                    <div class="thumb-node ${index === 0 ? 'active' : ''}" onclick="swapPreviewFrame('${imgSrc}', this)">
-                        <img src="${imgSrc}" />
-                    </div>
-                `).join('');
-            } else {
-                mainPreview.innerHTML = EMOJI_MAP[itemFaculty] || '📦';
-                thumbsContainer.innerHTML = '';
-            }
-
-            const purchaseBtn = document.getElementById('purchaseBtn');
-            if (targetItem.sold === 1 || targetItem.sold === true) {
-                purchaseBtn.textContent = "Sold Out / Deactivated";
-                purchaseBtn.disabled = true;
-                purchaseBtn.style.background = "#374151";
-            }
-        }
-
-        function swapPreviewFrame(imgSrc, thumbElement) {
-            document.getElementById('activePreviewImg').src = imgSrc;
-            document.querySelectorAll('.thumb-node').forEach(t => t.classList.remove('active'));
-            thumbElement.classList.add('active');
-        }
-
-        function openPaymentModal() { document.getElementById('paymentModal').classList.add('open'); }
-        function closePaymentModal() { document.getElementById('paymentModal').classList.remove('open'); }
-
-        function executeAcquisition() {
-            const purchaseBtn = document.getElementById('purchaseBtn');
-            purchaseBtn.disabled = true;
-            closePaymentModal();
-
-            fetch(`/items/${targetItem.id}`, {
+            fetch(`/items/${itemId}`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ buyer: currentUser.name })
+                body: JSON.stringify({ buyer: activeBuyer })
             })
             .then(res => res.json())
             .then(data => {
                 if (data.error) {
-                    alert("Transaction Registry Error: " + data.error);
-                    purchaseBtn.disabled = false;
+                    alert(data.error);
                 } else {
-                    const subject = encodeURIComponent(`EcoLoop MMU - Meetup Request: ${targetItem.name}`);
-                    const body = encodeURIComponent(`Hello ${targetItem.student},\n\nI have reserved your listing [${targetItem.name}] on EcoLoop for RM ${parseFloat(targetItem.price).toFixed(2)}.\n\nLet's arrange a physical meetup at the FCI Building to handle the handover.\n\nBest regards,\n${currentUser.name}`);
-                    const mockEmail = `${targetItem.student.toLowerCase().replace(/\s+/g, '')}@student.mmu.edu.my`;
-                    
-                    alert("Payment Confirmed! Initializing secure peer communications channel and synchronizing database schema indices.");
-                    window.open(`mailto:${mockEmail}?subject=${subject}&body=${body}`, '_blank');
+                    alert("Reservation Logged! Digital 6% escrow activated. Please meet the seller at FCI to settle the physical cash transaction.");
                     window.location.href = '/dashboard';
                 }
-            })
-            .catch(err => {
-                alert("Database Synchronization Intercepted. Verify app.py status.");
-                purchaseBtn.disabled = false;
             });
-        }
+        });
 
-        loadItemContext();
+        fetchProductSpecificationNode();
     </script>
 </body>
 </html>
