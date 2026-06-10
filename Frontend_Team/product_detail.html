@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
     <style>
         body { font-family: 'Segoe UI', sans-serif; background: #0b0e09; color: #f4f6f2; padding: 30px; min-height: 100vh; }
-        .detail-wrapper { max-width: 950px; margin: 40px auto; display: grid; grid-template-columns: 1fr 1fr; gap: 40px; background: rgba(20, 26, 17, 0.2); border: 1px solid rgba(255, 255, 255, 0.03); padding: 40px; border-radius: 24px; backdrop-filter: blur(10px); }
+        .detail-wrapper { max-width: 950px; margin: 40px auto; display: grid; grid-template-columns: 1fr 1fr; gap: 40px; background: rgba(20, 26, 17, 0.2); border: 1px solid rgba(255, 255, 255, 0.03); padding: 40px; border-radius: 24px; backdrop-filter: blur(10px); position: relative; }
         
         /* 📸 MULTI-IMAGE GALLERY SYSTEM LAYOUT */
         .gallery-container { display: flex; flex-direction: column; gap: 16px; }
@@ -37,8 +37,21 @@
         .btn-core.back:hover { background: rgba(255, 255, 255, 0.06); }
         .btn-core:disabled { opacity: 0.4; cursor: not-allowed; background: #374151 !important; color: #9ca3af !important; border: none !important; }
 
+        /* 💳 DUITNOW PLATFORM ESCROW MODAL BOX */
+        .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(8px); z-index: 100; align-items: center; justify-content: center; }
+        .modal-overlay.open { display: flex; }
+        .payment-box { background: #11160f; border: 1px solid rgba(126, 193, 57, 0.2); width: 420px; padding: 30px; border-radius: 24px; text-align: center; box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
+        .payment-box h3 { font-size: 20px; color: #fff; margin-bottom: 5px; }
+        .payment-breakdown { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); border-radius: 12px; padding: 15px; margin: 20px 0; text-align: left; font-size: 14px; }
+        
+        .qr-placeholder { width: 180px; height: 180px; margin: 20px auto; background: #fff; border-radius: 16px; padding: 15px; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; border: 4px solid #ef4444; }
+        .qr-logo-text { font-weight: 900; color: #ef4444; font-size: 15px; letter-spacing: -0.5px; border: 2px solid #ef4444; padding: 2px 6px; border-radius: 4px; margin-bottom: 8px; text-transform: uppercase; }
+        
+        .seller-connect-card { display: flex; align-items: center; gap: 12px; background: rgba(126, 193, 57, 0.05); border: 1px dashed rgba(126, 193, 57, 0.2); border-radius: 12px; padding: 12px 16px; margin-top: 15px; text-align: left; }
+        .seller-connect-card i { font-size: 24px; color: #7ec139; }
+
         nav { display: flex; justify-content: space-between; align-items: center; padding: 20px 40px; background: rgba(17, 22, 15, 0.8); border-bottom: 1px solid rgba(255,255,255,0.03); backdrop-filter: blur(10px); margin: -30px -30px 0 -30px; }
-        nav ul { display: flex; list-style: none; gap: 24px; align-items: center; }
+        nav nav ul { display: flex; list-style: none; gap: 24px; align-items: center; }
         .status-node { display: flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 700; letter-spacing: 0.5px; }
         .status-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
     </style>
@@ -67,9 +80,10 @@
         <div class="specs-panel">
             <span class="faculty-tag" id="facultyBadge">FCI Node</span>
             <h1 class="product-title" id="prodTitle">Loading Asset Parameters...</h1>
-            <div class="seller-node">Listed by: <span id="sellerName" style="color: #fff; font-weight: 600;">---</span></div>
             
-            <p class="product-desc" id="prodDesc">Decrypting dataset elements from central SQL repositories mapping infrastructure loops...</p>
+            <div class="seller-node">Listed by: <span id="sellerName">---</span></div>
+            
+            <div class="product-desc" id="prodDesc">Decrypting dataset elements from central SQL repositories...</div>
             
             <div class="price-badge">
                 <span class="price-currency">RM</span>
@@ -78,12 +92,51 @@
 
             <div class="btn-action-hub">
                 <button class="btn-core back" onclick="window.location.href='/student'"><i class="ti ti-arrow-narrow-left"></i> Back to Node</button>
-                <button class="btn-core buy" id="purchaseBtn" onclick="executeAcquisition()"><i class="ti ti-shopping-cart"></i> Acquire Material</button>
+                <button class="btn-core buy" id="purchaseBtn" onclick="openPaymentModal()"><i class="ti ti-shopping-cart"></i> Acquire Material</button>
             </div>
         </div>
     </div>
 
-  <script>
+    <div class="modal-overlay" id="paymentModal">
+        <div class="payment-box">
+            <h3>Campus Meetup Checkout</h3>
+            <p style="font-size: 13px; color: #878f82; margin-top: 4px;">Secure asset reservation & platform processing fee clearance</p>
+            
+            <div class="payment-breakdown">
+                <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
+                    <span style="color:#878f82;">Item Base Price (Pay Seller COD):</span>
+                    <span style="font-weight:600; color:#fff;" id="breakdownBase">RM 0.00</span>
+                </div>
+                <div style="display:flex; justify-content:space-between; color:#7ec139; font-weight:600;">
+                    <span>Platform Service Charge (6%):</span>
+                    <span id="breakdownFee">RM 0.00</span>
+                </div>
+            </div>
+
+            <p style="font-size: 12px; font-weight:700; color:#ef4444; text-transform:uppercase; letter-spacing:0.5px;">Scan to clear 6% platform fee</p>
+            
+            <div class="qr-placeholder">
+                <div class="qr-logo-text">DuitNow</div>
+                <i class="ti ti-qrcode" style="font-size: 80px; color:#111;"></i>
+                <div style="font-size:10px; color:#555; font-weight:700; margin-top:5px;">ECOLOOP MMU ESCROW</div>
+            </div>
+
+            <div class="seller-connect-card">
+                <i class="ti ti-message-circle"></i>
+                <div>
+                    <div style="font-size:13px; font-weight:700; color:#fff;">Direct Peer Mail Connection</div>
+                    <div style="font-size:11px; color:#878f82;" id="mailPromptText">Click below to finalize meetup details.</div>
+                </div>
+            </div>
+
+            <div class="modal-buttons" style="display:flex; gap:10px; margin-top:25px;">
+                <button class="btn-modal cancel" style="flex:1; padding:12px; border-radius:10px; font-weight:600; background:rgba(255,255,255,0.04); color:#fff; border:none; cursor:pointer;" onclick="closePaymentModal()">Cancel</button>
+                <button class="btn-modal confirm" style="flex:1; padding:12px; border-radius:10px; font-weight:600; background:#7ec139; color:#0b0e09; border:none; cursor:pointer;" onclick="executeAcquisition()">Paid & Connect</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
         const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
         if (!currentUser.name) { window.location.href = '/login'; }
 
@@ -101,7 +154,7 @@
                 .then(data => {
                     targetItem = data.find(i => i.id == itemId);
                     if (!targetItem) {
-                        alert("Asset vector node missing inside server registries.");
+                        alert("Asset vector missing inside server registries.");
                         window.location.href = '/student';
                         return;
                     }
@@ -111,26 +164,22 @@
 
         function renderProductData() {
             const basePrice = parseFloat(targetItem.price);
-            // DYNAMIC CALCULATION: 6% Platform Processing Fee
             const serviceCharge = basePrice * 0.06;
             const totalPrice = basePrice + serviceCharge;
 
             document.getElementById('prodTitle').textContent = targetItem.name;
-            document.getElementById('sellerName').textContent = targetItem.student;
             
-            // Appending a breakdown directly into the description area
-            document.getElementById('prodDesc').innerHTML = `
-                ${targetItem.description || "No description provided."}
-                <br><br>
-                <div style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); padding: 15px; border-radius: 10px; font-size: 13px;">
-                    <span style="color: #878f82;">Base Asset Price:</span> RM ${basePrice.toFixed(2)}<br>
-                    <span style="color: #7ec139;">EcoLoop Service Charge (6%):</span> RM ${serviceCharge.toFixed(2)}
-                </div>
-            `;
+            document.getElementById('sellerName').innerHTML = `
+                <span onclick="window.location.href='/profile/' + encodeURIComponent('${targetItem.student}')" style="color: #7ec139; font-weight: 600; text-decoration: underline; cursor: pointer;">
+                    ${targetItem.student}
+                </span>`;
             
-            // Display Total Price inside the main price badge
+            document.getElementById('prodDesc').textContent = targetItem.description || "No product specifications metadata attached to this listing.";
             document.getElementById('prodPrice').textContent = totalPrice.toFixed(2);
             
+            document.getElementById('breakdownBase').textContent = `RM ${basePrice.toFixed(2)}`;
+            document.getElementById('breakdownFee').textContent = `RM ${serviceCharge.toFixed(2)}`;
+
             const itemFaculty = targetItem.faculty || 'FCI';
             document.getElementById('facultyBadge').textContent = `${itemFaculty} Node`;
 
@@ -154,6 +203,7 @@
             if (targetItem.sold === 1 || targetItem.sold === true) {
                 purchaseBtn.textContent = "Sold Out / Deactivated";
                 purchaseBtn.disabled = true;
+                purchaseBtn.style.background = "#374151";
             }
         }
 
@@ -163,11 +213,13 @@
             thumbElement.classList.add('active');
         }
 
-        function executeAcquisition() {
-            const basePrice = parseFloat(targetItem.price);
-            const totalPrice = basePrice * 1.06; // Total including the 6% fee
+        function openPaymentModal() { document.getElementById('paymentModal').classList.add('open'); }
+        function closePaymentModal() { document.getElementById('paymentModal').classList.remove('open'); }
 
-            if (!confirm(`Confirm asset transfer routing for total of RM ${totalPrice.toFixed(2)} (includes 6% website service fee)?`)) return;
+        function executeAcquisition() {
+            const purchaseBtn = document.getElementById('purchaseBtn');
+            purchaseBtn.disabled = true;
+            closePaymentModal();
 
             fetch(`/items/${targetItem.id}`, {
                 method: 'PUT',
@@ -175,11 +227,24 @@
                 body: JSON.stringify({ buyer: currentUser.name })
             })
             .then(res => res.json())
-            .then(() => {
-                alert("Acquisition loop acknowledged! Asset locked under your profile node.");
-                window.location.href = '/student';
+            .then(data => {
+                if (data.error) {
+                    alert("Transaction Registry Error: " + data.error);
+                    purchaseBtn.disabled = false;
+                } else {
+                    const subject = encodeURIComponent(`EcoLoop MMU - Meetup Request: ${targetItem.name}`);
+                    const body = encodeURIComponent(`Hello ${targetItem.student},\n\nI have reserved your listing [${targetItem.name}] on EcoLoop for RM ${parseFloat(targetItem.price).toFixed(2)}.\n\nLet's arrange a physical meetup at the FCI Building to handle the handover.\n\nBest regards,\n${currentUser.name}`);
+                    const mockEmail = `${targetItem.student.toLowerCase().replace(/\s+/g, '')}@student.mmu.edu.my`;
+                    
+                    alert("Payment Confirmed! Initializing secure peer communications channel and synchronizing database schema indices.");
+                    window.open(`mailto:${mockEmail}?subject=${subject}&body=${body}`, '_blank');
+                    window.location.href = '/dashboard';
+                }
             })
-            .catch(err => alert("Acquisition pipeline connection timed out."));
+            .catch(err => {
+                alert("Database Synchronization Intercepted. Verify app.py status.");
+                purchaseBtn.disabled = false;
+            });
         }
 
         loadItemContext();

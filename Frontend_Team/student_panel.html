@@ -39,9 +39,12 @@
         .item-desc { color: #878f82; font-size: 13.5px; margin-bottom: 15px; margin-top: 4px; }
         .item-price { color: #ba7517; font-size: 20px; font-weight: 700; margin-top: auto; }
         .card-footer { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid rgba(255, 255, 255, 0.03); padding-top: 14px; margin-top: 12px; }
-        .status-badge { font-size: 12px; font-weight: bold; }
-        .status-badge.available { color: #7ec139; }
-        .status-badge.sold { color: #dc2626; }
+        
+        .status-badge { font-size: 11px; font-weight: bold; letter-spacing: 0.5px; text-transform: uppercase; padding: 2px 6px; border-radius: 4px; }
+        .status-badge.available { color: #7ec139; background: rgba(126, 193, 57, 0.1); }
+        .status-badge.pending { color: #eab308; background: rgba(234, 179, 8, 0.1); }
+        .status-badge.sold { color: #dc2626; background: rgba(220, 38, 38, 0.1); }
+        
         .btn-buy { background: transparent; border: 1px solid #7ec139; color: #7ec139; padding: 6px 14px; border-radius: 8px; cursor: pointer; font-weight: 600; }
         .btn-buy:hover { background: #7ec139; color: #0b0e09; }
         
@@ -110,6 +113,7 @@
         <div class="items-grid" id="itemsContainer"></div>
     </div>
 
+    <!-- Upload Modal Form -->
     <div class="modal-overlay" id="sellModal">
         <div class="modal-box">
             <h3>List FCI Material</h3>
@@ -134,6 +138,7 @@
         </div>
     </div>
 
+    <!-- Feedback Ticket Form -->
     <div class="modal-overlay" id="reportModal">
         <div class="modal-box">
             <h3>Help & Support Node</h3>
@@ -197,13 +202,14 @@
             const container = document.getElementById('itemsContainer');
             
             const filtered = marketplaceItems.filter(item => {
+                const itemStatus = item.status || "available";
                 const okSearch = !queryFilters.search || item.name.toLowerCase().includes(queryFilters.search);
                 const okMin = !queryFilters.min || item.price >= parseFloat(queryFilters.min);
                 const okMax = !queryFilters.max || item.price <= parseFloat(queryFilters.max);
                 
                 let passBase = true;
-                if (activeFilter === 'Available') passBase = !item.sold;
-                else if (activeFilter === 'Sold') passBase = item.sold;
+                if (activeFilter === 'Available') passBase = (itemStatus === 'available');
+                else if (activeFilter === 'Sold') passBase = (itemStatus === 'sold');
                 else if (activeFilter !== 'All') passBase = (item.faculty === activeFilter);
                 
                 return okSearch && okMin && okMax && passBase;
@@ -217,23 +223,31 @@
             }
 
             container.innerHTML = filtered.map(item => {
+                const itemStatus = item.status || "available";
                 const imagesList = item.image ? item.image.split('|||') : [];
                 const thumbnail = imagesList.length > 0 ? imagesList[0] : null;
                 const displayFaculty = item.faculty ? item.faculty : 'FCI';
 
+                // 🔒 PENDING/SOLD items display in feed but are locked from clicks
+                const isAvailable = itemStatus === 'available';
+                const cardAction = isAvailable ? `onclick="window.location.href='/product/${item.id}'"` : '';
+
                 return `
-                <div class="item-card" onclick="window.location.href='/product/${item.id}'" style="cursor:pointer; ${item.sold ? 'opacity: 0.5;' : ''}">
+                <div class="item-card" ${cardAction} style="${!isAvailable ? 'opacity: 0.6; cursor: default;' : 'cursor: pointer;'}">
                     <div class="card-visual">
                         ${thumbnail ? `<img src="${thumbnail}" class="product-img" />` : (EMOJI_MAP[displayFaculty] || '📦')}
                     </div>
                     <div class="card-body">
                         <span class="item-title">${item.name}</span>
-                        <span style="font-size:11px; color:#7ec139; font-weight:700; margin-top:3px; text-transform:uppercase;">${displayFaculty} Node</span>
+                        <div style="font-size:12px; color:#878f82; margin: 4px 0 8px 0;">
+                            Listed by: <span onclick="if(${isAvailable}) { event.stopPropagation(); window.location.href='/profile/' + encodeURIComponent('${item.student}') }" style="${isAvailable ? 'color: #7ec139; text-decoration: underline; cursor: pointer;' : 'color: #878f82;'} font-weight: 700;">${item.student}</span> · <span style="text-transform:uppercase; font-weight:600;">${displayFaculty} Node</span>
+                        </div>
                         <span class="item-desc">${item.description}</span>
                         <span class="item-price">RM ${parseFloat(item.price).toFixed(2)}</span>
                         <div class="card-footer">
-                            <span class="status-badge ${item.sold ? 'sold' : 'available'}">${item.sold ? 'Sold' : 'Available'}</span>
-                            ${item.sold ? '' : `<button class="btn-buy" onclick="event.stopPropagation(); purchaseItem(${item.id})">Buy</button>`}
+                            <span class="status-badge ${itemStatus}">${itemStatus.toUpperCase()}</span>
+                            <!-- 🚫 Hide buy button entirely if reserved/sold -->
+                            ${isAvailable ? `<button class="btn-buy" onclick="event.stopPropagation(); purchaseItem(${item.id})">Buy</button>` : ''}
                         </div>
                     </div>
                 </div>`;
@@ -242,12 +256,12 @@
 
         function updateStats() {
             document.getElementById('s-total').textContent = marketplaceItems.length;
-            document.getElementById('s-avail').textContent = marketplaceItems.filter(i => !i.sold).length;
-            document.getElementById('s-sold').textContent = marketplaceItems.filter(i => i.sold).length;
+            document.getElementById('s-avail').textContent = marketplaceItems.filter(i => (i.status || "available") === 'available').length;
+            document.getElementById('s-sold').textContent = marketplaceItems.filter(i => (i.status || "available") === 'sold').length;
         }
 
         function purchaseItem(id) {
-            fetch(`/items/${id}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ buyer: currentUser.name }) }).then(() => { loadMarketplace(); });
+            window.location.href = `/product/${id}`;
         }
 
         document.getElementById('reportForm').addEventListener('submit', function(e) {

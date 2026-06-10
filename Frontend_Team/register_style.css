@@ -1,30 +1,36 @@
 @import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&display=swap');
 
+/* ============================================================
+   ECOLOOP — REGISTER PAGE
+   Palette mirrors login_style.css exactly
+   ============================================================ */
+
 :root {
-    --grad-peach:    #e8845a;
-    --grad-pink:     #c0506e;
-    --grad-violet:   #5c2d6e;
-    --grad-navy-mid: #0d1829;
-    --grad-navy:     #050c18;
+    --grad-peach:     #e8845a;
+    --grad-pink:      #c0506e;
+    --grad-violet:    #5c2d6e;
+    --grad-navy-mid:  #0d1829;
+    --grad-navy:      #050c18;
 
-    --card-bg:       rgba(8, 16, 28, 0.96);
-    --input-bg:      rgba(4, 8, 16, 0.9);
-    --input-border:  rgba(255,255,255,0.07);
+    --card-bg:        rgba(8, 16, 28, 0.94);
+    --input-bg:       rgba(4, 8, 16, 0.9);
+    --input-border:   rgba(255, 255, 255, 0.07);
 
-    --text-primary:  #ffffff;
+    --text-primary:   #ffffff;
     --text-secondary: #7a90a4;
-    --text-muted:    #3d5166;
+    --text-muted:     #3d5166;
 
-    --accent:        #f26a45;
-    --accent-glow:   rgba(242, 106, 69, 0.35);
-    --accent-hover:  #ff8460;
+    --accent:         #f26a45;
+    --accent-glow:    rgba(242, 106, 69, 0.35);
+    --accent-hover:   #ff8460;
 
-    --radius-card: 20px;
+    --radius-card:  20px;
     --radius-input: 10px;
 }
 
 *, *::before, *::after {
-    margin: 0; padding: 0;
+    margin: 0;
+    padding: 0;
     box-sizing: border-box;
 }
 
@@ -33,8 +39,8 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
+    padding: 80px 20px 40px; /* top padding clears the fixed node-btn */
     font-family: 'DM Sans', sans-serif;
-    overflow: hidden;
     background: linear-gradient(
         -40deg,
         var(--grad-peach),
@@ -55,7 +61,7 @@ body {
     100% { background-position:   0% 50%; }
 }
 
-/* Ambient orbs */
+/* ── Ambient orbs ─────────────────────────────────────────── */
 .orb {
     position: fixed;
     border-radius: 50%;
@@ -74,7 +80,7 @@ body {
     66%       { transform: translate(-30px, 40px) scale(0.94); }
 }
 
-/* Return Home button */
+/* ── Return Home node button ──────────────────────────────── */
 .node-return-btn {
     position: fixed;
     top: 28px;
@@ -87,7 +93,7 @@ body {
     background: rgba(10, 18, 30, 0.75);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
-    border: 1px solid rgba(255,255,255,0.08);
+    border: 1px solid rgba(255, 255, 255, 0.08);
     border-radius: 30px;
     color: var(--text-secondary);
     text-decoration: none;
@@ -95,13 +101,13 @@ body {
     font-size: 0.68rem;
     font-weight: 700;
     letter-spacing: 1.5px;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
     transition: color 0.3s, background 0.3s, box-shadow 0.3s;
 }
 .node-return-btn:hover {
     background: rgba(18, 30, 50, 0.9);
     color: #fff;
-    box-shadow: 0 4px 25px rgba(242,106,69,0.2);
+    box-shadow: 0 4px 25px rgba(242, 106, 69, 0.2);
 }
 
 .node-dot {
@@ -114,51 +120,63 @@ body {
     animation: pulse 2.5s ease-in-out infinite;
 }
 @keyframes pulse {
-    0%, 100% { box-shadow: 0 0 8px var(--accent), 0 0 18px var(--accent-glow); }
+    0%, 100% { box-shadow: 0 0 8px var(--accent),  0 0 18px var(--accent-glow); }
     50%       { box-shadow: 0 0 14px var(--accent), 0 0 30px var(--accent-glow); }
 }
 
-/* Card */
-.auth-card {
+/* ── Card ─────────────────────────────────────────────────── */
+.register-container {
+    width: 100%;
+    max-width: 460px;
     position: relative;
     z-index: 10;
-    isolation: isolate;
+}
+
+.register-card {
+    position: relative;
+    /* Solid fallback first, then the semi-transparent layer on top */
     background: #080f1c;
     background: var(--card-bg);
     backdrop-filter: blur(24px);
     -webkit-backdrop-filter: blur(24px);
-    border: 1px solid rgba(255,255,255,0.07);
+    isolation: isolate;          /* creates its own stacking context */
+    border: 1px solid rgba(255, 255, 255, 0.07);
     border-radius: var(--radius-card);
     padding: 52px 44px 44px;
     width: 100%;
-    max-width: 440px;
-    box-shadow: 0 20px 60px rgba(0,0,0,0.7), inset 0 1px 0 rgba(255,255,255,0.06);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6),
+                inset 0 1px 0 rgba(255, 255, 255, 0.06);
     animation: cardIn 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
-    transition: transform 0.45s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.45s ease;
+    transition: transform 0.45s cubic-bezier(0.175, 0.885, 0.32, 1.275),
+                box-shadow 0.45s ease;
 }
-.auth-card:hover {
+.register-card:hover {
     transform: translateY(-6px) scale(1.015);
-    box-shadow: 0 30px 70px rgba(0,0,0,0.8), 0 0 40px rgba(242,106,69,0.06), inset 0 1px 0 rgba(255,255,255,0.08);
+    box-shadow: 0 30px 70px rgba(0, 0, 0, 0.7),
+                0 0 40px rgba(242, 106, 69, 0.06),
+                inset 0 1px 0 rgba(255, 255, 255, 0.08);
 }
 @keyframes cardIn {
     from { opacity: 0; transform: translateY(30px) scale(0.97); }
-    to   { opacity: 1; transform: translateY(0) scale(1); }
+    to   { opacity: 1; transform: translateY(0)    scale(1); }
 }
 
-/* Corner accents */
+/* Corner micro-accents */
 .corner {
     position: absolute;
-    width: 14px; height: 14px;
-    border: 1.5px solid rgba(242,106,69,0.35);
+    width: 14px;
+    height: 14px;
+    border: 1.5px solid rgba(242, 106, 69, 0.35);
 }
 .corner.tl { top: 14px;    left: 14px;    border-right-color: transparent; border-bottom-color: transparent; }
 .corner.tr { top: 14px;    right: 14px;   border-left-color:  transparent; border-bottom-color: transparent; }
 .corner.bl { bottom: 14px; left: 14px;    border-right-color: transparent; border-top-color:    transparent; }
 .corner.br { bottom: 14px; right: 14px;   border-left-color:  transparent; border-top-color:    transparent; }
 
+/* ── Card header ──────────────────────────────────────────── */
 .card-header {
     text-align: center;
-    margin-bottom: 38px;
+    margin-bottom: 36px;
 }
 
 .eco-badge {
@@ -167,19 +185,21 @@ body {
     font-size: 0.6rem;
     letter-spacing: 3px;
     color: var(--accent);
-    background: rgba(242,106,69,0.1);
-    border: 1px solid rgba(242,106,69,0.25);
+    background: rgba(242, 106, 69, 0.1);
+    border: 1px solid rgba(242, 106, 69, 0.25);
     border-radius: 4px;
     padding: 4px 10px;
     margin-bottom: 16px;
 }
-.eco-badge span { color: rgba(242,106,69,0.55); }
+.eco-badge span { color: rgba(242, 106, 69, 0.55); }
 
-.auth-card h2 {
+h2 {
     font-family: 'DM Sans', sans-serif;
     font-weight: 700;
     font-size: 2rem;
-    color: #ffffff !important;
+    color: var(--text-primary);
+    letter-spacing: -0.5px;
+    margin-bottom: 6px;
 }
 
 .subtitle {
@@ -190,13 +210,16 @@ body {
     text-transform: uppercase;
 }
 
-/* Input groups */
+/* ── Input groups ─────────────────────────────────────────── */
 .input-group {
-    margin-bottom: 18px;
-    animation: fieldIn 0.6s cubic-bezier(0.16,1,0.3,1) both;
+    margin-bottom: 16px;
+    animation: fieldIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
-.input-group:nth-child(1) { animation-delay: 0.1s; }
-.input-group:nth-child(2) { animation-delay: 0.17s; }
+.input-group:nth-child(1) { animation-delay: 0.08s; }
+.input-group:nth-child(2) { animation-delay: 0.13s; }
+.input-group:nth-child(3) { animation-delay: 0.18s; }
+.input-group:nth-child(4) { animation-delay: 0.23s; }
+.input-group:nth-child(5) { animation-delay: 0.28s; }
 
 @keyframes fieldIn {
     from { opacity: 0; transform: translateX(-10px); }
@@ -217,6 +240,7 @@ label {
     color: var(--accent);
 }
 
+/* ── Input wrapper (holds icon + field together) ──────────── */
 .input-wrap {
     position: relative;
     border: 1px solid var(--input-border);
@@ -224,25 +248,31 @@ label {
     background: var(--input-bg);
     transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
-.input-wrap.active,
-.input-wrap.typing-flash {
+
+.input-wrap.active {
     border-color: var(--accent);
-    box-shadow: 0 0 0 3px var(--accent-glow), 0 0 20px rgba(242,106,69,0.15);
-}
-.input-wrap.typing-flash {
-    box-shadow: 0 0 0 3px var(--accent-glow), 0 0 30px rgba(242,106,69,0.4);
-    transition: none;
-}
-.input-wrap.filled {
-    border-color: rgba(242,106,69,0.3);
+    box-shadow: 0 0 0 3px var(--accent-glow), 0 0 20px rgba(242, 106, 69, 0.15);
 }
 
+.input-wrap.typing-flash {
+    border-color: var(--accent) !important;
+    box-shadow: 0 0 0 3px var(--accent-glow),
+                0 0 30px rgba(242, 106, 69, 0.4) !important;
+    transition: none !important;
+}
+
+.input-wrap.filled {
+    border-color: rgba(242, 106, 69, 0.3);
+}
+
+/* Icon inside the wrap */
 .input-icon {
     position: absolute;
     left: 14px;
     top: 50%;
     transform: translateY(-50%);
-    width: 15px; height: 15px;
+    width: 15px;
+    height: 15px;
     color: var(--text-muted);
     pointer-events: none;
     transition: color 0.3s;
@@ -252,29 +282,86 @@ label {
     color: var(--accent);
 }
 
-input {
+/* Password input needs extra right padding for the eye button */
+#password {
+    padding-right: 44px;
+}
+
+/* Eye toggle for password */
+.toggle-pw {
+    position: absolute;
+    right: 12px;
+    top: 0;
+    bottom: 0;
+    margin: auto 0;
+    height: 100%;
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    padding: 0 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: color 0.2s;
+    z-index: 2;
+}
+.toggle-pw:hover { color: var(--accent); }
+
+/* Actual input / select fields */
+.input-group input,
+.input-group select {
     width: 100%;
     padding: 13px 14px 13px 40px;
     background: transparent;
     border: none;
     border-radius: var(--radius-input);
-    color: #ffffff;
+    color: var(--text-primary);         /* ✅ white text — fixes "black text" bug */
     font-family: 'DM Sans', sans-serif;
     font-size: 0.9rem;
     font-weight: 400;
     outline: none;
+    appearance: none;
+    -webkit-appearance: none;
 }
-input::placeholder {
+
+/* Select with right-side chevron space */
+.input-group select {
+    padding-right: 40px;
+    cursor: pointer;
+}
+
+/* Option list dark background */
+.input-group select option {
+    background-color: #0a1525;
+    color: #ffffff;
+}
+
+.input-group input::placeholder {
     color: var(--text-muted);
     font-weight: 300;
 }
 
-/* Submit button */
-.auth-btn {
+/* ── Error box ────────────────────────────────────────────── */
+.error-msg {
+    background: rgba(242, 106, 69, 0.1);
+    color: #ff8e71;
+    padding: 12px 16px;
+    border-radius: 8px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    margin-bottom: 20px;
+    border-left: 3px solid var(--accent);
+    letter-spacing: 0.4px;
+    font-family: 'Space Mono', monospace;
+}
+
+/* ── Submit button ────────────────────────────────────────── */
+.btn-register {
     position: relative;
     overflow: hidden;
     width: 100%;
-    margin-top: 24px;
+    margin-top: 22px;
     padding: 15px 24px;
     background: linear-gradient(135deg, var(--accent) 0%, #e05535 100%);
     border: none;
@@ -284,36 +371,29 @@ input::placeholder {
     font-size: 0.78rem;
     font-weight: 700;
     letter-spacing: 2px;
+    text-transform: uppercase;
     cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    box-shadow: 0 8px 24px rgba(242,106,69,0.35);
+    box-shadow: 0 8px 24px rgba(242, 106, 69, 0.35);
     transition: background 0.3s, transform 0.15s, box-shadow 0.3s;
-    animation: fieldIn 0.6s cubic-bezier(0.16,1,0.3,1) 0.28s both;
+    animation: fieldIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.33s both;
 }
-.auth-btn:hover {
+.btn-register:hover {
     background: linear-gradient(135deg, var(--accent-hover) 0%, #f26a45 100%);
-    box-shadow: 0 10px 32px rgba(242,106,69,0.5);
+    box-shadow: 0 10px 32px rgba(242, 106, 69, 0.5);
     transform: translateY(-1px);
 }
-.auth-btn:active {
+.btn-register:active {
     transform: scale(0.98) translateY(0);
-    box-shadow: 0 4px 12px rgba(242,106,69,0.3);
+    box-shadow: 0 4px 12px rgba(242, 106, 69, 0.3);
 }
 
-.btn-arrow {
-    width: 16px; height: 16px;
-    transition: transform 0.3s;
-}
-.auth-btn:hover .btn-arrow { transform: translateX(4px); }
-
+/* Ripple effect */
 .ripple {
     position: absolute;
     border-radius: 50%;
-    background: rgba(255,255,255,0.25);
-    width: 10px; height: 10px;
+    background: rgba(255, 255, 255, 0.25);
+    width: 10px;
+    height: 10px;
     transform: translate(-50%, -50%) scale(0);
     animation: rippleAnim 0.6s ease-out forwards;
     pointer-events: none;
@@ -322,23 +402,20 @@ input::placeholder {
     to { transform: translate(-50%, -50%) scale(30); opacity: 0; }
 }
 
-/* Footer */
-.auth-footer {
+/* ── Footer ───────────────────────────────────────────────── */
+.card-footer {
     text-align: center;
     margin-top: 28px;
     padding-top: 20px;
-    border-top: 1px solid rgba(255,255,255,0.05);
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
     font-size: 0.8rem;
     color: var(--text-muted);
-    animation: fieldIn 0.6s cubic-bezier(0.16,1,0.3,1) 0.35s both;
+    animation: fieldIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.4s both;
 }
-.auth-footer a {
+.card-footer a {
     color: var(--accent);
     text-decoration: none;
     font-weight: 600;
     transition: color 0.2s;
 }
-.auth-footer a:hover { color: var(--accent-hover); }
+.card-footer a:hover { color: var(--accent-hover); }
