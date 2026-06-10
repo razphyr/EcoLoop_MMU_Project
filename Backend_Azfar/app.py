@@ -141,9 +141,9 @@ def api_login():
         LIVE_OTP_REGISTRY[user.email] = {"code": generated_code}
         
         print("\n" + "="*60)
-        print(f"🚨 CLiC SECURITY ENGINE BROADCAST")
+        print(f"🚨 CLiC SECURITY ENGINE")
         print(f"📥 OTP DISPATCH TARGET: {user.email}")
-        print(f"🔢 SYSTEM PASSCODE TOKEN VALUE: {generated_code}")
+        print(f"🔢 SYSTEM PASSCODE TOKEN: {generated_code}")
         print("="*60 + "\n")
         
         return jsonify({
@@ -156,10 +156,43 @@ def api_login():
     return jsonify({"error": "Invalid login credentials configuration string."}), 401
 
 
+# =======================================================
+# 🔐 TWO-FACTOR AUTHENTICATION SYSTEM & TERMINAL DISPATCH
+# =======================================================
+@app.route("/api/send-otp", methods=["POST"])
+def api_send_otp():
+    data = request.json or {}
+    email = data.get("email", "").lower().strip()
+    
+    # 🔍 Verify user exists inside your SQLite records
+    user = User.query.filter_by(email=email).first()
+    if not user:
+        return jsonify({"error": "FCI Identity Fault: This email destination does not exist."}), 444
+
+    # 🔢 Generate a fresh 6-digit secure token
+    generated_otp = str(random.randint(100000, 999999))
+    
+    # 💾 Cache the code in memory for verification validation checks
+    LIVE_OTP_REGISTRY[email] = {"code": generated_otp}
+    
+    # 📟 GRAPHICAL TERMINAL BROADCAST INTERCEPT ENGINE
+    print("\n" + "═"*60)
+    print(" 🛡️  SECURITY MATRIX INTERCEPT: TWO-FACTOR VERIFICATION GENERATED")
+    print(f" 📥 TARGET MAIL ADDRESS NODE : {email}")
+    print(f" 🔢 SYSTEM PASSCODE TOKEN    : {generated_otp}")
+    print("═"*60 + "\n")
+    
+    return jsonify({
+        "success": True, 
+        "message": "Security token outputted to active server terminal lines.",
+        "secret": f"MMU-SECURE-SEED-{generated_otp[:3]}-{generated_otp[3:]}" # Formatted for your HTML secret key text holder block
+    }), 200
+
+
 @app.route("/api/verify-otp", methods=["POST"])
 def verify_otp():
-    data = request.json
-    email = data.get("email")
+    data = request.json or {}
+    email = data.get("email", "").lower().strip()
     token_input = data.get("otp", "").strip()
     
     user = User.query.filter_by(email=email).first()
@@ -175,12 +208,13 @@ def verify_otp():
             "user": {"name": user.name, "student_id": user.student_id, "level": user.level, "role": user.role}
         }), 200
         
-    return jsonify({"error": "Invalid 6-digit verification code. Please check your simulated notification alert."}), 400
+    return jsonify({"error": "Invalid 6-digit verification code. Please check your backend terminal console."}), 400
+
 
 @app.route("/api/reset-password", methods=["POST"])
 def reset_password():
-    data = request.json
-    email = data.get("email")
+    data = request.json or {}
+    email = data.get("email", "").lower().strip()
     password = data.get("password")
     
     user = User.query.filter_by(email=email).first()
@@ -243,7 +277,10 @@ def add_item():
     db.session.commit()
     return jsonify({"id": new_item.id, "name": new_item.name, "price": new_item.price, "status": new_item.status}), 201
 
-# 💳 RESERVATION ROUTE: Changes status from available -> pending
+
+# =========================================================
+#  💳 RESERVATION ROUTE: Changes status from available -> pending
+#==========================================================  
 @app.route("/items/<int:item_id>", methods=["PUT"])
 def toggle_item(item_id):
     item = Item.query.get(item_id)
@@ -274,6 +311,7 @@ def toggle_item(item_id):
         "net_payout": item.final_payout
     }), 200
 
+
 # 📸 FULFILLMENT CLEARANCE: Changes status from pending -> sold
 @app.route("/items/<int:item_id>/confirm-sold", methods=["POST"])
 def confirm_item_sold(item_id):
@@ -296,6 +334,7 @@ def confirm_item_sold(item_id):
     db.session.commit()
     return jsonify({"success": True, "status": "sold"}), 200
 
+
 @app.route("/items/<int:item_id>", methods=["DELETE"])
 def delete_item(item_id):
     item = Item.query.get(item_id)
@@ -303,6 +342,7 @@ def delete_item(item_id):
         db.session.delete(item)
         db.session.commit()
     return jsonify({"message": "deleted"})
+
 
 if __name__ == "__main__":
     with app.app_context():

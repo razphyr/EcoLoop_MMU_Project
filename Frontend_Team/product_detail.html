@@ -51,7 +51,7 @@
         .seller-connect-card i { font-size: 24px; color: #7ec139; }
 
         nav { display: flex; justify-content: space-between; align-items: center; padding: 20px 40px; background: rgba(17, 22, 15, 0.8); border-bottom: 1px solid rgba(255,255,255,0.03); backdrop-filter: blur(10px); margin: -30px -30px 0 -30px; }
-        nav ul { display: flex; list-style: none; gap: 24px; align-items: center; }
+        nav nav ul { display: flex; list-style: none; gap: 24px; align-items: center; }
         .status-node { display: flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 700; letter-spacing: 0.5px; }
         .status-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
     </style>
@@ -83,7 +83,7 @@
             
             <div class="seller-node">Listed by: <span id="sellerName">---</span></div>
             
-            <div class="product-desc" id="prodDesc">Decrypting dataset elements from central SQL repositories infrastructure loops...</div>
+            <div class="product-desc" id="prodDesc">Decrypting dataset elements from central SQL repositories...</div>
             
             <div class="price-badge">
                 <span class="price-currency">RM</span>
@@ -154,7 +154,7 @@
                 .then(data => {
                     targetItem = data.find(i => i.id == itemId);
                     if (!targetItem) {
-                        alert("Asset vector node missing inside server registries.");
+                        alert("Asset vector missing inside server registries.");
                         window.location.href = '/student';
                         return;
                     }
@@ -169,7 +169,6 @@
 
             document.getElementById('prodTitle').textContent = targetItem.name;
             
-            // REDIRECTION ADDED HERE: Dynamically building an inline anchor with URL token components pointing to /profile/
             document.getElementById('sellerName').innerHTML = `
                 <span onclick="window.location.href='/profile/' + encodeURIComponent('${targetItem.student}')" style="color: #7ec139; font-weight: 600; text-decoration: underline; cursor: pointer;">
                     ${targetItem.student}
@@ -204,6 +203,7 @@
             if (targetItem.sold === 1 || targetItem.sold === true) {
                 purchaseBtn.textContent = "Sold Out / Deactivated";
                 purchaseBtn.disabled = true;
+                purchaseBtn.style.background = "#374151";
             }
         }
 
@@ -217,22 +217,34 @@
         function closePaymentModal() { document.getElementById('paymentModal').classList.remove('open'); }
 
         function executeAcquisition() {
+            const purchaseBtn = document.getElementById('purchaseBtn');
+            purchaseBtn.disabled = true;
+            closePaymentModal();
+
             fetch(`/items/${targetItem.id}`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ buyer: currentUser.name })
             })
             .then(res => res.json())
-            .then(() => {
-                const subject = encodeURIComponent(`EcoLoop MMU - Meetup Request: ${targetItem.name}`);
-                const body = encodeURIComponent(`Hello ${targetItem.student},\n\nI have reserved your listing [${targetItem.name}] on EcoLoop for RM ${parseFloat(targetItem.price).toFixed(2)}.\n\nLet's arrange a physical meetup at the FCI Building to handle the handover.\n\nBest regards,\n${currentUser.name}`);
-                
-                const mockEmail = `${targetItem.student.toLowerCase().replace(/\s+/g, '')}@student.mmu.edu.my`;
-                
-                alert("Payment Confirmed! Launching direct secure communications link with the seller node.");
-                window.location.href = `mailto:${mockEmail}?subject=${subject}&body=${body}`;
+            .then(data => {
+                if (data.error) {
+                    alert("Transaction Registry Error: " + data.error);
+                    purchaseBtn.disabled = false;
+                } else {
+                    const subject = encodeURIComponent(`EcoLoop MMU - Meetup Request: ${targetItem.name}`);
+                    const body = encodeURIComponent(`Hello ${targetItem.student},\n\nI have reserved your listing [${targetItem.name}] on EcoLoop for RM ${parseFloat(targetItem.price).toFixed(2)}.\n\nLet's arrange a physical meetup at the FCI Building to handle the handover.\n\nBest regards,\n${currentUser.name}`);
+                    const mockEmail = `${targetItem.student.toLowerCase().replace(/\s+/g, '')}@student.mmu.edu.my`;
+                    
+                    alert("Payment Confirmed! Initializing secure peer communications channel and synchronizing database schema indices.");
+                    window.open(`mailto:${mockEmail}?subject=${subject}&body=${body}`, '_blank');
+                    window.location.href = '/dashboard';
+                }
             })
-            .catch(err => alert("Transaction validation loop timed out."));
+            .catch(err => {
+                alert("Database Synchronization Intercepted. Verify app.py status.");
+                purchaseBtn.disabled = false;
+            });
         }
 
         loadItemContext();

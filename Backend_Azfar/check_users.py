@@ -1,8 +1,10 @@
-from TEst_Broke_Bite.app import app
+
+from app import app as my_app
 from models import db, User
 
-with app.app_context():
-    # Fetch all user records directly from the database table matrix
+
+with my_app.app_context():
+    # Fetch all user records directly from the database table 
     all_users = User.query.all()
     
     print("\n" + "="*60)
@@ -17,6 +19,8 @@ with app.app_context():
         print(f"  Student ID: {user.student_id}")
         print(f"  Level:      {user.level}")
         print(f"  Email:      {user.email}")
-        print(f"  Password:   {user.password}") # Displays the password string clearly for testing
+        print(f"  Password:   {user.password}") 
+        print(f"  Role:       {user.role}")     
+        print(f"  Phone:      {user.phone if user.phone else 'None Registered'}")
         print("-"*40)
     print("="*60 + "\n")
