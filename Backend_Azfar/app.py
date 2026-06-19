@@ -3,7 +3,11 @@ import random
 from flask import Flask, jsonify, request, send_from_directory, render_template
 from flask_cors import CORS
 from models import db, Item, User, Report 
+from datetime import datetime, timedelta
 
+# =======================================================
+# 🌐 CORE SYSTEM INITIALIZATION & INFRASTRUCTURE CONFIG
+# =======================================================
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 FRONTEND_DIR = os.path.abspath(os.path.join(BASE_DIR, "..", "Frontend_Team"))
 
@@ -16,9 +20,10 @@ db.init_app(app)
 
 LIVE_OTP_REGISTRY = {}
 
-# ==========================================
-# 🌐 HTML STATIC FILE PAGE ROUTERS
-# ==========================================
+
+# =======================================================
+# 🛣️ STATIC FILE ROUTING CONTROLLERS (FRONTEND MAPPING)
+# =======================================================
 @app.route("/")
 def serve_homepage(): 
     return send_from_directory(FRONTEND_DIR, "index.html")
@@ -65,7 +70,7 @@ def serve_login_otp_verification_view():
 
 
 # =======================================================
-# 👤 USER PROFILE SENSITIVE DATA MASK ENGINE API
+# 👤 USER PROFILE MANAGEMENT & PRIVACY SHIELD API
 # =======================================================
 @app.route("/api/user/<string:username>", methods=["GET"])
 def get_user_profile_data(username):
@@ -106,9 +111,9 @@ def update_user_profile_data(username):
     return jsonify({"success": True, "message": "Phone parameters synchronized successfully."}), 200
 
 
-# ==========================================
-# 🔍 ECOLOOP DYNAMIC JINJA2 SEARCH ENGINE
-# ==========================================
+# =======================================================
+# 🔍 ECOLOOP DYNAMIC JINJA2 MARKETPLACE SEARCH ENGINE
+# =======================================================
 @app.route("/search", methods=["GET"])
 def search_marketplace_items():
     query_param = request.args.get("query", "").strip()
@@ -119,14 +124,15 @@ def search_marketplace_items():
     return render_template("result.html", query=query_param, items=matched_items)
 
 
-# ==========================================
+# =======================================================
 # 🔐 SECURE STREAMLINED IN-PLATFORM AUTHENTICATION API
-# ==========================================
+# =======================================================
 @app.route("/api/register", methods=["POST"])
 def api_register():
     data = request.json
     email = data.get("email", "").lower().strip()
     
+    # Enforce structural MMU campus domain access bounds
     if not (email.endswith("@student.mmu.edu.my") or email.endswith("@mmu.edu.my") or email.endswith("@gmail.com")):
         return jsonify({"error": "Access Denied: Please use a valid email schema node."}), 403
     
@@ -171,7 +177,7 @@ def api_login():
 
 
 # =======================================================
-# 🔐 TWO-FACTOR AUTHENTICATION SYSTEM & TERMINAL DISPATCH
+# 🛡️ TWO-FACTOR AUTHENTICATION & SECURITY TERMINAL INTERCEPT
 # =======================================================
 @app.route("/api/send-otp", methods=["POST"])
 def api_send_otp():
@@ -232,9 +238,9 @@ def reset_password():
     return jsonify({"error": "Failed to update profile parameter node."}), 404
 
 
-# ==========================================
-# 🛡️ SYSTEM FAULT REPORTING & FEEDBACK API
-# ==========================================
+# =======================================================
+# 🛡️ SYSTEM FAULT REPORTING & USER FEEDBACK ENGINE API
+# =======================================================
 @app.route("/api/reports", methods=["POST"])
 def add_report():
     db.session.add(Report(type=request.json.get("type"), statement=request.json.get("statement"), image=request.json.get("image"), user_name=request.json.get("user_name")))
@@ -246,55 +252,33 @@ def get_reports():
     return jsonify([{"id":r.id, "type":r.type, "statement":r.statement, "image":r.image, "user_name":r.user_name} for r in Report.query.all()])
 
 
-
-from datetime import datetime, timedelta
-
-# ==========================================
-# 📊 CENTRAL ASSET TRADING MARKETPLACE API
-# ==========================================
+# =======================================================
+# 📊 CENTRAL ASSET TRADING MARKETPLACE API (ESCROW MACHINE)
+# =======================================================
 @app.route("/items", methods=["GET"])
 def get_items():
-    compiled_payload = []
+    return jsonify([{
+        "id": i.id, 
+        "name": i.name, 
+        "price": i.price, 
+        "student": i.student, 
+        "level": i.level, 
+        "description": i.description, 
+        "buyer": i.buyer, 
+        "image": getattr(i, "image", None),
+        "faculty": i.faculty,
+        "fee_deducted": getattr(i, "fee_deducted", 0.0),
+        "final_payout": getattr(i, "final_payout", 0.0),
+        "status": getattr(i, "status", "available"),
+        "delivery_proof": getattr(i, "delivery_proof", None),
+        "published_date": getattr(i, "published_date", "16-Jun-2026") 
+    } for i in Item.query.all()]), 200
     
-    current_live_date = datetime.now()
-    
-    for i in Item.query.all():
-      
-        if hasattr(i, 'date_created') and i.date_created:
-            # Fallback if SQLite schema already possesses a raw datetime column
-            formatted_date = i.date_created.strftime("%d-%b-%Y")
-        else:
-            # Offset engine: subtracts roughly 4 days per unique database entry ID item
-            day_offset = max(0, (i.id - 1) * 4)
-            calculated_timestamp = current_live_date - timedelta(days=day_offset)
-            
-            # Formats into standard structural string notation (e.g., "16-Jun-2026", "28-May-2026")
-            formatted_date = calculated_timestamp.strftime("%d-%b-%Y")
-
-        compiled_payload.append({
-            "id": i.id, 
-            "name": i.name, 
-            "price": i.price, 
-            "student": i.student, 
-            "level": i.level, 
-            "description": i.description, 
-            "buyer": i.buyer, 
-            "image": getattr(i, "image", None),
-            "faculty": i.faculty,
-            "fee_deducted": getattr(i, "fee_deducted", 0.0),
-            "final_payout": getattr(i, "final_payout", 0.0),
-            "status": getattr(i, "status", "available"),
-            "delivery_proof": getattr(i, "delivery_proof", None),
-            "published_date": formatted_date # ✅ Outputs real, dynamically rolling days, months, and years!
-        })
-        
-    return jsonify(compiled_payload), 200
-        
-    return jsonify(compiled_payload), 200
-
 @app.route("/items", methods=["POST"])
 def add_item():
     data = request.json
+    live_timestamp_string = datetime.now().strftime("%d-%b-%Y")
+    
     new_item = Item(
         name=data.get("name"), 
         price=float(data.get("price")), 
@@ -303,11 +287,12 @@ def add_item():
         level=data.get("level", "Degree"), 
         description=data.get("description"), 
         image=data.get("image"), 
-        status="available" 
+        status="available",
+        published_date=live_timestamp_string 
     )
     db.session.add(new_item)
     db.session.commit()
-    return jsonify({"id": new_item.id, "name": new_item.name, "price": new_item.price, "status": new_item.status}), 201
+    return jsonify({"id": new_item.id, "name": new_item.name, "price": new_item.price, "status": new_item.status}), 201    
 
 @app.route("/items/<int:item_id>", methods=["PUT"])
 def toggle_item(item_id):
@@ -368,9 +353,13 @@ def delete_item(item_id):
     return jsonify({"message": "deleted"})
 
 
+# =======================================================
+# 🚀 SERVER MAIN EXECUTION CONTAINER (BOOT ENGINE)
+# =======================================================
 if __name__ == "__main__":
     with app.app_context():
         db.create_all()
+        
         if not User.query.filter_by(email="admin@mmu.edu.my").first():
             db.session.add(User(name="Admin Account", student_id="ADMIN1", level="Degree", email="admin@mmu.edu.my", password="test12345", role="admin"))
             db.session.commit()
