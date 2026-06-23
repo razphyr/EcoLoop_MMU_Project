@@ -5,140 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FCI Student Profile Node // EcoLoop</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
-    <style>
-        /* ==========================================================
-            🌌 PREMIUM FOREST MATRIX THEME - ANONYMIZED PROFILE VIEW
-            🎨 Palette: Obsidian Jade | Emerald Glow | Muted Amber
-           ========================================================== */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-        }
-
-        body {
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-            overflow: hidden; 
-            position: relative;
-            background-color: #081111 !important; /* Deep obsidian jade base */
-        }
-
-        body::before {
-            content: "";
-            position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
-            z-index: 1;
-            pointer-events: none;
-            background: radial-gradient(circle at 85% 50%, rgba(16, 185, 129, 0.3) 0%, transparent 55%),
-                        radial-gradient(circle at 15% 50%, rgba(31, 23, 38, 0.6) 0%, transparent 60%);
-            background-size: 150% 150%;
-        }
-
-        .profile-card {
-            background: rgba(11, 24, 23, 0.85) !important;
-            border: 1px solid rgba(16, 185, 129, 0.15);
-            padding: 40px;
-            border-radius: 24px;
-            max-width: 500px;
-            width: 100%;
-            backdrop-filter: blur(20px);
-            display: flex;
-            align-items: center;
-            gap: 28px;
-            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.75);
-            z-index: 5;
-            position: relative;
-        }
-
-        .avatar-circle {
-            width: 84px;
-            height: 84px;
-            border-radius: 50%;
-            border: 2px solid #10b981;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 38px;
-            color: #10b981;
-            background: rgba(16, 185, 129, 0.05);
-            box-shadow: 0 0 15px rgba(16, 185, 129, 0.15);
-            flex-shrink: 0;
-        }
-
-        .profile-info {
-            text-align: left;
-            overflow: hidden;
-        }
-
-        .profile-info h2 {
-            font-size: 1.8rem;
-            color: #ffffff;
-            margin-bottom: 6px;
-            font-weight: 700;
-            white-space: nowrap;
-            text-overflow: ellipsis;
-            overflow: hidden;
-        }
-
-        /* 🔒 SECURE ANONYMOUS DISPLAY TAG */
-        .secure-notice {
-            font-size: 13px;
-            color: #94a3b8;
-            margin: 6px 0 16px 0;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            font-weight: 500;
-        }
-
-        .verified-badge {
-            color: #10b981;
-            font-size: 11px;
-            font-weight: 800;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            background: rgba(16, 185, 129, 0.1);
-            padding: 4px 10px;
-            border-radius: 6px;
-            border: 1px solid rgba(16, 185, 129, 0.2);
-            width: fit-content;
-        }
-
-        .btn-back {
-            margin-top: 18px;
-            background: rgba(255, 255, 255, 0.02);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            color: #64748b;
-            padding: 8px 16px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 12px;
-            font-weight: 700;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            transition: all 0.2s ease;
-        }
-
-        .btn-back:hover {
-            border-color: #10b981;
-            color: #10b981;
-            background: rgba(16, 185, 129, 0.02);
-            box-shadow: 0 0 12px rgba(16, 185, 129, 0.1);
-        }
-    </style>
+    <link rel="stylesheet" href="/seller_profile.css">
 </head>
 <body>
+
+    <div class="floating-container">
+        <div class="float-item" style="top: 15%; left: 10%;"></div>
+        <div class="float-item" style="top: 70%; left: 85%;"></div>
+        <div class="float-item" style="top: 40%; left: 20%;"></div>
+        <div class="float-item" style="top: 80%; left: 10%;"></div>
+    </div>
 
     <div class="profile-card">
         <div class="avatar-circle">
@@ -147,7 +23,6 @@
         <div class="profile-info">
             <h2 id="profileName">Loading User...</h2>
             
-            <!-- 🔒 PUBLIC ANONYMIZATION notice (Replaces raw phone / email displays) -->
             <div class="secure-notice">
                 <i class="ti ti-lock-square-rounded" style="color: #ba7517; font-size: 16px;"></i>
                 <span>Contact Managed via EcoLoop Administrator</span>
@@ -164,12 +39,10 @@
     </div>
 
     <script>
-        // Parse the target username string parameter dynamically out of browser URI paths
         const pathSegments = window.location.pathname.split('/');
         const targetUsername = decodeURIComponent(pathSegments[pathSegments.length - 1]);
 
         function loadAnonymizedProfile() {
-            // Fetch configuration details cleanly passing current credentials context
             const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
             const queryParams = `?role=${encodeURIComponent(currentUser.role || 'user')}&requester=${encodeURIComponent(currentUser.name || '')}`;
 
@@ -183,7 +56,6 @@
                     }
                 })
                 .catch(err => {
-                    console.error("Identity retrieval faulted:", err);
                     document.getElementById('profileName').textContent = "Connection Error";
                 });
         }
