@@ -1,1 +1,4 @@
-﻿ecoloop.db
+﻿venv/
+__pycache__/
+*.db
+.env

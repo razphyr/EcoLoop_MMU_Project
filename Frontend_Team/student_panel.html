@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FCI Marketplace Matrix // EcoLoop</title>
+    <link rel="stylesheet" href="student_panel.css">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+</head>
+<body>
+
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+
+    <nav>
+        <div class="status-node" onclick="window.location.href='/'" style="cursor:pointer">
+            <span class="status-dot"></span>
+            <span class="status-text">FCI LIVE PORTAL ENVIRONMENT</span>
+        </div>
+        <ul>
+            <li onclick="window.location.href='/'">Home</li>
+            <li onclick="window.location.href='/student'">Explore</li>
+            <li onclick="window.location.href='/dashboard'" style="color: var(--accent);">Dashboard</li>
+            <li onclick="logout()" style="color: var(--danger);"><i class="ti ti-logout"></i> Logout</li>
+        </ul>
+    </nav>
+
+    <div class="market-wrapper">
+        <div class="welcome-banner">
+            <span class="corner tl" style="position:absolute; top:14px; left:14px; width:14px; height:14px; border: 1.5px solid rgba(242,106,69,0.35); border-right-color: transparent; border-bottom-color: transparent;"></span>
+            <span class="corner br" style="position:absolute; bottom:14px; right:14px; width:14px; height:14px; border: 1.5px solid rgba(242,106,69,0.35); border-left-color: transparent; border-top-color: transparent;"></span>
+            <div class="welcome-text">
+                <h1>Welcome, <span id="userDisplayName" class="user-badge">User</span></h1>
+                <p>Browsing pre-loved computing assets listed inside the FCI Faculty Node database.</p>
+            </div>
+            <div class="market-actions">
+                <button class="btn-panel" onclick="openReportModal()"><i class="ti ti-alert-circle"></i> Report/Feedback</button>
+                <button class="btn-panel primary" onclick="openModal()"><i class="ti ti-plus"></i> Sell Material</button>
+            </div>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-node"><div class="stat-val" id="s-total">0</div><div class="stat-lbl">FCI Listings</div></div>
+            <div class="stat-node"><div class="stat-val" id="s-avail" style="color: var(--success);">0</div><div class="stat-lbl">Available</div></div>
+            <div class="stat-node"><div class="stat-val" id="s-sold" style="color: var(--danger);">0</div><div class="stat-lbl">Sold Out</div></div>
+        </div>
+
+        <div class="filters-row">
+            <button class="filter-btn active" onclick="setFilter('All',this)">All Items</button>
+            <button class="filter-btn" onclick="setFilter('Available',this)">Available</button>
+            <button class="filter-btn" onclick="setFilter('Sold',this)">Sold</button>
+            <button class="filter-btn" onclick="setFilter('FCI',this)">FCI Only</button>
+            <button class="filter-btn" id="favFilterBtn" onclick="setFilter('Favorites',this)"><i class="ti ti-heart"></i> Favorites</button>
+
+            <input type="text" id="searchBox" class="search-control" placeholder="Search item name..." oninput="applyStudentFilters()">
+            <input type="number" id="minPrice" class="search-control" placeholder="Min RM" oninput="applyStudentFilters()" style="width: 90px;">
+            <input type="number" id="maxPrice" class="search-control" placeholder="Max RM" oninput="applyStudentFilters()" style="width: 90px;">
+
+            <select id="sortControl" class="sort-control" onchange="applyStudentFilters()">
+                <option value="newest">Newest First</option>
+                <option value="price-asc">Price: Low to High</option>
+                <option value="price-desc">Price: High to Low</option>
+            </select>
+        </div>
+
+        <div class="items-grid" id="itemsContainer"></div>
+    </div>
+
+    <!-- Upload Modal Form -->
+    <div class="modal-overlay" id="sellModal">
+        <div class="modal-box">
+            <h3>List FCI Material</h3>
+            <form id="itemForm">
+                <div class="input-group"><label>Material Name</label><input type="text" id="itemName" required></div>
+                <div class="input-group"><label>Description</label><input type="text" id="itemDesc" required></div>
+                <div class="input-group"><label>Price (RM)</label><input type="number" id="itemPrice" required></div>
+
+                <div class="input-group">
+                    <label>Target Faculty Node</label>
+                    <select id="itemFaculty" required>
+                        <option value="FCI" selected>FCI (Computing)</option>
+                    </select>
+                </div>
+
+                <div class="input-group"><label>Product Snapshots (Can select multiple)</label><input type="file" id="itemImagesField" accept="image/*" multiple></div>
+                <div class="modal-buttons">
+                    <button type="submit" class="btn-modal confirm">Publish Listing</button>
+                    <button type="button" class="btn-modal cancel" onclick="closeModal()">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Feedback Ticket Form -->
+    <div class="modal-overlay" id="reportModal">
+        <div class="modal-box">
+            <h3>Help & Support Node</h3>
+            <form id="reportForm">
+                <div class="input-group">
+                    <label>Submission Type</label>
+                    <select id="subType">
+                        <option value="Report">Report Bug / Issue</option>
+                        <option value="Feedback">General Feedback</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label>Statement Reasoning</label>
+                    <textarea id="subStatement" rows="4" required></textarea>
+                </div>
+                <div class="input-group"><label>Proof Attachment</label><input type="file" id="subImage" accept="image/*"></div>
+                <div class="modal-buttons">
+                    <button type="submit" class="btn-modal confirm">Submit Node</button>
+                    <button type="button" class="btn-modal cancel" onclick="closeReportModal()">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+        if (!currentUser.name) { window.location.href = '/login'; }
+        else { document.getElementById('userDisplayName').textContent = currentUser.name; }
+
+        function logout() { localStorage.clear(); window.location.href = '/'; }
+        function openModal() { document.getElementById('sellModal').classList.add('open'); }
+        function closeModal() { document.getElementById('sellModal').classList.remove('open'); document.getElementById('itemForm').reset(); }
+        function openReportModal() { document.getElementById('reportModal').classList.add('open'); }
+        function closeReportModal() { document.getElementById('reportModal').classList.remove('open'); document.getElementById('reportForm').reset(); }
+
+        let marketplaceItems = [];
+        let activeFilter = 'All';
+        let queryFilters = { search: '', min: '', max: '', sort: 'newest' };
+
+        const EMOJI_MAP = { 'FCI': '💻' };
+
+        // ===== FAVORITES (localStorage-backed wishlist) =====
+        function getFavorites() {
+            return JSON.parse(localStorage.getItem('favoriteItems') || '[]');
+        }
+
+        function isFavorite(id) {
+            return getFavorites().includes(id);
+        }
+
+        function toggleFavorite(id, btnEl) {
+            let favs = getFavorites();
+            if (favs.includes(id)) {
+                favs = favs.filter(favId => favId !== id);
+                btnEl.classList.remove('active');
+            } else {
+                favs.push(id);
+                btnEl.classList.add('active');
+            }
+            localStorage.setItem('favoriteItems', JSON.stringify(favs));
+
+            // little pop animation for feedback
+            btnEl.classList.remove('pop');
+            requestAnimationFrame(() => btnEl.classList.add('pop'));
+
+            // if currently viewing the Favorites filter, re-render to drop unfavorited items
+            if (activeFilter === 'Favorites') renderItems();
+        }
+
+        function loadMarketplace() {
+            fetch('/items').then(res => res.json()).then(data => { marketplaceItems = data; renderItems(); });
+        }
+
+        function applyStudentFilters() {
+            queryFilters.search = document.getElementById('searchBox').value.toLowerCase();
+            queryFilters.min = document.getElementById('minPrice').value;
+            queryFilters.max = document.getElementById('maxPrice').value;
+            queryFilters.sort = document.getElementById('sortControl').value;
+            renderItems();
+        }
+
+        function setFilter(filterType, element) {
+            activeFilter = filterType;
+            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+            element.classList.add('active');
+            renderItems();
+        }
+
+        function renderItems() {
+            const container = document.getElementById('itemsContainer');
+            const favs = getFavorites();
+
+            let filtered = marketplaceItems.filter(item => {
+                const itemStatus = item.status || "available";
+                const okSearch = !queryFilters.search || item.name.toLowerCase().includes(queryFilters.search);
+                const okMin = !queryFilters.min || item.price >= parseFloat(queryFilters.min);
+                const okMax = !queryFilters.max || item.price <= parseFloat(queryFilters.max);
+
+                let passBase = true;
+                if (activeFilter === 'Available') passBase = (itemStatus === 'available');
+                else if (activeFilter === 'Sold') passBase = (itemStatus === 'sold');
+                else if (activeFilter === 'Favorites') passBase = favs.includes(item.id);
+                else if (activeFilter !== 'All') passBase = (item.faculty === activeFilter);
+
+                return okSearch && okMin && okMax && passBase;
+            });
+
+            // ===== SORTING =====
+            if (queryFilters.sort === 'price-asc') {
+                filtered = filtered.slice().sort((a, b) => a.price - b.price);
+            } else if (queryFilters.sort === 'price-desc') {
+                filtered = filtered.slice().sort((a, b) => b.price - a.price);
+            } else {
+                // Newest first - assumes higher id = more recently added
+                filtered = filtered.slice().sort((a, b) => b.id - a.id);
+            }
+
+            updateStats();
+
+            if (filtered.length === 0) {
+                const msg = activeFilter === 'Favorites'
+                    ? "You haven't favorited any items yet. Tap the heart icon on a listing to save it here."
+                    : "No items matched your specific faculty filter queries inside the node.";
+                container.innerHTML = `<div class="empty-state">${msg}</div>`;
+                return;
+            }
+
+            container.innerHTML = filtered.map(item => {
+                const itemStatus = item.status || "available";
+                const imagesList = item.image ? item.image.split('|||') : [];
+                const thumbnail = imagesList.length > 0 ? imagesList[0] : null;
+                const displayFaculty = item.faculty ? item.faculty : 'FCI';
+                const isAvailable = itemStatus === 'available';
+                const cardAction = isAvailable ? `onclick="window.location.href='/product/${item.id}'"` : '';
+                const favActive = favs.includes(item.id) ? 'active' : '';
+
+                return `
+                <div class="item-card" ${cardAction} style="${!isAvailable ? 'opacity: 0.6; cursor: default;' : 'cursor: pointer;'}">
+                    <div class="card-visual">
+                        <div class="fav-toggle ${favActive}" onclick="event.stopPropagation(); toggleFavorite(${item.id}, this)">
+                            <i class="${favActive ? 'ti ti-heart-filled' : 'ti ti-heart'}"></i>
+                        </div>
+                        ${thumbnail ? `<img src="${thumbnail}" class="product-img" />` : (EMOJI_MAP[displayFaculty] || '📦')}
+                    </div>
+                    <div class="card-body">
+                        <span class="item-title">${item.name}</span>
+                        <div style="font-size:12px; color: var(--text-secondary); margin: 4px 0 8px 0;">
+                            Listed by: <span onclick="if(${isAvailable}) { event.stopPropagation(); window.location.href='/profile/' + encodeURIComponent('${item.student}') }" style="${isAvailable ? 'color: var(--accent); text-decoration: underline; cursor: pointer;' : 'color: var(--text-secondary);'} font-weight: 700;">${item.student}</span> · <span style="text-transform:uppercase; font-weight:600;">${displayFaculty} Node</span>
+                        </div>
+                        <span class="item-desc">${item.description}</span>
+                        <span class="item-price">RM ${parseFloat(item.price).toFixed(2)}</span>
+                        <div class="card-footer">
+                            <span class="status-badge ${itemStatus}">${itemStatus.toUpperCase()}</span>
+                            ${isAvailable ? `<button class="btn-buy" onclick="event.stopPropagation(); purchaseItem(${item.id})">Buy</button>` : ''}
+                        </div>
+                    </div>
+                </div>`;
+            }).join('');
+
+            // Toggle the heart icon class after click for instant feedback
+            document.querySelectorAll('.fav-toggle').forEach(el => {
+                el.addEventListener('click', () => {
+                    const icon = el.querySelector('i');
+                    if (el.classList.contains('active')) {
+                        icon.className = 'ti ti-heart-filled';
+                    } else {
+                        icon.className = 'ti ti-heart';
+                    }
+                });
+            });
+        }
+
+        function updateStats() {
+            document.getElementById('s-total').textContent = marketplaceItems.length;
+            document.getElementById('s-avail').textContent = marketplaceItems.filter(i => (i.status || "available") === 'available').length;
+            document.getElementById('s-sold').textContent = marketplaceItems.filter(i => (i.status || "available") === 'sold').length;
+        }
+
+        function purchaseItem(id) {
+            window.location.href = `/product/${id}`;
+        }
+
+        document.getElementById('reportForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const type = document.getElementById('subType').value;
+            const statement = document.getElementById('subStatement').value;
+            const file = document.getElementById('subImage').files[0];
+
+            if (file) {
+                const reader = new FileReader();
+                reader.onloadend = function() { transmitTicket(type, statement, reader.result); }
+                reader.readAsDataURL(file);
+            } else {
+                transmitTicket(type, statement, null);
+            }
+        });
+
+        function transmitTicket(type, statement, imgData) {
+            fetch('/api/reports', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ type: type, statement: statement, image: imgData, user_name: currentUser.name })
+            }).then(() => {
+                alert("Support request node successfully broadcasted to admin terminal!");
+                closeReportModal();
+            });
+        }
+
+        document.getElementById('itemForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const name = document.getElementById('itemName').value;
+            const description = document.getElementById('itemDesc').value;
+            const price = document.getElementById('itemPrice').value;
+            const faculty = document.getElementById('itemFaculty').value;
+            const files = document.getElementById('itemImagesField').files;
+
+            if (files.length > 0) {
+                let encodedArray = [];
+                let completedCount = 0;
+
+                for (let i = 0; i < files.length; i++) {
+                    const reader = new FileReader();
+                    reader.onloadend = function() {
+                        encodedArray.push(reader.result);
+                        completedCount++;
+                        if (completedCount === files.length) {
+                            transmitItem(name, description, price, faculty, encodedArray.join('|||'));
+                        }
+                    }
+                    reader.readAsDataURL(files[i]);
+                }
+            } else {
+                transmitItem(name, description, price, faculty, null);
+            }
+        });
+
+        function transmitItem(name, description, price, faculty, multiImgString) {
+            fetch('/items', {
+                method: 'POST', headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name, description, price: parseFloat(price), student: currentUser.name, level: currentUser.level, faculty: faculty, image: multiImgString })
+            }).then(() => { closeModal(); loadMarketplace(); });
+        }
+
+        loadMarketplace();
+    </script>
+</body>
+</html>

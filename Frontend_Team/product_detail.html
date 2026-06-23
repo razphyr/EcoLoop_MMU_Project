@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Marketplace Asset Node // EcoLoop</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+    
+    <style>
+        /* ==========================================================
+            🌌 PREMIUM FOREST MATRIX THEME - ITEM DETAILS VIEW
+            🎨 Palette: Obsidian Jade | Emerald Glow | Muted Amber
+           ========================================================== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 40px;
+            background-color: #081111 !important; /* Deep obsidian jade base */
+            color: #f4f6f2;
+            position: relative;
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            z-index: 1;
+            pointer-events: none;
+            background: radial-gradient(circle at 80% 20%, rgba(16, 185, 129, 0.15) 0%, transparent 50%),
+                        radial-gradient(circle at 20% 80%, rgba(5, 150, 105, 0.1) 0%, transparent 50%);
+        }
+
+        .product-container {
+            max-width: 1000px;
+            width: 100%;
+            background: rgba(11, 24, 23, 0.85) !important;
+            border: 1px solid rgba(16, 185, 129, 0.15);
+            border-radius: 24px;
+            padding: 40px;
+            backdrop-filter: blur(20px);
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.75);
+            display: flex;
+            gap: 40px;
+            z-index: 5;
+        }
+
+        .product-image-section {
+            flex: 1;
+            max-width: 450px;
+        }
+
+        .main-img-holder {
+            width: 100%;
+            height: 380px;
+            background: rgba(6, 13, 13, 0.8);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .main-img-holder img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .product-details-section {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .product-header h1 {
+            font-size: 2.2rem;
+            color: #ffffff;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .seller-meta {
+            font-size: 14px;
+            color: #94a3b8;
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 20px;
+            border-bottom: 1px solid rgba(16, 185, 129, 0.1);
+            padding-bottom: 15px;
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .seller-meta a {
+            color: #10b981;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .seller-meta a:hover {
+            text-decoration: underline;
+        }
+
+        .product-description {
+            font-size: 15px;
+            color: #94a3b8;
+            line-height: 1.6;
+            margin-bottom: 25px;
+            background: rgba(6, 13, 13, 0.4);
+            padding: 15px;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.03);
+        }
+
+        /* 🎚️ RESTRUCTURED TRANSPARENT PRICING CORE UI */
+        .pricing-breakdown-card {
+            background: rgba(6, 13, 13, 0.6);
+            border: 1px solid rgba(16, 185, 129, 0.15);
+            padding: 20px;
+            border-radius: 14px;
+            margin-bottom: 25px;
+        }
+
+        .price-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .price-row .label {
+            color: #878f82;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        /* ✨ FIXED: Kept clean, fully visible, and removed the line-through styling */
+        .price-row .value.original {
+            color: #e2e8f0;
+            font-size: 16px;
+            font-weight: 600;
+            opacity: 0.9;
+        }
+
+        .activation-statement {
+            color: #ba7517;
+            font-size: 12px;
+            font-weight: 600;
+            margin: 12px 0;
+            padding: 10px;
+            background: rgba(186, 117, 23, 0.04);
+            border-left: 3px solid #ba7517;
+            border-radius: 4px;
+            line-height: 1.4;
+        }
+
+        .final-price-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px dashed rgba(255, 255, 255, 0.08);
+            padding-top: 14px;
+            margin-top: 10px;
+        }
+
+        .final-price-row .label {
+            color: #ffffff;
+            font-size: 15px;
+            font-weight: 700;
+        }
+
+        .final-price-row .value.final {
+            font-size: 30px;
+            font-weight: 700;
+            color: #feaf17;
+            text-shadow: 0 2px 10px rgba(254, 175, 23, 0.15);
+        }
+
+        .btn-acquire {
+            width: 100%;
+            background: #10b981 !important;
+            color: #ffffff !important;
+            border: none;
+            padding: 16px;
+            font-size: 1rem;
+            font-weight: 700;
+            border-radius: 12px;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.2);
+        }
+
+        .btn-acquire:hover {
+            background: #059669 !important;
+            box-shadow: 0 0 25px rgba(16, 185, 129, 0.4);
+            transform: translateY(-1px);
+        }
+
+        .btn-back-nav {
+            background: transparent;
+            border: none;
+            color: #64748b;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 20px;
+            transition: color 0.15s ease;
+        }
+
+        .btn-back-nav:hover {
+            color: #10b981;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="product-container">
+        
+        <div class="product-image-section">
+            <button class="btn-back-nav" onclick="window.history.back()">
+                <i class="ti ti-arrow-left"></i> Back to Marketplace
+            </button>
+            <div class="main-img-holder">
+                <img id="productImg" src="placeholder.png" alt="Marketplace Asset">
+            </div>
+        </div>
+
+        <div class="product-details-section">
+            <div>
+                <div class="product-header">
+                    <h1 id="productTitle">Loading Item Specification...</h1>
+                    
+                    <div class="seller-meta">
+                        <div class="meta-item">
+                            <i class="ti ti-user-circle"></i>
+                            <span>Listed by: <a href="#" id="sellerLink">Manager</a></span>
+                        </div>
+                        <!-- 📅 NEW: PUBLISHED DATE METADATA TAG NODE -->
+                        <div class="meta-item" style="color: #64748b;">
+                            <i class="ti ti-calendar-event" style="color: #ba7517;"></i>
+                            <span>Published: <span id="publishDateNode" style="color: #94a3b8; font-weight: 500;">Loading...</span></span>
+                        </div>
+                    </div>
+                </div>
+
+                <p class="product-description" id="productDesc">
+                    Retrieving structural ledger information from the localized database row...
+                </p>
+            </div>
+
+            <div>
+                <div class="pricing-breakdown-card">
+                    <div class="price-row">
+                        <span class="label">Original Price:</span>
+                        <span class="value original" id="originalPriceNode">RM 0.00</span>
+                    </div>
+
+                    <div class="activation-statement">
+                        ⚠️ By using this website will charge 6% for website activation
+                    </div>
+
+                    <div class="final-price-row">
+                        <span class="label">Finalised Price:</span>
+                        <span class="value final" id="finalisedPriceNode">RM 0.00</span>
+                    </div>
+                </div>
+
+                <button class="btn-acquire" id="acquireBtn">
+                    <i class="ti ti-shopping-cart-discount"></i> Acquire Material
+                </button>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        const pathParts = window.location.pathname.split('/');
+        const itemId = pathParts[pathParts.length - 1];
+
+        function fetchProductSpecificationNode() {
+            fetch(`/items`) 
+                .then(res => res.json())
+                .then(items => {
+                    const currentItem = items.find(i => i.id == itemId);
+                    if (!currentItem) {
+                        document.getElementById('productTitle').textContent = "Asset Node Missing";
+                        return;
+                    }
+
+                    document.getElementById('productTitle').textContent = currentItem.name;
+                    document.getElementById('productDesc').textContent = currentItem.description;
+                    document.getElementById('sellerLink').textContent = currentItem.student;
+                    document.getElementById('sellerLink').href = `/profile/${encodeURIComponent(currentItem.student)}`;
+                    
+                    // Inject the item's publication timeline stamp
+                    document.getElementById('publishDateNode').textContent = currentItem.published_date || "10-Jun-2026";
+                    
+                    if(currentItem.image) {
+                        document.getElementById('productImg').src = currentItem.image;
+                    }
+
+                    const rawBasePrice = parseFloat(currentItem.price);
+                    const feeSurcharge = rawBasePrice * 0.06;
+                    const computedTotal = rawBasePrice + feeSurcharge;
+
+                    document.getElementById('originalPriceNode').textContent = `RM ${rawBasePrice.toFixed(2)}`;
+                    document.getElementById('finalisedPriceNode').textContent = `RM ${computedTotal.toFixed(2)}`;
+
+                    if (currentItem.status !== "available") {
+                        const acquireBtn = document.getElementById('acquireBtn');
+                        acquireBtn.textContent = "Asset Escrow Locked";
+                        acquireBtn.style.background = "#334155";
+                        acquireBtn.style.cursor = "not-allowed";
+                        acquireBtn.disabled = true;
+                    }
+                })
+                .catch(err => console.error("Database tracking fault:", err));
+        }
+
+        document.getElementById('acquireBtn').addEventListener('click', function() {
+            const activeBuyer = JSON.parse(localStorage.getItem('currentUser') || '{}').name || "Anonymous Student";
+            
+            fetch(`/items/${itemId}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ buyer: activeBuyer })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.error) {
+                    alert(data.error);
+                } else {
+                    alert("Reservation Logged! Digital 6% escrow activated. Please meet the seller at FCI to settle the physical cash transaction.");
+                    window.location.href = '/dashboard';
+                }
+            });
+        });
+
+        fetchProductSpecificationNode();
+    </script>
+</body>
+</html>

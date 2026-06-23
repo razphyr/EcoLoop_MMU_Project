@@ -1,0 +1,83 @@
+/* ==========================================================
+   PREMIUM FOREST MATRIX // ANIMATED BACKGROUND
+   ========================================================== */
+* { 
+    margin: 0; padding: 0; box-sizing: border-box; 
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; 
+}
+
+body {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    overflow: hidden; 
+    position: relative;
+    background-color: #081111 !important;
+}
+
+/* ANIMATED GRADIENT BACKGROUND */
+body::before {
+    content: "";
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    z-index: 0;
+    pointer-events: none;
+    background: radial-gradient(circle at 85% 50%, rgba(16, 185, 129, 0.3) 0%, transparent 55%),
+                radial-gradient(circle at 15% 50%, rgba(31, 23, 38, 0.6) 0%, transparent 60%);
+    background-size: 200% 200%;
+    animation: gradientMove 15s ease infinite;
+}
+
+@keyframes gradientMove {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+/* PROFILE CARD */
+.profile-card {
+    background: rgba(11, 24, 23, 0.85) !important;
+    border: 1px solid rgba(16, 185, 129, 0.15);
+    padding: 40px;
+    border-radius: 24px;
+    max-width: 500px;
+    width: 100%;
+    backdrop-filter: blur(20px);
+    display: flex;
+    align-items: center;
+    gap: 28px;
+    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.75);
+    z-index: 5;
+    position: relative;
+}
+
+.avatar-circle {
+    width: 84px; height: 84px;
+    border-radius: 50%;
+    border: 2px solid #10b981;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 38px; color: #10b981;
+    background: rgba(16, 185, 129, 0.05);
+    box-shadow: 0 0 15px rgba(16, 185, 129, 0.15);
+    flex-shrink: 0;
+}
+
+.profile-info h2 { font-size: 1.8rem; color: #ffffff; margin-bottom: 6px; font-weight: 700; }
+
+.verified-badge {
+    color: #10b981; font-size: 11px; font-weight: 800;
+    display: flex; align-items: center; gap: 6px;
+    text-transform: uppercase; background: rgba(16, 185, 129, 0.1);
+    padding: 4px 10px; border-radius: 6px;
+    border: 1px solid rgba(16, 185, 129, 0.2); width: fit-content;
+}
+
+.btn-back {
+    margin-top: 18px; background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.08); color: #64748b;
+    padding: 8px 16px; border-radius: 8px; cursor: pointer;
+    font-size: 12px; font-weight: 700; transition: all 0.2s ease;
+}
+.btn-back:hover { border-color: #10b981; color: #10b981; }

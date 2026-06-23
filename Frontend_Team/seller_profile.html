@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FCI Student Profile Node // EcoLoop</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+    <link rel="stylesheet" href="/seller_profile.css">
+</head>
+<body>
+
+    <div class="floating-container">
+        <div class="float-item" style="top: 15%; left: 10%;"></div>
+        <div class="float-item" style="top: 70%; left: 85%;"></div>
+        <div class="float-item" style="top: 40%; left: 20%;"></div>
+        <div class="float-item" style="top: 80%; left: 10%;"></div>
+    </div>
+
+    <div class="profile-card">
+        <div class="avatar-circle">
+            <i class="ti ti-user-shield"></i>
+        </div>
+        <div class="profile-info">
+            <h2 id="profileName">Loading User...</h2>
+            
+            <div class="secure-notice">
+                <i class="ti ti-lock-square-rounded" style="color: #ba7517; font-size: 16px;"></i>
+                <span>Contact Managed via EcoLoop Administrator</span>
+            </div>
+            
+            <div class="verified-badge">
+                <i class="ti ti-shield-check"></i> Verified FCI Student Seller
+            </div>
+            
+            <button class="btn-back" onclick="window.history.back()">
+                <i class="ti ti-arrow-left"></i> Return to Feed
+            </button>
+        </div>
+    </div>
+
+    <script>
+        const pathSegments = window.location.pathname.split('/');
+        const targetUsername = decodeURIComponent(pathSegments[pathSegments.length - 1]);
+
+        function loadAnonymizedProfile() {
+            const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+            const queryParams = `?role=${encodeURIComponent(currentUser.role || 'user')}&requester=${encodeURIComponent(currentUser.name || '')}`;
+
+            fetch(`/api/user/${encodeURIComponent(targetUsername)}${queryParams}`)
+                .then(res => res.json())
+                .then(data => {
+                    if (data.error) {
+                        document.getElementById('profileName').textContent = "Profile Node Missing";
+                    } else {
+                        document.getElementById('profileName').textContent = data.name;
+                    }
+                })
+                .catch(err => {
+                    document.getElementById('profileName').textContent = "Connection Error";
+                });
+        }
+
+        loadAnonymizedProfile();
+    </script>
+</body>
+</html>

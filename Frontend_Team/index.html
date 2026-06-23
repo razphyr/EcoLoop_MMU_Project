@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Eco Loop // FCI Hub</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+</head>
+<body>
+
+    <div class="floating-bg">
+        <div class="floating-item"><i class="ti ti-book"></i></div>
+        <div class="floating-item"><i class="ti ti-calculator"></i></div>
+        <div class="floating-item"><i class="ti ti-pencil"></i></div>
+        <div class="floating-item"><i class="ti ti-book"></i></div>
+        <div class="floating-item"><i class="ti ti-calculator"></i></div>
+    </div>
+
+    <nav>
+        <div class="status-node">
+            <span class="status-dot"></span>
+            <span class="status-text">NODE // FCI_LIVE</span>
+        </div>
+        
+        <ul id="navLinksList">
+            <li onclick="window.location.href='/'" style="color: #ffffff; cursor: pointer;">Home</li>
+            <li onclick="window.location.href='/login'" style="cursor: pointer;">Explore</li>
+            <li onclick="window.location.href='/login'" style="cursor: pointer;">Dashboard</li>
+        </ul>
+    </nav>
+
+    <section class="hero">
+        <h1 class="main-title">EcoLoop</h1>
+        
+        <h2 class="subtitle">The FCI Computing Marketplace Hub</h2>
+        
+        <p class="description">
+            EcoLoop helps FCI students and staff trade programming manuals, computing hardware, and course reference guides easily to reduce waste within our faculty community.
+        </p>
+
+        <div class="search-container">
+            <form action="/search" method="get" onsubmit="return handleSearch(event)">
+                <input type="text" name="query" placeholder="Search textbooks, lab kits, electronics..." required autocomplete="off">
+                <button type="submit">Search</button>
+            </form>
+        </div>
+
+        <div class="action-container">
+            <button id="heroActionButton" class="btn-start-now" onclick="window.location.href='/login'">Start Now</button>
+        </div>
+    </section>
+
+    <script>
+    // FIXED: Unified search validation checking your active logged-in profile node parameters
+    function handleSearch(event) {
+        const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+        const hasActiveSession = !!currentUser.name;
+
+        if (!hasActiveSession) {
+            event.preventDefault(); 
+            alert("Access Denied! You must be registered and logged in to search the FCI marketplace repository.");
+            window.location.href = '/login';
+            return false;
+        }
+        return true;
+    }
+
+    document.addEventListener("DOMContentLoaded", function() {
+        // Checking for your actual active configuration session parameter mapping
+        const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+        const hasActiveSession = !!currentUser.name;
+        
+        if (hasActiveSession) {
+            const navList = document.getElementById('navLinksList');
+            const listItems = navList.querySelectorAll('li');
+            
+            // Dynamically point paths to clean backend routes rather than sending back to /login
+            if (listItems.length >= 3) {
+                listItems[1].setAttribute('onclick', "window.location.href='/student'");
+                listItems[2].setAttribute('onclick', "window.location.href='/dashboard'");
+            }
+            
+            // Append a secure logout trigger node
+            const logoutLi = document.createElement('li');
+            logoutLi.innerHTML = '<i class="ti ti-logout"></i> Logout';
+            logoutLi.style.cursor = 'pointer';
+            logoutLi.style.color = '#ef4444';
+            logoutLi.style.fontWeight = '700';
+            logoutLi.setAttribute('onclick', 'logout()');
+            navList.appendChild(logoutLi);
+            
+            const heroBtn = document.getElementById('heroActionButton');
+            if (heroBtn) {
+                heroBtn.textContent = "Enter Marketplace";
+                heroBtn.setAttribute('onclick', "window.location.href='/student'");
+                heroBtn.style.background = "#10b981"; // Dynamic Emerald Match
+                heroBtn.style.color = "#081111";
+                heroBtn.style.border = "none";
+                heroBtn.style.boxShadow = "0 4px 15px rgba(16, 185, 129, 0.25)";
+            }
+        }
+    });
+
+    // Clean session clear callback method
+    function logout() {
+        if (confirm("Are you sure you want to log out of your session?")) {
+            localStorage.clear();
+            window.location.href = '/';
+        }
+    }
+    </script>
+
+</body>
+</html>

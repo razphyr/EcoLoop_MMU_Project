@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard // EcoLoop</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="student_dashboard.css">
+</head>
+<body>
+
+    <!-- Ambient orbs -->
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+
+    <!-- Top Navigation -->
+    <nav class="topnav">
+        <div class="nav-left">
+            <div class="eco-badge" onclick="window.location.href='/student'" style="cursor:pointer">
+                ECO<span>LOOP</span>
+            </div>
+            <span class="nav-divider"></span>
+            <span class="nav-page-title"><i class="ti ti-layout-dashboard"></i> Dashboard</span>
+        </div>
+        <ul class="nav-links">
+            <li onclick="window.location.href='/'"><i class="ti ti-home"></i> Home</li>
+            <li onclick="window.location.href='/student'"><i class="ti ti-search"></i> Explore</li>
+            <li class="active"><i class="ti ti-layout-dashboard"></i> Dashboard</li>
+            <li class="nav-logout" onclick="localStorage.clear(); window.location.href='/'">
+                <i class="ti ti-logout"></i> Logout
+            </li>
+        </ul>
+    </nav>
+
+    <div class="dashboard-wrapper">
+
+        <!-- Welcome Banner -->
+        <div class="welcome-banner">
+            <div class="welcome-text">
+                <p class="welcome-label">WELCOME BACK</p>
+                <h1 id="welcomeName">Loading...</h1>
+                <p class="welcome-sub">Your personal transaction ledger and profile hub.</p>
+            </div>
+            <div class="welcome-badge">
+                <i class="ti ti-user-circle"></i>
+            </div>
+        </div>
+
+        <!-- Stats Row -->
+        <div class="stats-row">
+            <div class="stat-card">
+                <div class="stat-icon"><i class="ti ti-package"></i></div>
+                <div class="stat-info">
+                    <span class="stat-value" id="statSelling">0</span>
+                    <span class="stat-label">Items Selling</span>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon bought"><i class="ti ti-shopping-cart"></i></div>
+                <div class="stat-info">
+                    <span class="stat-value" id="statBought">0</span>
+                    <span class="stat-label">Items Bought</span>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon pending"><i class="ti ti-clock"></i></div>
+                <div class="stat-info">
+                    <span class="stat-value" id="statPending">0</span>
+                    <span class="stat-label">Pending</span>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon sold"><i class="ti ti-circle-check"></i></div>
+                <div class="stat-info">
+                    <span class="stat-value" id="statSold">0</span>
+                    <span class="stat-label">Completed</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Grid -->
+        <div class="main-grid">
+
+            <!-- Profile Card -->
+            <div class="panel-card profile-card">
+                <div class="panel-header">
+                    <span class="panel-title"><i class="ti ti-settings"></i> Profile Node</span>
+                </div>
+                <div class="panel-body">
+                    <div class="profile-avatar">
+                        <i class="ti ti-user"></i>
+                    </div>
+                    <p class="profile-name" id="profileName">—</p>
+                    <p class="profile-id" id="profileId">—</p>
+                    <p class="profile-level" id="profileLevel">—</p>
+
+                    <div class="field-group">
+                        <label>Contact Number</label>
+                        <div class="field-row">
+                            <input type="text" id="userPhoneInput" placeholder="e.g. 60123456789">
+                            <button class="btn-update" onclick="saveProfilePhoneParameters()">
+                                <i class="ti ti-device-floppy"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div id="profileMsg" class="profile-msg"></div>
+                </div>
+            </div>
+
+            <!-- Transactions -->
+            <div class="panel-card transactions-card">
+                <div class="panel-header">
+                    <span class="panel-title"><i class="ti ti-history"></i> Transaction Ledger</span>
+                    <span class="panel-count" id="txCount">0 records</span>
+                </div>
+                <div class="panel-body">
+                    <div id="dashboardContainer" class="ledger-list"></div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        const user = JSON.parse(localStorage.getItem('currentUser') || '{}');
+        if (!user.name) window.location.href = '/login';
+
+        // Populate welcome + profile
+        document.getElementById('welcomeName').textContent = user.name || '—';
+        document.getElementById('profileName').textContent = user.name || '—';
+        document.getElementById('profileId').textContent = user.student_id || '—';
+        document.getElementById('profileLevel').textContent = user.level || '—';
+
+        // Load phone
+        fetch(`/api/user/${user.name}`)
+            .then(r => r.json())
+            .then(d => { if (d.phone) document.getElementById('userPhoneInput').value = d.phone; })
+            .catch(() => {});
+
+        function saveProfilePhoneParameters() {
+            const phone = document.getElementById('userPhoneInput').value.trim();
+            const msg = document.getElementById('profileMsg');
+            fetch(`/api/user/${user.name}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ phone })
+            })
+            .then(r => r.json())
+            .then(() => {
+                msg.textContent = '✓ Contact updated successfully.';
+                msg.className = 'profile-msg success';
+                setTimeout(() => { msg.textContent = ''; msg.className = 'profile-msg'; }, 3000);
+            })
+            .catch(() => {
+                msg.textContent = '✗ Update failed. Try again.';
+                msg.className = 'profile-msg error';
+            });
+        }
+
+        function loadDashboardLedger() {
+            fetch('/items')
+                .then(res => res.json())
+                .then(data => {
+                    const mine = data.filter(i => i.student === user.name || i.buyer === user.name);
+                    const selling = mine.filter(i => i.student === user.name);
+                    const bought  = mine.filter(i => i.buyer === user.name);
+                    const pending = mine.filter(i => i.status === 'pending');
+                    const sold    = mine.filter(i => i.status === 'sold');
+
+                    document.getElementById('statSelling').textContent = selling.length;
+                    document.getElementById('statBought').textContent  = bought.length;
+                    document.getElementById('statPending').textContent = pending.length;
+                    document.getElementById('statSold').textContent    = sold.length;
+                    document.getElementById('txCount').textContent     = `${mine.length} record${mine.length !== 1 ? 's' : ''}`;
+
+                    const container = document.getElementById('dashboardContainer');
+                    if (mine.length === 0) {
+                        container.innerHTML = `
+                            <div class="empty-state">
+                                <i class="ti ti-inbox"></i>
+                                <p>No transactions logged yet.</p>
+                                <a href="/student">Browse the marketplace →</a>
+                            </div>`;
+                        return;
+                    }
+
+                    container.innerHTML = mine.map(i => {
+                        const isOwner  = i.student === user.name;
+                        const status   = i.status || 'available';
+                        const statusClass = status === 'sold' ? 'sold' : status === 'pending' ? 'pending' : 'available';
+                        return `
+                        <div class="ledger-item" id="card-${i.id}">
+                            <div class="ledger-item-main" onclick="toggleDrawer(${i.id})">
+                                <div class="ledger-item-left">
+                                    <div class="ledger-icon ${statusClass}">
+                                        <i class="ti ti-${status === 'sold' ? 'circle-check' : status === 'pending' ? 'clock' : 'package'}"></i>
+                                    </div>
+                                    <div class="ledger-item-info">
+                                        <p class="ledger-item-name">${i.name}</p>
+                                        <p class="ledger-item-desc">${i.description || 'No description.'}</p>
+                                    </div>
+                                </div>
+                                <div class="ledger-item-right">
+                                    <span class="ledger-price">RM ${parseFloat(i.price).toFixed(2)}</span>
+                                    <span class="role-tag ${isOwner ? 'selling' : 'bought'}">${isOwner ? 'Selling' : 'Bought'}</span>
+                                    <span class="status-tag ${statusClass}">${status}</span>
+                                </div>
+                            </div>
+                            <div class="fulfillment-drawer" id="drawer-${i.id}" onclick="event.stopPropagation()">
+                                ${isOwner && status === 'pending' ? `
+                                    <p class="drawer-label"><i class="ti ti-truck-delivery"></i> Upload delivery proof to complete sale</p>
+                                    <input type="file" id="proofUpload-${i.id}" accept="image/*" class="file-input">
+                                    <button class="btn-fulfill" onclick="submitHandoverProof(${i.id})">
+                                        <i class="ti ti-circle-check"></i> Complete & Release
+                                    </button>
+                                ` : `<p class="drawer-status-msg">Status: <strong>${status}</strong>${i.buyer ? ` · Buyer: ${i.buyer}` : ''}</p>`}
+                            </div>
+                        </div>`;
+                    }).join('');
+                });
+        }
+
+        function toggleDrawer(id) {
+            const drawer = document.getElementById(`drawer-${id}`);
+            drawer.classList.toggle('open');
+        }
+
+        function submitHandoverProof(id) {
+            const fileInput = document.getElementById(`proofUpload-${id}`);
+            if (!fileInput.files[0]) { alert('Please select a proof image first.'); return; }
+            const reader = new FileReader();
+            reader.onload = e => {
+                fetch(`/items/${id}/confirm-sold`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ delivery_proof: e.target.result })
+                })
+                .then(r => r.json())
+                .then(() => { alert('Sale completed!'); loadDashboardLedger(); })
+                .catch(() => alert('Error submitting proof.'));
+            };
+            reader.readAsDataURL(fileInput.files[0]);
+        }
+
+        loadDashboardLedger();
+    </script>
+</body>
+</html>

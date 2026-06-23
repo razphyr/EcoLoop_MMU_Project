@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portal Login // EcoLoop</title>
+    <link rel="stylesheet" href="login_style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+
+    <a href="/" class="node-return-btn">
+        <span class="node-dot"></span>
+        <span class="node-label">NODE // RETURN HOME</span>
+    </a>
+
+    <div class="auth-card">
+        <span class="corner tl"></span>
+        <span class="corner tr"></span>
+        <span class="corner bl"></span>
+        <span class="corner br"></span>
+
+        <div class="card-header">
+            <div class="eco-badge">ECO<span>LOOP</span></div>
+            <h2>Portal Login</h2>
+            <p class="subtitle">FCI REPOSITORIES MARKETPLACE NETWORK</p>
+        </div>
+
+        <form id="loginForm" novalidate>
+            <div class="input-group">
+                <label for="username">MMU Email or Student ID</label>
+                <div class="input-wrap">
+                    <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <rect x="2" y="4" width="20" height="16" rx="2"/>
+                        <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>
+                    </svg>
+                    <input id="username" name="username" type="text" placeholder="ID or @student.mmu.edu.my" required autocomplete="off">
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label for="password">Password</label>
+                <div class="input-wrap">
+                    <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <rect x="3" y="11" width="18" height="11" rx="2"/>
+                        <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                    </svg>
+                    <input id="password" name="password" type="password" placeholder="••••••••" required>
+                </div>
+            </div>
+
+            <button type="submit" class="auth-btn">
+                <span class="btn-text">AUTHORIZE ENTRY</span>
+                <svg class="btn-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <path d="M5 12h14M12 5l7 7-7 7"/>
+                </svg>
+            </button>
+        </form>
+
+        <div class="auth-footer">
+            <p>Forgot credentials? <a href="/forgot-password">Configure 2FA Recovery</a></p>
+            <p>New to the Hub? <a href="/register">Create Profile Node</a></p>
+        </div>
+    </div>
+
+    <script>
+        // --- TEAMMATE'S INTERACTIVE UI ENHANCEMENTS ---
+        const inputs = document.querySelectorAll('input');
+        inputs.forEach(input => {
+            const wrap = input.closest('.input-wrap');
+            if (!wrap) return;
+
+            input.addEventListener('input', () => {
+                wrap.classList.add('typing-flash');
+                setTimeout(() => wrap.classList.remove('typing-flash'), 150);
+            });
+
+            input.addEventListener('focus', () => wrap.classList.add('active'));
+            input.addEventListener('blur', () => {
+                wrap.classList.remove('active');
+                if (input.value) wrap.classList.add('filled');
+                else wrap.classList.remove('filled');
+            });
+        });
+
+        // Button ripple interaction engine
+        const btn = document.querySelector('.auth-btn');
+        if (btn) {
+            btn.addEventListener('click', function(e) {
+                const ripple = document.createElement('span');
+                ripple.className = 'ripple';
+                const rect = btn.getBoundingClientRect();
+                ripple.style.left = (e.clientX - rect.left) + 'px';
+                ripple.style.top  = (e.clientY - rect.top)  + 'px';
+                btn.appendChild(ripple);
+                setTimeout(() => ripple.remove(), 600);
+            });
+        }
+
+        // --- AZFAR'S SECURE DATABASE SQL PIPELINE CONNECTORS ---
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault(); 
+            
+            const usernameVal = document.getElementById('username').value.trim();
+            const passwordVal = document.getElementById('password').value;
+
+            if (!usernameVal || !passwordVal) {
+                alert("Please fill in all access verification fields.");
+                return;
+            }
+
+            fetch('/api/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username: usernameVal, password: passwordVal })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.error) { 
+                    alert(data.error); 
+                } else {
+                    // Harmonized condition matching the newly structured dynamic email packet parameters
+                    if (data.action === "otp_required") {
+                        localStorage.setItem('pendingVerifyEmail', data.email);
+                        localStorage.setItem('clicSimPacket', JSON.stringify(data.simulated_clic_packet));
+                        window.location.href = '/verify-login-otp';
+                    } else {
+                        localStorage.setItem('currentUser', JSON.stringify(data.user));
+                        window.location.href = data.user.role === 'admin' ? '/admin' : '/student';
+                    }
+                }
+            })
+            .catch(err => {
+                console.error("Link link fault:", err);
+                alert("Failed to reach central app.py repository network. Ensure backend thread is running.");
+            });
+        });
+    </script>
+</body>
+</html>
