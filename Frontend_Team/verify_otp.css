@@ -1,0 +1,74 @@
+* { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
+
+body {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #081111;
+    overflow: hidden;
+    position: relative;
+}
+
+/* Same Matrix Background as Dashboard */
+body::before {
+    content: "";
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    z-index: 0;
+    pointer-events: none;
+    background: radial-gradient(circle at 85% 50%, rgba(16, 185, 129, 0.3) 0%, transparent 55%),
+                radial-gradient(circle at 15% 50%, rgba(31, 23, 38, 0.6) 0%, transparent 60%);
+    background-size: 200% 200%;
+    animation: gradientMove 15s ease infinite;
+}
+
+@keyframes gradientMove {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+.profile-card {
+    background: rgba(11, 24, 23, 0.85);
+    border: 1px solid rgba(16, 185, 129, 0.15);
+    padding: 40px;
+    border-radius: 24px;
+    max-width: 400px;
+    width: 90%;
+    backdrop-filter: blur(20px);
+    text-align: center;
+    z-index: 5;
+    position: relative;
+    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.75);
+}
+
+h2 { color: #ffffff; margin-bottom: 10px; }
+.secure-notice { color: #94a3b8; font-size: 14px; margin-bottom: 20px; }
+
+input {
+    width: 100%;
+    padding: 15px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(16, 185, 129, 0.2);
+    border-radius: 8px;
+    color: #ffffff;
+    font-size: 1.5rem;
+    text-align: center;
+    margin-bottom: 20px;
+    letter-spacing: 5px;
+}
+
+.btn-back {
+    width: 100%;
+    background: #10b981;
+    color: #081111;
+    padding: 12px;
+    border-radius: 8px;
+    border: none;
+    font-weight: 700;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.btn-back:hover { background: #059669; }

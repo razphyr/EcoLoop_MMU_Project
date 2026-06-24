@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verify OTP // EcoLoop</title>
+    <link rel="stylesheet" href="verify_otp.css">
+</head>
+<body>
+    <div class="profile-card">
+        <div class="profile-info">
+            <h2>Security Verification</h2>
+            <p class="secure-notice">Enter the 6-digit code sent to your email.</p>
+            
+            <form id="otp-form">
+                <input type="text" id="otp-input" placeholder="000000" maxlength="6" required>
+                <button type="submit" class="btn-back">Verify Identity</button>
+            </form>
+            
+            <p id="status-msg"></p>
+        </div>
+    </div>
+
+   <script>
+    document.getElementById('otp-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const otp = document.getElementById('otp-input').value;
+        const statusMsg = document.getElementById('status-msg');
+
+        const email = localStorage.getItem('pendingVerifyEmail');
+
+        if (!email) {
+            statusMsg.style.color = "#ef4444";
+            statusMsg.textContent = "Session expired. Please log in again.";
+            return;
+        }
+
+        try {
+            const response = await fetch('/api/verify-otp', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email: email, otp: otp })
+            });
+
+            const data = await response.json();
+
+            if (response.ok && data.success) {
+                statusMsg.style.color = "#10b981";
+                statusMsg.textContent = "Verification Successful!";
+                localStorage.setItem('currentUser', JSON.stringify(data.user));
+                localStorage.removeItem('pendingVerifyEmail');
+                window.location.href = data.user.role === 'admin' ? '/admin' : '/student';
+            } else {
+                statusMsg.style.color = "#ef4444";
+                statusMsg.textContent = data.error || "Invalid OTP. Try again.";
+            }
+        } catch (error) {
+            statusMsg.style.color = "#ef4444";
+            statusMsg.textContent = "Server error. Please try again.";
+        }
+    });
+</script>

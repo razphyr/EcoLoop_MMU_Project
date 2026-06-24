@@ -11,15 +11,15 @@
     --input-bg:      rgba(4, 8, 16, 0.9);
     --input-border:  rgba(255,255,255,0.07);
 
-    --text-primary:  #ffffff;
+    --text-primary:   #ffffff;
     --text-secondary: #7a90a4;
-    --text-muted:    #3d5166;
+    --text-muted:     #3d5166;
 
     --accent:        #f26a45;
     --accent-glow:   rgba(242, 106, 69, 0.35);
     --accent-hover:  #ff8460;
 
-    --radius-card: 20px;
+    --radius-card:  20px;
     --radius-input: 10px;
 }
 
@@ -55,7 +55,7 @@ body {
     100% { background-position:   0% 50%; }
 }
 
-/* Ambient orbs */
+/* ── AMBIENT ORBS ── */
 .orb {
     position: fixed;
     border-radius: 50%;
@@ -74,7 +74,7 @@ body {
     66%       { transform: translate(-30px, 40px) scale(0.94); }
 }
 
-/* Return Home button */
+/* ── RETURN HOME BUTTON ── */
 .node-return-btn {
     position: fixed;
     top: 28px;
@@ -118,12 +118,11 @@ body {
     50%       { box-shadow: 0 0 14px var(--accent), 0 0 30px var(--accent-glow); }
 }
 
-/* Card */
+/* ── AUTH CARD ── */
 .auth-card {
     position: relative;
     z-index: 10;
     isolation: isolate;
-    background: #080f1c;
     background: var(--card-bg);
     backdrop-filter: blur(24px);
     -webkit-backdrop-filter: blur(24px);
@@ -156,6 +155,7 @@ body {
 .corner.bl { bottom: 14px; left: 14px;    border-right-color: transparent; border-top-color:    transparent; }
 .corner.br { bottom: 14px; right: 14px;   border-left-color:  transparent; border-top-color:    transparent; }
 
+/* ── CARD HEADER ── */
 .card-header {
     text-align: center;
     margin-bottom: 38px;
@@ -179,7 +179,7 @@ body {
     font-family: 'DM Sans', sans-serif;
     font-weight: 700;
     font-size: 2rem;
-    color: #ffffff !important;
+    color: #ffffff;
 }
 
 .subtitle {
@@ -188,9 +188,10 @@ body {
     letter-spacing: 2px;
     color: var(--text-secondary);
     text-transform: uppercase;
+    margin-top: 6px;
 }
 
-/* Input groups */
+/* ── INPUT GROUPS ── */
 .input-group {
     margin-bottom: 18px;
     animation: fieldIn 0.6s cubic-bezier(0.16,1,0.3,1) both;
@@ -269,7 +270,48 @@ input::placeholder {
     font-weight: 300;
 }
 
-/* Submit button */
+/* Password field — extra right padding so text clears the eye button */
+#password {
+    padding-right: 46px;
+}
+
+/* ── EYE TOGGLE ── */
+.eye-toggle {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    padding: 4px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-muted);
+    border-radius: 6px;
+    transition: color 0.2s ease, background 0.2s ease;
+    outline: none;
+}
+.eye-toggle:hover {
+    color: var(--text-secondary);
+    background: rgba(255,255,255,0.05);
+}
+.eye-toggle.active {
+    color: var(--accent);
+}
+.eye-icon {
+    width: 16px;
+    height: 16px;
+    pointer-events: none;
+    display: block;
+}
+.input-wrap.active .eye-toggle,
+.input-wrap.typing-flash .eye-toggle {
+    color: var(--accent);
+}
+
+/* ── SUBMIT BUTTON ── */
 .auth-btn {
     position: relative;
     overflow: hidden;
@@ -322,7 +364,7 @@ input::placeholder {
     to { transform: translate(-50%, -50%) scale(30); opacity: 0; }
 }
 
-/* Footer */
+/* ── FOOTER ── */
 .auth-footer {
     text-align: center;
     margin-top: 28px;
@@ -342,3 +384,10 @@ input::placeholder {
     transition: color 0.2s;
 }
 .auth-footer a:hover { color: var(--accent-hover); }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 480px) {
+    .auth-card { padding: 40px 28px 36px; }
+    .auth-card h2 { font-size: 1.6rem; }
+    .node-return-btn { top: 16px; left: 16px; padding: 8px 14px; }
+}
