@@ -158,10 +158,8 @@
         }
 
         function dismissLogNode(id) {
-            // Fallback mock deletion row intercepting matching parameters
-            alert(`Log entry block #${id} marked as resolved & dismissed from memory terminal.`);
-            // Optional: If you implement an active report deletion route in app.py later:
-            // fetch(`/api/reports/${id}`, { method: 'DELETE' }).then(() => fetchUserFeedbackLogs());
+            fetch(`/api/reports/${id}`, { method: 'DELETE' })
+                .then(() => fetchUserFeedbackLogs());
         }
 
         // Initialize helpdesk retrieval system

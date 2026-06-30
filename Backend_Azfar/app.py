@@ -251,6 +251,13 @@ def add_report():
 def get_reports():
     return jsonify([{"id":r.id, "type":r.type, "statement":r.statement, "image":r.image, "user_name":r.user_name} for r in Report.query.all()])
 
+@app.route("/api/reports/<int:report_id>", methods=["DELETE"])
+def delete_report(report_id):
+    report = Report.query.get(report_id)
+    if report:
+        db.session.delete(report)
+        db.session.commit()
+    return jsonify({"message": "deleted"}), 200
 
 # =======================================================
 # 📊 CENTRAL ASSET TRADING MARKETPLACE API (ESCROW MACHINE)

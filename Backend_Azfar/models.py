@@ -30,7 +30,7 @@ class Item(db.Model):
     # 🔄 STATUS STATE MACHINE PARAMETERS
     status = db.Column(db.String(20), default="available") # "available", "pending", "sold"
     delivery_proof = db.Column(db.Text, nullable=True)     # Base64 verification image string
-
+    published_date = db.Column(db.String(50), nullable=True)
 class Report(db.Model):
     __tablename__ = 'report'
     id = db.Column(db.Integer, primary_key=True)

@@ -176,7 +176,6 @@ function render() {
       <td><span class="badge-${it.sold ? 'sold' : 'avail'}">${it.sold ? 'Sold' : 'Available'}</span></td>
       <td>
         <div class="action-cell">
-          <button class="btn-toggle" onclick="toggleStatus(${it.id})">Toggle</button>
           <button class="btn-del" onclick="deleteItem(${it.id})">Delete</button>
         </div>
       </td>
@@ -195,17 +194,7 @@ function updateStats() {
   document.getElementById('s-revenue').textContent = 'RM '+revenue.toLocaleString();
 }
 
-function toggleStatus(id){
-  fetch(`/items/${id}`, { method: "PUT" })
-  .then(res => res.json())
-  .then(updated => {
-    const index = items.findIndex(i => i.id === id);
-    if(index !== -1){
-      items[index].sold = updated.sold;
-      render();
-    }
-  });
-}
+
 
 function deleteItem(id){
   if(!confirm("Are you sure you want to delete this listing?")) return;
