@@ -215,11 +215,21 @@
                                     <button class="btn-fulfill" onclick="submitHandoverProof(${i.id})">
                                         <i class="ti ti-circle-check"></i> Complete & Release
                                     </button>
-                                ` : `<p class="drawer-status-msg">Status: <strong>${status}</strong>${i.buyer ? ` · Buyer: ${i.buyer}` : ''}</p>`}
+                                ` : `<p class=\"drawer-status-msg\">Status: <strong>${status}</strong>${i.buyer ? ` · Buyer: ${i.buyer}` : ''}</p>
+                                     ${isOwner && status === 'available' ? `<button class="btn-fulfill" style="background:#ef4444;" onclick="removeListing(${i.id})"><i class="ti ti-trash"></i> Remove Listing</button>` : ''}`}
                             </div>
                         </div>`;
                     }).join('');
                 });
+        }
+
+
+        function removeListing(id) {
+            if (!confirm('Remove this listing?')) return;
+            fetch(`/items/${id}`, { method: 'DELETE' })
+                .then(() => fetch('/items'))
+                .then(res => res.json())
+                .then(data => { loadDashboardLedger(); });
         }
 
         function toggleDrawer(id) {

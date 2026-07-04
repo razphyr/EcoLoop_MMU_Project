@@ -167,6 +167,14 @@
             fetch('/items').then(res => res.json()).then(data => { marketplaceItems = data; renderItems(); });
         }
 
+        function removeListing(id) {
+            if (!confirm('Remove this listing?')) return;
+            fetch(`/items/${id}`, { method: 'DELETE' })
+                .then(() => fetch('/items'))
+                .then(res => res.json())
+                .then(data => { marketplaceItems = data; renderItems(); });
+        }
+
         function applyStudentFilters() {
             queryFilters.search = document.getElementById('searchBox').value.toLowerCase();
             queryFilters.min = document.getElementById('minPrice').value;
@@ -248,6 +256,7 @@
                         <div class="card-footer">
                             <span class="status-badge ${itemStatus}">${itemStatus.toUpperCase()}</span>
                             ${isAvailable ? `<button class="btn-buy" onclick="event.stopPropagation(); purchaseItem(${item.id})">Buy</button>` : ''}
+                            ${item.student === currentUser.name ? `<button class="btn-buy" style="background:#ef4444;" onclick="event.stopPropagation(); removeListing(${item.id})">Remove</button>` : ''}
                         </div>
                     </div>
                 </div>`;
