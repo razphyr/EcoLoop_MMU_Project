@@ -20,9 +20,12 @@
     --text-secondary: #7a90a4;
     --text-muted:     #3d5166;
 
-    --accent:         #f26a45;
-    --accent-glow:    rgba(242, 106, 69, 0.35);
-    --accent-hover:   #ff8460;
+    --accent:         #4ade80;
+    --accent-glow:    rgba(74, 222, 128, 0.35);
+    --accent-hover:   #6ee7a0;
+
+    --danger:         #dc2626;
+    --danger-glow:    rgba(220, 38, 38, 0.35);
 
     --radius-card:  20px;
     --radius-input: 10px;
@@ -70,7 +73,7 @@ body {
     opacity: 0.18;
     z-index: 0;
 }
-.orb-1 { width: 500px; height: 500px; background: #f26a45; top: -120px; left: -120px; animation: orbFloat 20s ease-in-out infinite; }
+.orb-1 { width: 500px; height: 500px; background: #4ade80; top: -120px; left: -120px; animation: orbFloat 20s ease-in-out infinite; }
 .orb-2 { width: 400px; height: 400px; background: #c0506e; bottom: -100px; right: -80px; animation: orbFloat 25s ease-in-out infinite reverse; }
 .orb-3 { width: 300px; height: 300px; background: #5c2d6e; bottom: 30%; left: 10%; animation: orbFloat 30s ease-in-out infinite 5s; }
 
@@ -107,7 +110,7 @@ body {
 .node-return-btn:hover {
     background: rgba(18, 30, 50, 0.9);
     color: #fff;
-    box-shadow: 0 4px 25px rgba(242, 106, 69, 0.2);
+    box-shadow: 0 4px 25px rgba(74, 222, 128, 0.2);
 }
 
 .node-dot {
@@ -153,7 +156,7 @@ body {
 .register-card:hover {
     transform: translateY(-6px) scale(1.015);
     box-shadow: 0 30px 70px rgba(0, 0, 0, 0.7),
-                0 0 40px rgba(242, 106, 69, 0.06),
+                0 0 40px rgba(74, 222, 128, 0.06),
                 inset 0 1px 0 rgba(255, 255, 255, 0.08);
 }
 @keyframes cardIn {
@@ -166,7 +169,7 @@ body {
     position: absolute;
     width: 14px;
     height: 14px;
-    border: 1.5px solid rgba(242, 106, 69, 0.35);
+    border: 1.5px solid rgba(74, 222, 128, 0.35);
 }
 .corner.tl { top: 14px;    left: 14px;    border-right-color: transparent; border-bottom-color: transparent; }
 .corner.tr { top: 14px;    right: 14px;   border-left-color:  transparent; border-bottom-color: transparent; }
@@ -185,13 +188,13 @@ body {
     font-size: 0.6rem;
     letter-spacing: 3px;
     color: var(--accent);
-    background: rgba(242, 106, 69, 0.1);
-    border: 1px solid rgba(242, 106, 69, 0.25);
+    background: rgba(74, 222, 128, 0.1);
+    border: 1px solid rgba(74, 222, 128, 0.25);
     border-radius: 4px;
     padding: 4px 10px;
     margin-bottom: 16px;
 }
-.eco-badge span { color: rgba(242, 106, 69, 0.55); }
+.eco-badge span { color: rgba(74, 222, 128, 0.55); }
 
 h2 {
     font-family: 'DM Sans', sans-serif;
@@ -251,18 +254,18 @@ label {
 
 .input-wrap.active {
     border-color: var(--accent);
-    box-shadow: 0 0 0 3px var(--accent-glow), 0 0 20px rgba(242, 106, 69, 0.15);
+    box-shadow: 0 0 0 3px var(--accent-glow), 0 0 20px rgba(74, 222, 128, 0.15);
 }
 
 .input-wrap.typing-flash {
     border-color: var(--accent) !important;
     box-shadow: 0 0 0 3px var(--accent-glow),
-                0 0 30px rgba(242, 106, 69, 0.4) !important;
+                0 0 30px rgba(74, 222, 128, 0.4) !important;
     transition: none !important;
 }
 
 .input-wrap.filled {
-    border-color: rgba(242, 106, 69, 0.3);
+    border-color: rgba(74, 222, 128, 0.3);
 }
 
 /* Icon inside the wrap */
@@ -344,14 +347,14 @@ label {
 
 /* ── Error box ────────────────────────────────────────────── */
 .error-msg {
-    background: rgba(242, 106, 69, 0.1);
-    color: #ff8e71;
+    background: rgba(220, 38, 38, 0.1);
+    color: #ff8e8e;
     padding: 12px 16px;
     border-radius: 8px;
     font-size: 0.8rem;
     font-weight: 600;
     margin-bottom: 20px;
-    border-left: 3px solid var(--accent);
+    border-left: 3px solid var(--danger);
     letter-spacing: 0.4px;
     font-family: 'Space Mono', monospace;
 }
@@ -363,7 +366,7 @@ label {
     width: 100%;
     margin-top: 22px;
     padding: 15px 24px;
-    background: linear-gradient(135deg, var(--accent) 0%, #e05535 100%);
+    background: linear-gradient(135deg, var(--accent) 0%, #16a34a 100%);
     border: none;
     border-radius: var(--radius-input);
     color: #fff;
@@ -373,18 +376,18 @@ label {
     letter-spacing: 2px;
     text-transform: uppercase;
     cursor: pointer;
-    box-shadow: 0 8px 24px rgba(242, 106, 69, 0.35);
+    box-shadow: 0 8px 24px rgba(74, 222, 128, 0.35);
     transition: background 0.3s, transform 0.15s, box-shadow 0.3s;
     animation: fieldIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.33s both;
 }
 .btn-register:hover {
-    background: linear-gradient(135deg, var(--accent-hover) 0%, #f26a45 100%);
-    box-shadow: 0 10px 32px rgba(242, 106, 69, 0.5);
+    background: linear-gradient(135deg, var(--accent-hover) 0%, #4ade80 100%);
+    box-shadow: 0 10px 32px rgba(74, 222, 128, 0.5);
     transform: translateY(-1px);
 }
 .btn-register:active {
     transform: scale(0.98) translateY(0);
-    box-shadow: 0 4px 12px rgba(242, 106, 69, 0.3);
+    box-shadow: 0 4px 12px rgba(74, 222, 128, 0.3);
 }
 
 /* Ripple effect */

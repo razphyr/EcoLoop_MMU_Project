@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -57,23 +58,6 @@
                             <rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 3H8a2 2 0 0 0-2 2v2h12V5a2 2 0 0 0-2-2z"/>
                         </svg>
                         <input type="text" id="student_id" required placeholder="1211101234">
-                    </div>
-                </div>
-
-                <!-- Academic Level -->
-                <div class="input-group">
-                    <label for="level">Academic Level</label>
-                    <div class="input-wrap" id="wrap-level">
-                        <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/>
-                        </svg>
-                        <select id="level" required>
-                            <option value="" disabled selected>Select your level</option>
-                            <option value="Foundation">Foundation</option>
-                            <option value="Diploma">Diploma</option>
-                            <option value="Degree">Bachelor's Degree</option>
-                            <option value="Postgraduate">Postgraduate</option>
-                        </select>
                     </div>
                 </div>
 
@@ -159,7 +143,7 @@
             const payload = {
                 name:       document.getElementById('name').value,
                 student_id: document.getElementById('student_id').value,
-                level:      document.getElementById('level').value,
+                level:      "Degree", // Academic Level filter removed from UI; backend requires a non-null value
                 email:      document.getElementById('email').value,
                 password:   document.getElementById('password').value
             };
