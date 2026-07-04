@@ -1,146 +1,132 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>EcoLoop MMU — Admin Panel</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
-<style>
-*{box-sizing:border-box;margin:0;padding:0}
-:root{
-  --leaf:#3B6D11;--leaf-light:#EAF3DE;--leaf-mid:#639922;
-  --gold:#BA7517;--gold-light:#FAEEDA;
-  --red:#A32D2D;--red-light:#FCEBEB;
-  --ink:#1a1f16;--ink2:#2e3529;
-  --paper:#f6f5f0;--paper2:#eeeae0;
-  --muted:#7a7a6e;--border:#d8d4c8;
-  --white:#fff;
-}
-body{font-family:'DM Sans',sans-serif;background:var(--ink);color:var(--paper);min-height:100vh}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EcoLoop MMU — Admin Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+    <style>
+        /* ==========================================================
+           🌌 PREMIUM FOREST MATRIX THEME - ADMIN SYSTEM
+           🎨 Palette: Obsidian Jade | Emerald Glow | Muted Crimson
+           ========================================================== */
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
+        body { background: #081111; color: #f4f6f2; display: flex; min-height: 100vh; overflow-x: hidden; }
 
-.sidebar{position:fixed;top:0;left:0;width:220px;height:100vh;background:var(--ink2);border-right:0.5px solid #3a3f34;display:flex;flex-direction:column;padding:1.5rem 1rem;z-index:10}
-.logo{font-family:'DM Serif Display',serif;font-size:20px;color:var(--leaf-mid);margin-bottom:4px}
-.logo-sub{font-size:11px;color:var(--muted);letter-spacing:.05em;text-transform:uppercase;margin-bottom:2rem}
-.nav-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:8px;font-size:13px;color:var(--muted);cursor:pointer;transition:all .15s;margin-bottom:4px}
-.nav-item.active{background:var(--leaf);color:#fff}
-.nav-item:hover:not(.active){background:#3a3f34;color:var(--paper)}
-.sidebar-footer{margin-top:auto;font-size:11px;color:#4a4f44;border-top:0.5px solid #3a3f34;padding-top:1rem}
+        /* Left Command Sidebar Anchor */
+        .sidebar-panel { width: 260px; background: #0b1817; border-right: 1px solid rgba(16, 185, 129, 0.15); padding: 35px 24px; display: flex; flex-direction: column; gap: 40px; position: fixed; height: 100vh; z-index: 10; }
+        .panel-brand h1 { font-size: 24px; font-weight: 800; color: #fff; display: flex; align-items: center; gap: 8px; }
+        .panel-brand span { color: #10b981; }
+        .panel-brand p { font-size: 11px; font-weight: 700; color: #4b5563; letter-spacing: 1px; margin-top: 4px; }
 
-.main{margin-left:220px;padding:2rem;min-height:100vh}
-.topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:2rem}
-.page-title{font-family:'DM Serif Display',serif;font-size:26px;font-weight:400;color:var(--paper)}
-.page-sub{font-size:13px;color:var(--muted);margin-top:2px}
-.admin-badge{background:var(--leaf);color:#fff;font-size:11px;font-weight:500;padding:4px 12px;border-radius:20px}
+        .sidebar-menu { list-style: none; display: flex; flex-direction: column; gap: 12px; }
+        .menu-item { display: flex; align-items: center; gap: 12px; padding: 14px 18px; border-radius: 12px; font-size: 14.5px; font-weight: 600; color: #94a3b8; cursor: pointer; transition: all 0.2s; }
+        .menu-item:hover, .menu-item.active { background: rgba(16, 185, 129, 0.08); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.15); }
+        .menu-item.exit { color: #f43f5e; margin-top: auto; }
+        .menu-item.exit:hover { background: rgba(244, 63, 94, 0.08); border-color: rgba(244, 63, 94, 0.15); }
 
-.stats{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-bottom:2rem}
-.stat-card{background:var(--ink2);border:0.5px solid #3a3f34;border-radius:12px;padding:1.1rem 1.2rem}
-.stat-val{font-size:28px;font-weight:500;color:var(--paper);line-height:1}
-.stat-lbl{font-size:12px;color:var(--muted);margin-top:5px}
-.stat-card.accent{border-color:var(--leaf);background:linear-gradient(135deg,#1e2e18 0%,var(--ink2) 100%)}
-.stat-card.accent .stat-val{color:var(--leaf-mid)}
+        /* Core Workspace Section Layout */
+        .main-workspace { margin-left: 260px; flex: 1; padding: 50px; position: relative; z-index: 5; }
+        .hub-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 35px; }
+        .hub-header h2 { font-size: 28px; color: #fff; font-weight: 700; }
+        .hub-header p { font-size: 14px; color: #94a3b8; margin-top: 4px; }
+        .role-pill { background: rgba(16, 185, 129, 0.1); border: 1px solid #10b981; color: #10b981; font-size: 11px; font-weight: 700; padding: 6px 14px; border-radius: 20px; text-transform: uppercase; letter-spacing: 0.5px; }
 
-.filters-bar{display:grid;grid-template-columns:1fr 120px 120px 160px auto auto;gap:10px;margin-bottom:1.5rem;align-items:center}
-.filters-bar input,.filters-bar select{background:var(--ink2);border:0.5px solid #3a3f34;border-radius:8px;padding:9px 12px;font-family:'DM Sans',sans-serif;font-size:13px;color:var(--paper);outline:none;}
-.filters-bar input::placeholder{color:#4a4f44}
-.btn-ghost{background:transparent;border:0.5px solid #3a3f34;border-radius:8px;padding:9px 14px;font-family:'DM Sans',sans-serif;font-size:13px;color:var(--muted);cursor:pointer;white-space:nowrap}
-.btn-danger-ghost{background:transparent;border:0.5px solid var(--red);border-radius:8px;padding:9px 14px;font-family:'DM Sans',sans-serif;font-size:13px;color:var(--red);cursor:pointer;white-space:nowrap}
-.btn-danger-ghost:hover{background:var(--red);color:#fff}
+        /* Metric Indicator Blocks */
+        .analytics-row { display: grid; grid-template-columns: repeat(5, 1fr); gap: 20px; margin-bottom: 35px; }
+        .metric-node { background: rgba(11, 24, 23, 0.6); border: 1px solid rgba(16, 185, 129, 0.1); padding: 22px; border-radius: 16px; backdrop-filter: blur(10px); text-align: left; }
+        .metric-node.accent { border-color: #10b981; background: linear-gradient(135deg, rgba(16,185,129,0.08) 0%, rgba(11,24,23,0.6) 100%); }
+        .metric-val { font-size: 32px; font-weight: 700; color: #fff; line-height: 1; }
+        .metric-lbl { font-size: 11px; color: #64748b; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 10px; }
 
-.table-wrap{background:var(--ink2);border:0.5px solid #3a3f34;border-radius:14px;overflow:hidden}
-table{width:100%;border-collapse:collapse}
-thead tr{border-bottom:0.5px solid #3a3f34}
-th{padding:12px 16px;font-size:11px;font-weight:500;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;text-align:left}
-td{padding:13px 16px;font-size:13px;color:var(--paper);border-bottom:0.5px solid #2a2f24;vertical-align:middle}
-.item-name{font-weight:500;color:var(--paper)}
-.price-cell{color:var(--gold);font-weight:500}
-.student-link{color:#639922;cursor:pointer;font-weight:500}
-.faculty-badge{display:inline-block;font-size:11px;padding:3px 9px;border-radius:20px;font-weight:500;background:#2a2f24;color:var(--muted)}
-.badge-avail{background:#1a2e18;color:#639922}
-.badge-sold{background:#2e1a1a;color:#c9504f}
-.action-cell{display:flex;gap:6px;justify-content:center}
-.btn-toggle{background:#1e2e18;border:0.5px solid var(--leaf);color:var(--leaf-mid);border-radius:7px;padding:5px 12px;font-size:12px;cursor:pointer;}
-.btn-toggle:hover{background:var(--leaf);color:#fff}
-.btn-del{background:#2e1a1a;border:0.5px solid var(--red);color:var(--red);border-radius:7px;padding:5px 10px;font-size:12px;cursor:pointer;}
-.btn-del:hover{background:var(--red);color:#fff}
-.empty-row td{text-align:center;padding:2.5rem;color:#4a4f44}
-</style>
+        /* Filters */
+        .filters-bar { display: grid; grid-template-columns: 1fr 110px 110px 150px auto auto; gap: 10px; margin-bottom: 25px; align-items: center; }
+        .filters-bar input, .filters-bar select { background: rgba(11, 24, 23, 0.6); border: 1px solid rgba(16, 185, 129, 0.15); border-radius: 10px; padding: 10px 14px; font-size: 13px; color: #f4f6f2; outline: none; }
+        .filters-bar input::placeholder { color: #4b5563; }
+        .btn-ghost { background: transparent; border: 1px solid rgba(148,163,184,0.25); border-radius: 10px; padding: 10px 16px; font-size: 13px; color: #94a3b8; cursor: pointer; white-space: nowrap; }
+        .btn-ghost:hover { border-color: #10b981; color: #10b981; }
+        .btn-danger-ghost { background: transparent; border: 1px solid rgba(244,63,94,0.3); border-radius: 10px; padding: 10px 16px; font-size: 13px; color: #f43f5e; cursor: pointer; white-space: nowrap; }
+        .btn-danger-ghost:hover { background: #f43f5e; color: #081111; }
+
+        /* Registry Data Table Grid Layout */
+        .data-shield { background: rgba(11, 24, 23, 0.4); border: 1px solid rgba(16, 185, 129, 0.1); border-radius: 20px; overflow: hidden; backdrop-filter: blur(16px); }
+        .table-head-row { display: grid; grid-template-columns: 1.4fr 100px 1fr 100px 110px 100px; background: rgba(16, 185, 129, 0.04); border-bottom: 1px solid rgba(16, 185, 129, 0.1); padding: 18px 24px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: #64748b; text-align: left; }
+
+        .item-row { display: grid; grid-template-columns: 1.4fr 100px 1fr 100px 110px 100px; align-items: center; padding: 16px 24px; border-bottom: 1px solid rgba(255, 255, 255, 0.03); font-size: 14px; text-align: left; transition: background 0.2s; }
+        .item-row:last-child { border-bottom: none; }
+        .item-row:hover { background: rgba(16, 185, 129, 0.02); }
+
+        .item-name { font-weight: 600; color: #fff; }
+        .price-cell { color: #f5c26b; font-weight: 700; }
+        .student-link { color: #10b981; cursor: pointer; font-weight: 600; }
+        .faculty-badge { display: inline-block; font-size: 11px; padding: 4px 10px; border-radius: 20px; font-weight: 700; background: rgba(148,163,184,0.08); color: #94a3b8; }
+        .status-badge { font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 20px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .status-badge.avail { background: rgba(16,185,129,0.1); color: #10b981; }
+        .status-badge.sold { background: rgba(244,63,94,0.1); color: #f43f5e; }
+
+        .btn-action-dismiss { background: rgba(244, 63, 94, 0.1); border: 1px solid rgba(244, 63, 94, 0.3); color: #f43f5e; padding: 6px 14px; border-radius: 8px; cursor: pointer; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; transition: all 0.2s; }
+        .btn-action-dismiss:hover { background: #f43f5e; color: #081111; box-shadow: 0 0 10px rgba(244, 63, 94, 0.4); }
+        .empty-state { text-align: center; padding: 60px; color: #64748b; font-size: 15px; font-weight: 500; }
+    </style>
 </head>
 <body>
 
-<div class="sidebar">
-  <div class="logo">EcoLoop</div>
-  <div class="logo-sub">MMU Admin Panel</div>
-  <div class="nav-item active" onclick="window.location.href='/admin'"><i class="ti ti-layout-dashboard"></i> Dashboard</div>
-  <div class="nav-item" onclick="window.location.href='/admin/items'"><i class="ti ti-building-store"></i> Student Panel</div>
-  <div class="nav-item" onclick="localStorage.clear(); window.location.href='/'" style="color:#ef4444;"><i class="ti ti-logout"></i> Exit Terminal</div>
-  <div class="sidebar-footer">EcoLoop MMU v1.0</div>
-</div>
+    <div class="sidebar-panel">
+        <div class="panel-brand">
+            <h1>Eco<span>Loop</span></h1>
+            <p>MMU ADMIN PANEL</p>
+        </div>
+        <ul class="sidebar-menu">
+            <li class="menu-item active" onclick="window.location.href='/admin'"><i class="ti ti-layout-dashboard"></i> Dashboard</li>
+            <li class="menu-item" onclick="window.location.href='/admin/items'"><i class="ti ti-message-report"></i> Feedback Hub</li>
+            <li class="menu-item exit" onclick="localStorage.clear(); window.location.href='/'"><i class="ti ti-logout"></i> Exit Terminal</li>
+        </ul>
+    </div>
 
-<div class="main">
-  <div class="topbar">
-    <div>
-      <div class="page-title">Marketplace Overview</div>
-      <div class="page-sub">Manage all student listings across faculties</div>
-    </div>
-    <div style="display:flex;align-items:center;gap:12px">
-      <span class="admin-badge"><i class="ti ti-shield-check" style="font-size:11px"></i> Admin</span>
-    </div>
-  </div>
+    <div class="main-workspace">
+        <div class="hub-header">
+            <div>
+                <h2>Marketplace Overview</h2>
+                <p>Manage all student listings across faculties.</p>
+            </div>
+            <span class="role-pill">Admin</span>
+        </div>
 
-  <div class="stats">
-    <div class="stat-card accent">
-      <div class="stat-val" id="s-total">0</div>
-      <div class="stat-lbl">Total listings</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-val" id="s-avail" style="color:#639922">0</div>
-      <div class="stat-lbl">Available</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-val" id="s-sold" style="color:#c9504f">0</div>
-      <div class="stat-lbl">Sold</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-val" id="s-avail-val" style="color:var(--leaf-mid)">RM 0</div>
-      <div class="stat-lbl">Available value</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-val" id="s-revenue" style="color:var(--gold)">RM 0</div>
-      <div class="stat-lbl">Revenue earned</div>
-    </div>
-  </div>
+        <div class="analytics-row">
+            <div class="metric-node accent"><div class="metric-val" id="s-total">0</div><div class="metric-lbl">Total Listings</div></div>
+            <div class="metric-node"><div class="metric-val" id="s-avail" style="color:#10b981">0</div><div class="metric-lbl">Available</div></div>
+            <div class="metric-node"><div class="metric-val" id="s-sold" style="color:#f43f5e">0</div><div class="metric-lbl">Sold</div></div>
+            <div class="metric-node"><div class="metric-val" id="s-avail-val" style="color:#10b981">RM 0</div><div class="metric-lbl">Available Value</div></div>
+            <div class="metric-node"><div class="metric-val" id="s-revenue" style="color:#f5c26b">RM 0</div><div class="metric-lbl">Revenue Earned</div></div>
+        </div>
 
-  <div class="filters-bar">
-    <input type="text" id="searchInput" placeholder="Search item or student..." oninput="applyFilters()">
-    <input type="number" id="minPrice" placeholder="Min RM" oninput="applyFilters()">
-    <input type="number" id="maxPrice" placeholder="Max RM" oninput="applyFilters()">
-    <select id="facultyFilter" onchange="applyFilters()">
-      <option value="">All Faculties</option>
-      <option value="FCI">FCI</option>
-      <option value="FOAIE">FOAIE</option>
-      <option value="FCM">FCM</option>
-    </select>
-    <button class="btn-ghost" onclick="showAll()"><i class="ti ti-eye" style="font-size:14px;vertical-align:-2px"></i> Show All</button>
-    <button class="btn-danger-ghost" onclick="clearFilters()"><i class="ti ti-x" style="font-size:14px;vertical-align:-2px"></i> Clear</button>
-  </div>
+        <div class="filters-bar">
+            <input type="text" id="searchInput" placeholder="Search item or student..." oninput="applyFilters()">
+            <input type="number" id="minPrice" placeholder="Min RM" oninput="applyFilters()">
+            <input type="number" id="maxPrice" placeholder="Max RM" oninput="applyFilters()">
+            <select id="facultyFilter" onchange="applyFilters()">
+                <option value="">All Faculties</option>
+                <option value="FCI">FCI</option>
+                <option value="FOAIE">FOAIE</option>
+                <option value="FCM">FCM</option>
+            </select>
+            <button class="btn-ghost" onclick="showAll()"><i class="ti ti-eye" style="font-size:14px;vertical-align:-2px"></i> Show All</button>
+            <button class="btn-danger-ghost" onclick="clearFilters()"><i class="ti ti-x" style="font-size:14px;vertical-align:-2px"></i> Clear</button>
+        </div>
 
-  <div class="table-wrap">
-    <table>
-      <thead>
-        <tr>
-          <th>Item</th>
-          <th>Price</th>
-          <th>Student</th>
-          <th>Faculty</th>
-          <th>Status</th>
-          <th style="text-align:center">Actions</th>
-        </tr>
-      </thead>
-      <tbody id="itemTable"></tbody>
-    </table>
-  </div>
-</div>
+        <div class="data-shield">
+            <div class="table-head-row">
+                <div>Item</div>
+                <div>Price</div>
+                <div>Student</div>
+                <div>Faculty</div>
+                <div>Status</div>
+                <div>Action</div>
+            </div>
+            <div id="itemTable"></div>
+        </div>
+    </div>
 
 <script>
 let items = [];
@@ -162,24 +148,20 @@ function render() {
   });
 
   if (!filtered.length) {
-    tbody.innerHTML = '<tr class="empty-row"><td colspan="6">No listings found</td></tr>';
+    tbody.innerHTML = '<div class="empty-state">No listings found</div>';
     updateStats();
     return;
   }
 
   tbody.innerHTML = filtered.map(it => `
-    <tr data-id="${it.id}">
-      <td class="item-name">${it.name}</td>
-      <td class="price-cell">RM ${parseFloat(it.price).toFixed(2)}</td>
-      <td><span class="student-link" onclick="filterByStudent('${it.student}')">${it.student}</span></td>
-      <td><span class="faculty-badge">${it.faculty || 'FCI'}</span></td>
-      <td><span class="badge-${it.sold ? 'sold' : 'avail'}">${it.sold ? 'Sold' : 'Available'}</span></td>
-      <td>
-        <div class="action-cell">
-          <button class="btn-del" onclick="deleteItem(${it.id})">Delete</button>
-        </div>
-      </td>
-    </tr>
+    <div class="item-row" data-id="${it.id}">
+      <div class="item-name">${it.name}</div>
+      <div class="price-cell">RM ${parseFloat(it.price).toFixed(2)}</div>
+      <div><span class="student-link" onclick="filterByStudent('${it.student}')">${it.student}</span></div>
+      <div><span class="faculty-badge">${it.faculty || 'FCI'}</span></div>
+      <div><span class="status-badge ${it.sold ? 'sold' : 'avail'}">${it.sold ? 'Sold' : 'Available'}</span></div>
+      <div><button class="btn-action-dismiss" onclick="deleteItem(${it.id})">Delete</button></div>
+    </div>
   `).join('');
   updateStats();
 }
@@ -193,8 +175,6 @@ function updateStats() {
   document.getElementById('s-avail-val').textContent = 'RM '+availVal.toLocaleString();
   document.getElementById('s-revenue').textContent = 'RM '+revenue.toLocaleString();
 }
-
-
 
 function deleteItem(id){
   if(!confirm("Are you sure you want to delete this listing?")) return;
