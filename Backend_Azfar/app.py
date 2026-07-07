@@ -2,8 +2,34 @@ import os
 import random
 from flask import Flask, jsonify, request, send_from_directory, render_template
 from flask_cors import CORS
-from models import db, Item, User, Report 
+from models import db, Item, User, Report
 from datetime import datetime, timedelta
+
+# 1. DEFINE BASE PATHS
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+FRONTEND_DIR = os.path.abspath(os.path.join(BASE_DIR, "..", "Frontend_Team"))
+
+# 2. INITIALIZE FLASK ENGINE BEFORE USING IT
+app = Flask(__name__, template_folder=FRONTEND_DIR, static_folder=FRONTEND_DIR, static_url_path='')
+CORS(app)
+
+# 3. CONFIGURE DATABASE SCHEMAS
+DATABASE_URL = os.environ.get('DATABASE_URL')
+
+if DATABASE_URL:
+    if DATABASE_URL.startswith("postgres://"):
+        DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
+    app.config['SQLALCHEMY_DATABASE_URI'] = DATABASE_URL
+else:
+    app.config['SQLALCHEMY_DATABASE_URI'] = f"sqlite:///{os.path.join(BASE_DIR, 'ecoloop.db')}"
+
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+# 4. PLUG IN DATABASE 
+db.init_app(app)
+
+
+
 
 # =======================================================
 # 🌐 CORE SYSTEM INITIALIZATION & INFRASTRUCTURE CONFIG
