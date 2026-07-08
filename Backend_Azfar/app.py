@@ -16,13 +16,13 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 FRONTEND_DIR = os.path.abspath(os.path.join(BASE_DIR, "..", "Frontend_Team"))
 
 # =======================================================
-# 2. INITIALIZE FLASK ENGINE & UNLOCK CORS
+# 2. INITIALIZE FLASK ENGINE & CROSS-ORIGIN MIDDLEWARE
 # =======================================================
 app = Flask(__name__, template_folder=FRONTEND_DIR, static_folder=FRONTEND_DIR, static_url_path='')
 CORS(app, resources={r"/api/*": {"origins": "*"}})
 
 # =======================================================
-# 3. REINFORCED DATABASE COMPLIANCE POOLING
+# 3. REINFORCED PRODUCTION POSTGRES DATA LINK POOLING
 # =======================================================
 DATABASE_URL = os.environ.get('DATABASE_URL')
 
@@ -46,7 +46,7 @@ app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {
 }
 
 # =======================================================
-# 4. SECURE EMAIL DELIVERY ENGINE (CLiC LAYOUT)
+# 4. SECURE SMTP CLiC EMAIL DISPATCH INFRASTRUCTURE
 # =======================================================
 SMTP_SERVER = "smtp.gmail.com"
 SMTP_PORT = 587
@@ -54,9 +54,9 @@ SENDER_EMAIL = os.environ.get("SENDER_EMAIL")
 SENDER_PASSWORD = os.environ.get("SENDER_PASSWORD") 
 
 def dispatch_secure_otp(recipient_email, otp_code):
-    """Delivers an official multi-factor secure token packet to the user's inbox."""
+    """Physically transmits an official security token matching CLiC email formats."""
     if not SENDER_EMAIL or not SENDER_PASSWORD:
-        print("⚠️ MAIL WARNING: SMTP variables are missing from Render Environment settings.")
+        print("⚠️ MAIL WARNING: SMTP access keys missing from Render Environment panel.")
         return False
     try:
         msg = MIMEMultipart('alternative')
@@ -87,14 +87,14 @@ def dispatch_secure_otp(recipient_email, otp_code):
         server.login(SENDER_EMAIL, SENDER_PASSWORD)
         server.sendmail(SENDER_EMAIL, recipient_email, msg.as_string())
         server.quit()
-        print(f"✅ SUCCESS: Token delivered to {recipient_email}")
+        print(f"✅ SUCCESS: Security token delivered to {recipient_email}")
         return True
     except Exception as e:
-        print(f"🚨 MAIL ENGINE CRITICAL FAILURE: {e}")
+        print(f"🚨 MAIL ENGINE DISPATCH CRITICAL FAULT: {e}")
         return False
 
 # =======================================================
-# 5. INITIALIZE DATABASE TABLES
+# 5. INITIALIZE MATRIX DATABASE
 # =======================================================
 db.init_app(app)
 
@@ -190,10 +190,10 @@ def update_user_profile_data(username):
     data = request.json or {}
     user.phone = data.get("phone", "").strip()
     db.session.commit()
-    return jsonify({"success": True, "message": "Phone parameters updated successfully."}), 200
+    return jsonify({"success": True, "message": "Profile parameters updated."}), 200
 
 # =======================================================
-# 🔍 SEARCH ENGINE
+# 🔍 ECOLOOP MARKETPLACE SEARCH ENGINE
 # =======================================================
 @app.route("/search", methods=["GET"])
 def search_marketplace_items():
@@ -205,7 +205,7 @@ def search_marketplace_items():
     return render_template("result.html", query=query_param, items=matched_items)
 
 # =======================================================
-# 🔐 AUTHENTICATION CORE API
+# 🔐 SYSTEM REGISTRATION & ACCOUNT API
 # =======================================================
 @app.route("/api/register", methods=["POST"])
 def api_register():
@@ -213,7 +213,7 @@ def api_register():
     email = data.get("email", "").lower().strip()
     
     if not (email.endswith("@student.mmu.edu.my") or email.endswith("@mmu.edu.my") or email.endswith("@gmail.com")):
-        return jsonify({"error": "Access Denied: Please use a valid email schema node."}), 403
+        return jsonify({"error": "Access Denied: Please use a valid email structure."}), 403
     
     existing_user = User.query.filter((User.email == email) | (User.student_id == data.get("student_id"))).first()
     if existing_user: 
@@ -227,6 +227,9 @@ def api_register():
     db.session.commit()
     return jsonify({"message": "Success"}), 201
 
+# =======================================================
+# 🔓 SECURE LOGIN ROUTE (GENERATES & MAILS REAL OTP)
+# =======================================================
 @app.route("/api/login", methods=["POST"])
 def api_login():
     data = request.json
@@ -239,10 +242,8 @@ def api_login():
         generated_code = str(random.randint(100000, 999999))
         LIVE_OTP_REGISTRY[user.email] = {"code": generated_code}
         
-        # Physically transmits the generated code via smtplib
+        # Fires the email directly to your recipient outbox
         dispatch_secure_otp(user.email, generated_code)
-        
-        print(f"🔢 SECURITY BROADCAST -> OTP DISPATCHED TO {user.email}: {generated_code}")
         
         return jsonify({
             "action": "otp_required",
@@ -265,12 +266,11 @@ def api_send_otp():
     generated_otp = str(random.randint(100000, 999999))
     LIVE_OTP_REGISTRY[email] = {"code": generated_otp}
     
-    # Physically transmits recovery token
     dispatch_secure_otp(email, generated_otp)
     
     return jsonify({
         "success": True, 
-        "message": "Security token successfully delivered.",
+        "message": "Security token successfully outputted.",
         "secret": f"MMU-SECURE-SEED-{generated_otp[:3]}-{generated_otp[3:]}"
     }), 200
 
@@ -306,10 +306,10 @@ def reset_password():
         user.password = password
         db.session.commit()
         return jsonify({"success": True, "message": "Passcode overwritten successfully."}), 200
-    return jsonify({"error": "Failed to update profile parameter node."}), 404
+    return jsonify({"error": "Failed to update profile parameters."}), 404
 
 # =======================================================
-# 📊 FEEDBACK & REPORTING API
+# 🛡️ HELPDESK & TICKETING API
 # =======================================================
 @app.route("/api/reports", methods=["POST"])
 def add_report():
@@ -398,6 +398,9 @@ def delete_item(item_id):
         db.session.commit()
     return jsonify({"message": "deleted"})
 
+# =======================================================
+# 🚀 BOOT ENGINE CONTEXT
+# =======================================================
 if __name__ == "__main__":
     with app.app_context():
         if not User.query.filter_by(email="admin@mmu.edu.my").first():
